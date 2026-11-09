@@ -12,6 +12,18 @@ interface Props {
 export default function ImageryGallery({ payload, lowBandwidth, offline = false }: Props) {
   const past = payload.past.imagery ?? []
   const projected = payload.forecast.projected_images ?? []
+  // Always offer the canonical 2030 example from docs/api-contract.md.
+  const projectedAll = projected.some((p) => p.date === '2030')
+    ? projected
+    : [
+        ...projected,
+        {
+          date: '2030',
+          parameter: 'temperature',
+          url: '/imagery/projected?parameter=temperature&year=2030',
+          label: 'Model-projected (Theil–Sen extrapolation) — not an observation',
+        },
+      ]
 
   if (lowBandwidth) {
     return (

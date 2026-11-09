@@ -26,6 +26,8 @@ export function usePlace(lat: number | null, lon: number | null, horizonMonths =
     const myId = ++abort.current
     setLoading(true)
     setError(null)
+    // Never show a previous location's payload while the new one loads/fails.
+    setData(null)
     fetchPlace(lat, lon, horizonMonths)
       .then((payload) => {
         if (abort.current !== myId) return
