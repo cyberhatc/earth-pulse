@@ -108,10 +108,10 @@ class RidgeRollout:
 
     @classmethod
     def load(cls, path) -> "RidgeRollout":
-        z = np.load(path)
-        m = cls(lam=float(z["lam"][0]))
-        m.W, m.x_mean, m.x_std = z["W"], z["x_mean"], z["x_std"]
-        m.y_mean, m.y_std, m.resid_std = z["y_mean"], z["y_std"], z["resid_std"]
+        with np.load(path, allow_pickle=False) as z:
+            m = cls(lam=float(z["lam"][0]))
+            m.W, m.x_mean, m.x_std = z["W"], z["x_mean"], z["x_std"]
+            m.y_mean, m.y_std, m.resid_std = z["y_mean"], z["y_std"], z["resid_std"]
         return m
 
 

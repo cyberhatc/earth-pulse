@@ -142,6 +142,13 @@ def build_sample_arrays():
     ):
         arrays[name] = arr
 
+    # --- land/ocean mask: SST & sea level only over ocean; NDVI only over land ---
+    from pipeline.land_ocean import demo_mask_flat, apply_mask_in_place
+    mask = demo_mask_flat()
+    apply_mask_in_place(arrays, mask)
+    n_ocean = int(mask.sum())
+    print(f"[pipeline] demo land/ocean mask applied — ocean cells: {n_ocean}/{len(mask)} (illustrative, labeled)")
+
     meta = {
         "provenance": "synthetic_demo",
         "synthetic": True,
