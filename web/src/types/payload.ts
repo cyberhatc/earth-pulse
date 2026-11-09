@@ -15,7 +15,10 @@ export interface DataCoverage {
   sources: Record<string, string>
   time_range: [string, string]
   overlap_used_for_training: [string, string]
-  gap_notes: string[]
+  /** Preferred key emitted by api/routers/place.py */
+  gap_notes?: string[]
+  /** docs/api-contract.md calls the same field `gaps`; accept both */
+  gaps?: string[]
   notes: string
 }
 
@@ -62,6 +65,14 @@ export interface ProjectedImage {
   label: string
 }
 
+export interface Backtest {
+  mae?: number
+  rmse?: number
+  picp_p10_p90?: number
+  vs_baselines?: Record<string, number>
+  note?: string
+}
+
 export interface ForecastBlock {
   horizon_months: number
   issued: string
@@ -69,7 +80,7 @@ export interface ForecastBlock {
   trained_artifact: boolean
   dates: string[]
   timeseries: Record<string, ForecastParam>
-  backtest: unknown
+  backtest: Backtest | null
   projected_images: ProjectedImage[]
   scenarios: Array<{ name: string; generated_image_url: string | null; label: string }>
 }
