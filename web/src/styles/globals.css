@@ -106,7 +106,46 @@ body {
 .trend-cell .k { font-size: 0.68rem; color: var(--text-muted); }
 .trend-cell .v { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .trend-cell .v.up { color: var(--trend-up); } .trend-cell .v.down { color: var(--trend-down); }
-.trend-cell .sig { font-size: 0.62rem; color: var(--text-muted); }
+.trend-cell .sig { font-size: 0.62rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+.sig-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); flex: 0 0 auto; }
+.trend-cell .sig.sig-yes .sig-dot { background: var(--trend-up); }
+.trend-cell .sig.sig-no .sig-dot { background: var(--text-muted); }
+.sig-badge {
+  display: inline-flex; align-items: center; gap: 4px; margin-left: 6px;
+  font-size: 0.62rem; font-weight: 700; padding: 1px 7px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--text-muted);
+}
+.sig-badge.sig-yes { border-color: var(--trend-up); color: var(--trend-up); }
+.sig-badge.sig-yes .sig-dot { background: var(--trend-up); }
+.sig-badge.sig-no .sig-dot { background: var(--text-muted); }
+
+/* ---------- panel tabs ---------- */
+.panel-tabs {
+  display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--border);
+  padding-bottom: 2px;
+}
+.panel-tab {
+  flex: 0 0 auto; border: 1px solid transparent; border-bottom: 2px solid transparent;
+  background: transparent; color: var(--text-muted); cursor: pointer;
+  padding: 6px 10px; font-size: 0.76rem; font-weight: 700; border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.panel-tab:hover { color: var(--accent-strong); }
+.panel-tab[aria-selected='true'] {
+  color: var(--accent-strong); border-color: var(--border);
+  border-bottom-color: var(--accent); background: var(--surface-2);
+}
+.tab-content { display: flex; flex-direction: column; gap: var(--space-4); }
+.why-list { font-size: 0.78rem; line-height: 1.5; color: var(--text-muted); margin: 0; padding-left: 18px; }
+.why-list b { color: var(--text); }
+
+/* ---------- offline fallback ---------- */
+.fallback-banner {
+  border: 1px solid var(--anomaly); border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--anomaly) 9%, var(--surface));
+  padding: var(--space-3); font-size: 0.78rem; line-height: 1.45;
+}
+.fallback-banner b { color: var(--text); }
+.hint-sample-btn { margin-top: 8px; }
 
 .param-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--space-2); }
 .pill { border: 1px solid var(--border); background: var(--surface); border-radius: 999px; padding: 4px 10px; font-size: 0.75rem; cursor: pointer; color: var(--text); }
