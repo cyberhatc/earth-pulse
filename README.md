@@ -166,3 +166,29 @@ earth-pulse/
 ## 13. Credits
 
 Data courtesy of NASA Earthdata and partner space agencies. Built for the NASA Space Apps Challenge 2026.
+
+---
+
+## 14. What's implemented in this repo (v0.1.0)
+
+This repository now contains a **working offline-first implementation** of the Earth Pulse stack (deterministic synthetic demo store; swap in real NASA products for research):
+
+- **`pipeline/`** — sample store generator (`--sample`), NASA POWER point fetcher, GIBS tile builder, FIRMS fires (optional key), MERRA-2/MODIS/GPM OPeNDAP fetch path, CMR discovery, cleaning + feature engineering.
+- **`engine/`** — Theil–Sen + Mann–Kendall trends for all grid cells, **Opposite Trend Detector** (NDVI/precipitation), K-Means **climate twins** → `data/processed/analysis.json`.
+- **`models/`** — multivariate ridge-rollout forecaster with p10–p90 bands (trained artifact `models/artifacts/forecaster.npz`), transparent linear-trend fallback, rolling robust-z anomalies, rolling-origin backtest, dependency-free **SVG projected maps**, optional (disabled-by-default) AI scenario module.
+- **`api/`** — FastAPI serving **unified `GET /place?lat&lon` payload** (trends, forecast, anomalies, opposite trends, GIBS past imagery, projected SVG maps, explainer), `/imagery/projected`, `/tier-b`, `/health`. Dockerfile for HF Spaces/Render free tier.
+- **`web/`** — React + Vite + TypeScript + **MapLibre GL** frontend (click anywhere → charts with uncertainty ribbon, imagery gallery, case-file cards, coverage badge, EN/HI/KN, low-bandwidth mode, localStorage watchlist). `cd web && npm install && npm run dev`.
+- **`docs/`** — architecture, data sources (with the honest 40-year coverage check), API contract, ML/accuracy notes, UI/UX spec, free deployment guide, parallel-session prompts.
+- **`notebooks/`, `tests/`, CI** — 01 explore NASA POWER/GIBS · 02 train · 03 backtest; pytest suite; GitHub Actions CI + Pages deploy.
+
+### Quickstart (offline)
+```bash
+pip install numpy scipy fastapi uvicorn httpx pydantic pytest
+make sample-data engine train test   # deterministic demo store → analysis.json → artifact → tests
+make api                             # http://localhost:8000 (try /place?lat=12.97&lon=77.59)
+cd web && npm install && npm run dev # http://localhost:5173
+```
+`docker compose up` works too (API + web). See `docs/deploy.md` for free hosting (HF Spaces + Vercel/Netlify/Pages).
+
+### Honest limitations
+Bundled demo data is **synthetic** (physically motivated, deterministic). Real accuracy requires real products (`docs/data-sources.md`) and overlap-period training; forecasts are probabilistic (p10–p90), not certain futures. Never claim "40 years" for NDVI/SST/sea level (~2000/2002/1993 onward).
