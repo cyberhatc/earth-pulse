@@ -46,6 +46,17 @@ class RidgeRollout:
         self.resid_std: np.ndarray | None = None  # per target, 1-step residual (raw units)
 
     def fit(self, X: np.ndarray, Y: np.ndarray) -> "RidgeRollout":
+        X = np.asarray(X, dtype=np.float64)
+        Y = np.asarray(Y, dtype=np.float64)
+        if X.ndim != 2 or Y.ndim != 2 or X.shape[0] != Y.shape[0]:
+            raise ValueError(f"fit expects 2-D X/Y with equal rows, got {X.shape} and {Y.shape}")
+        # Fail loudly instead of silently fitting NaNs: one NaN propagates through
+        # the means/gram matrix and poisons every prediction and band.
+        if not np.isfinite(X).all() or not np.isfinite(Y).all():
+            raise ValueError(
+                "RidgeRollout.fit received non-finite values; impute or drop them "
+                "(pipeline.clean.fill_missing_linear) before training."
+            )
         # standardize features and targets
         self.x_mean = X.mean(axis=0)
         self.x_std = X.std(axis=0)
