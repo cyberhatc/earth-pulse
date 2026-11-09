@@ -87,19 +87,29 @@ def place(lat: float = Query(..., ge=-90, le=90),
     twin = svc.twin_label(analysis, cell)
     gibs = ondemand.gibs_past(glat, glon)
 
+    relevance = {
+        "sst": "ocean" if is_ocean_cell else ("land" if is_ocean_cell is not None else "unknown"),
+        "sea_level": "ocean" if is_ocean_cell else ("land" if is_ocean_cell is not None else "unknown"),
+        "ndvi": "land" if is_ocean_cell is not None and not is_ocean_cell else ("ocean" if is_ocean_cell else "unknown"),
+    }
     data_coverage = {
         "synthetic_demo": synthetic,
-        "parameters_used": list(svc.TS_PARAMS),
-        "sources": svc.SOURCE_MAP,
+        "parameters_used": usable,
+        "parameters_unavailable": dropped,
+        "ocean_cell": is_ocean_cell,
+        "parameter_relevance": relevance,
+        "sources": {k: v for k, v in svc.SOURCE_MAP.items() if k in usable},
         "time_range": time_range,
         "overlap_used_for_training": ["2000-01", dates[-1]],
         "gap_notes": [
             "Bundled demo uses a deterministic SYNTHETIC store — replace with real products (docs/data-sources.md) for research use.",
             "NDVI/SST/sea level records start later than 1985 in reality (≈2000/2002/1993 respectively).",
-            "Sea level is meaningful near coasts; SST where ocean; both are illustrative in the synthetic store.",
+            "Sea level & SST are ocean parameters; NDVI is a land parameter. Shown only where relevant." if is_ocean_cell is not None else "",
+            (f"Parameters unavailable at this cell (masked or non-finite): {', '.join(dropped)}" if dropped else ""),
         ],
-        "notes": "Tier A: served from precomputed store + engine artifacts. Tier B (POWER/FIRMS/CMR) is opt-in via /tier-b.",
+        "notes": "Tier A: served from precomputed store + engine artifacts. Tier B (POWER/FIRMS/CMR) is opt-in via /tier-b and cached in data/cache/.",
     }
+    data_coverage["gap_notes"] = [n for n in data_coverage["gap_notes"] if n]
 
     forecast_temps = fc_timeseries.get("temperature", {}).get("mean", [])
     deltas = {}
