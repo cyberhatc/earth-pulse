@@ -1,29 +1,68 @@
-"""Pipeline store generation + features tests."""
+"""Pipeline store generation + features tests.
+
+Generates the sample store into a pytest tmp dir so the repo artifacts are not
+touched, then asserts the shape/format contract every downstream module relies on.
+"""
 from __future__ import annotations
 
 import numpy as np
 
-from pipeline.export_store import VARIABLES, build_sample_arrays
+from pipeline.export_store import (
+    VARIABLES,
+    build_sample_arrays,
+    generate_sample,
+    load_store,
+)
 from pipeline.build_features import time_features
 
+EXPECTED_MONTHS = 498        # 1985-01 .. 2026-06
+EXPECTED_CELLS = 240         # 10 lats x 24 lons
+EXPECTED_PARAMETERS = 8
 
-def test_sample_store_shapes():
-    arrays = build_sample_arrays()
-    T = len(arrays["dates"])
-    G = len(arrays["grid_lat"])
-    assert T == 498, T          # 1985-01 .. 2026-06
-    assert G == 240             # 10 lats x 24 lons
-    for var in VARIABLES:
-        assert arrays[var].shape == (T, G)
-    # dates strictly increasing, YYYY-MM format
-    assert list(arrays["dates"]) == sorted(arrays["dates"])
-    assert all(len(d) == 7 and d[4] == '-' for d in arrays["dates"])
+
+def test_sample_store_generates_to_tmp_path(tmp_path):
+    out = generate_sample(tmp_path / "earth_pulse_sample.npz")
+    assert out.exists() and out.stat().st_size > 0
+
+    with np.load(out, allow_pickle=False) as z:
+        files = set(z.files)
+        T = len(z["dates"])
+        G = len(z["grid_lat"])
+
+        assert T == EXPECTED_MONTHS, T
+        assert G == EXPECTED_CELLS, G
+        assert len(z["grid_lon"]) == G
+
+        # 8 named parameters, all (T, G)
+        assert len(VARIABLES) == EXPECTED_PARAMETERS
+        for var in VARIABLES:
+            assert var in files, f"missing parameter array {var}"
+            assert z[var].shape == (T, G), f"{var}: {z[var].shape}"
+            assert np.all(np.isfinite(z[var])), f"{var}: non-finite values"
+
+        # dates strictly increasing, YYYY-MM format
+        dates = [str(d) for d in z["dates"]]
+        assert dates == sorted(dates)
+        assert len(set(dates)) == len(dates), "duplicate dates"
+        assert all(len(d) == 7 and d[4] == "-" for d in dates)
+        assert dates[0] == "1985-01" and dates[-1] == "2026-06"
+
+        assert "meta_json" in files
+
+
+def test_sample_store_round_trips(tmp_path):
+    out = generate_sample(tmp_path / "store.npz")
+    store = load_store(out)
+    assert store["meta"]["synthetic"] is True
+    assert store["meta"]["n_months"] == EXPECTED_MONTHS
+    assert store["temperature"].shape == (EXPECTED_MONTHS, EXPECTED_CELLS)
 
 
 def test_sample_store_deterministic():
     a = build_sample_arrays()
     b = build_sample_arrays()
     np.testing.assert_allclose(a["temperature"], b["temperature"])
+    np.testing.assert_allclose(a["precipitation"], b["precipitation"])
 
 
 def test_time_features():
