@@ -18,8 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from pipeline.fetch_gibs import thumbnails_for_point
 from models.infer import forecast_place
-from api.deps import get_store  # noqa: F401  (documents the shared dependency)
-from pipeline.export_store import nearest_cell_index
+from pipeline.export_store import nearest_cell_index, load_store
 from models.scenario_image import build_conditioning, generate_scenario_cards, LABEL
 
 
@@ -32,7 +31,6 @@ def main() -> int:
     ap.add_argument("--generate", action="store_true", help="actually run the diffusion pipeline (GPU + diffusers)")
     args = ap.parse_args()
 
-    from pipeline.export_store import load_store
     store = load_store()
     cell = nearest_cell_index(store, args.lat, args.lon)
     fc = forecast_place(store, cell, args.horizon_months)
