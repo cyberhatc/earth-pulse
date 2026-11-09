@@ -57,8 +57,16 @@ Each block below is a **ready-to-paste prompt** for a separate OpenCode session 
 
 ## Status log
 - [ ] A web  —
-- [ ] B tests/ci/notebooks —
+- [x] B tests/ci/notebooks — done at 2026-11-09 by Session B agent
 - [ ] C accuracy review —
 - [ ] D docker/deploy/readme —
 - [ ] E integration run —
 - [ ] F docs polish —
+
+## Session B — done notes
+- Added `tests/test_api.py` (TestClient: `/health`, `/place` schema/horizon/bands, synthetic labelling, validation).
+- `tests/test_pipeline.py` now generates the store into `tmp_path` and asserts T=498, G=240, 8 parameters, strictly increasing `YYYY-MM` dates, meta round-trip.
+- `tests/test_models.py` now exercises `forecast_place` (12/60-month horizons, future date sequence, lower ≤ mean ≤ upper).
+- `notebooks/02` loads the sample store + explains rolling-origin backtests; `notebooks/03` compares ridge vs `linear_trend_seasonal` and prints MAE/RMSE/PicP across origins. All three notebooks execute.
+- `ci.yml` python job now runs `make sample-data engine test` (plus `api/tests`).
+- Verified: `python3 -m pytest tests/ -q` → **30 passed**; `python3 scripts/verify_offline.py` → offline pipeline OK.
