@@ -33,12 +33,18 @@ def test_sample_store_generates_to_tmp_path(tmp_path):
         assert G == EXPECTED_CELLS, G
         assert len(z["grid_lon"]) == G
 
-        # 8 named parameters, all (T, G)
+        # 8 named parameters, all (T, G). SST/sea_level are NaN over land and NDVI over ocean
+        # (land/ocean mask, docs/real-data-ingestion.md) — every other parameter is finite.
         assert len(VARIABLES) == EXPECTED_PARAMETERS
         for var in VARIABLES:
             assert var in files, f"missing parameter array {var}"
             assert z[var].shape == (T, G), f"{var}: {z[var].shape}"
-            assert np.all(np.isfinite(z[var])), f"{var}: non-finite values"
+            if var in ("sst", "sea_level", "ndvi"):
+                assert np.isnan(z[var]).any(), f"{var}: land/ocean mask missing"
+                assert np.isfinite(z[var]).any(), f"{var}: unexpectedly all-NaN"
+            else:
+                assert np.all(np.isfinite(z[var])), f"{var}: non-finite values"
+        assert "ocean_mask" in files
 
         # dates strictly increasing, YYYY-MM format
         dates = [str(d) for d in z["dates"]]
