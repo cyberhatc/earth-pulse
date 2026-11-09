@@ -37,3 +37,13 @@ features:
 api:
   cors_origins: ["http://localhost:5173", "http://localhost:4173", "https://example.github.io"]
   rate_limit_per_min: 120
+
+cache:
+  enabled: true            # Tier B (POWER/FIRMS) file cache in data/cache/
+  ttl_seconds: 3600        # override with EP_CACHE_TTL env var
+  dir: data/cache/
+
+mask:
+  demo: illustrative_15deg_dominant_class   # embedded in sample store; 1=ocean, 0=land
+  real: derive_from_sst_nan_fraction        # pipeline/land_ocean.py: ocean where SST finite ≥ 50%
+  semantics: { sst: ocean_only, sea_level: ocean_only, ndvi: land_only }

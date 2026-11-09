@@ -190,7 +190,14 @@ def load_store(path: str | Path | None = None) -> dict[str, np.ndarray]:
         )
     with np.load(p, allow_pickle=False) as z:
         store = {k: z[k] for k in z.files}
-    store["meta"] = json.loads(str(store.pop("meta_json", "{}") or "{}"))
+    # meta_json is stored as a 0-d unicode array. Use .item() rather than str()
+    # so a future 1-element array cannot leak "['...']" into json.loads().
+    raw_meta = store.pop("meta_json", None)
+    if isinstance(raw_meta, np.ndarray):
+        meta_text = str(raw_meta.item()) if raw_meta.size == 1 else str(raw_meta)
+    else:
+        meta_text = str(raw_meta) if raw_meta is not None else ""
+    store["meta"] = json.loads(meta_text or "{}")
     return store
 
 

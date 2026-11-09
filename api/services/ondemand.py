@@ -30,11 +30,18 @@ def power_point(lat: float, lon: float) -> dict:
 
 @lru_cache(maxsize=256)
 def firms_area(lat: float, lon: float) -> dict:
-    try:
-        from pipeline.fetch_firms import fetch_firms_area
-        return fetch_firms_area(lat, lon)
-    except Exception as exc:
-        return {"available": False, "note": f"firms_error: {exc}"}
+    key = f"firms:{lat:.3f},{lon:.3f}"
+
+    def _produce():
+        try:
+            from pipeline.fetch_firms import fetch_firms_area
+            return fetch_firms_area(lat, lon)
+        except Exception as exc:
+            return {"available": False, "note": f"firms_error: {exc}"}
+
+    from pipeline.cache import cached_json
+    ttl = int(os.environ.get("EP_CACHE_TTL", "3600")) if os.environ.get("FIRMS_MAP_KEY") else 300
+    return cached_json(key, ttl_seconds=ttl, producer=_produce)
 
 
 def gibs_past(lat: float, lon: float) -> list[dict]:
