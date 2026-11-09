@@ -11,19 +11,27 @@ from scipy import stats
 
 
 def theil_sen_slope(y: np.ndarray) -> tuple[float, float]:
-    """Return (slope per index, intercept) using the median of pairwise slopes."""
+    """Return (slope per index, intercept) using the median of pairwise slopes.
+
+    Theil–Sen is O(n²) in time and memory because the exact median needs every
+    pairwise slope. For the demo series (n = 498 months) that is ~124k slopes
+    (~1 MB), which is fine. Do not call this on multi-million-point series;
+    downsample or aggregate first.
+    """
     y = np.asarray(y, dtype=np.float64)
     n = y.size
-    if n < 3:
-        return 0.0, float(np.nanmean(y)) if n else 0.0
     mask = np.isfinite(y)
+    finite = y[mask]
+    if finite.size < 3:
+        # No usable trend: report a flat slope and the mean of whatever is valid.
+        return 0.0, float(finite.mean()) if finite.size else 0.0
     x = np.arange(n, dtype=np.float64)[mask]
-    yv = y[mask]
+    yv = finite
     m = yv.size
-    if m < 3:
-        return 0.0, float(np.nanmean(y))
     slopes = []
-    # chunked pairwise differences to bound memory
+    # Pairwise slopes between every pair of valid observations. Keeping the
+    # original x indices makes this correct when NaNs are present (irregular
+    # spacing) — do not replace x with a compacted arange.
     for i in range(m):
         d = yv[i + 1:] - yv[i]
         denom = x[i + 1:] - x[i]
