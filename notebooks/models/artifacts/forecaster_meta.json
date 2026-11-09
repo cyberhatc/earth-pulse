@@ -1,0 +1,17 @@
+{
+  "artifact": "forecaster.npz",
+  "variables": [
+    "temperature",
+    "precipitation",
+    "ndvi",
+    "sst",
+    "sea_level",
+    "solar_radiation",
+    "humidity",
+    "wind"
+  ],
+  "seq_len": 24,
+  "lam": 0.01,
+  "samples": 113760,
+  "note": "Ridge rollout trained on pooled cells. For PyTorch LSTM see notebooks/02_train_forecast.ipynb."
+}
