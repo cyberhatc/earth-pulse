@@ -86,6 +86,7 @@ export default function ImageryGallery({ payload, lowBandwidth, offline = false 
         Scenario image generation is <b>off by default</b> (configs/model.yaml → scenario_image.enabled). When enabled,
         lower/median/upper variants are labelled “AI-generated scenario — not an observation” and are strictly illustrative.
       </p>
+      <ScenarioStatus payload={payload} />
     </div>
   )
 }
