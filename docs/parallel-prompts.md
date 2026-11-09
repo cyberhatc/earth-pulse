@@ -58,7 +58,7 @@ Each block below is a **ready-to-paste prompt** for a separate OpenCode session 
 ## Status log
 - [x] A web  — done at 2026-11-09 09:56 IST by Session A agent (`web/` frontend, build verified)
 - [x] B tests/ci/notebooks — done at 2026-11-09 by Session B agent
-- [ ] C accuracy review —
+- [x] C accuracy review — done at 2026-11-09 10:12 IST by Session C agent (fixed a critical ridge-inference column-order bug + 5 smaller numerical issues; `pytest` 37 passed — see Session C notes)
 - [x] D docker/deploy/readme — done at 2026-11-09 10:06 IST by Session D agent (docker-compose.yml validated; `.dockerignore` added; `api/Dockerfile` verified by real build → image `nasa-api:latest` with sample+engine+train baked; README dated section 15 appended)
 - [x] E integration run — done at 2026-11-09 10:06 IST by Session E agent (API live on :8000 — `/health` + `/place` schema_version 1.0.0, ridge_rollout, `climate_twin`; web rebuilt with `VITE_API_BASE=http://localhost:8000`, preview :4173 HTML+bundle 200; `/tier-b` fetched 596 months of real NASA POWER data, cached)
 - [x] F docs polish — done at 2026-11-09 10:00 IST by Session F agent (api-contract: `/docs-payload` and `gemini` generator marked planned/not wired, `climate_twin` block added; ml.md §6 + deploy.md §7 corrected, §9 links new docs; added `docs/limitations.md` + `docs/submission-checklist.md`)
