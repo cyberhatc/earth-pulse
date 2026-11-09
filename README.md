@@ -192,3 +192,39 @@ cd web && npm install && npm run dev # http://localhost:5173
 
 ### Honest limitations
 Bundled demo data is **synthetic** (physically motivated, deterministic). Real accuracy requires real products (`docs/data-sources.md`) and overlap-period training; forecasts are probabilistic (p10–p90), not certain futures. Never claim "40 years" for NDVI/SST/sea level (~2000/2002/1993 onward).
+
+---
+
+## 15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)
+
+Everything below was **run and verified on this tree on Nov 9, 2026**; see `docs/parallel-prompts.md` status log. Full detail: `docs/limitations.md` (honest limits) and `docs/submission-checklist.md` (Space Apps pre-submit QA).
+
+**Implemented pieces (all verified today)**
+
+| Piece | What ships |
+|---|---|
+| `pipeline/` | deterministic synthetic store generator (`--sample` → `data/samples/earth_pulse_sample.npz`, 498 months 1985-01→2026-06, 240-cell 15° grid), NASA POWER fetch, GIBS tiles, FIRMS/OPeNDAP/CMR (opt-in) |
+| `engine/` | Theil–Sen + Mann–Kendall per cell → `data/processed/analysis.json` (407 KB), Opposite Trend Detector (120+120 candidate pairs), K-Means climate twins |
+| `models/` | ridge-rollout forecaster → `models/artifacts/forecaster.npz` (113,760 pooled samples × 192 lag features, trained in seconds), p10–p90 bands, backtest, projected SVG maps |
+| `api/` | FastAPI `GET /health`, `/place`, `/imagery/past|projected`, `/trends/cell|/opposite`, `/twins`, `/forecast`, `/anomalies`, `/tier-b`, `POST /explain` — schema_version `1.0.0` |
+| `web/` | React + Vite + TS + MapLibre; `npm run build` = 51 modules / 1.0 MB JS (286 KB gzip) |
+| `docs/` | architecture, api-contract, data-sources, deploy, ml, ui-ux, **limitations (new)**, **submission-checklist (new)** |
+
+**Verified today (actual outputs, not claims)**
+
+- `docker compose config` → parses; services `api`, `web`. ✅
+- `docker compose build api` → image **`nasa-api:latest`** built: python-3.12-slim + numpy/scipy/fastapi/uvicorn, sample + engine + **train** executed at build time (artifact baked in). First attempt hit a transient PyPI metadata error for scipy; retry succeeded. ✅
+- `uvicorn api.main:app --port 8000` → `/health` `{"status":"ok","schema_version":"1.0.0","sample_store":true,"analysis":true}`; `/place?lat=12.97&lon=77.59` → full payload (ridge_rollout forecast, 4 opposite-trend pairs, templated explainer, climate_twin); `/imagery/projected?parameter=temperature&year=2030` → SVG; `/tier-b` → **fetched 596 months of real NASA POWER data, cached**. ✅
+- `cd web && npm install && VITE_API_BASE=http://localhost:8000 npm run build` → ✅ (API base confirmed embedded in `dist/assets/*.js`); `npm run preview -- --port 4173` → HTML + JS + CSS + favicon all HTTP 200. ✅
+
+**Quickstart (all offline-capable)**
+
+```bash
+pip install numpy scipy fastapi uvicorn httpx pydantic pytest
+make sample-data engine train test   # synthetic store → analysis.json → artifact → tests
+make api                             # http://localhost:8000/health
+cd web && npm install && npm run build && npm run preview   # http://localhost:4173
+docker compose up --build            # same stack in containers (image verified above)
+```
+
+**Limitations** — the demo store is synthetic (15°×15° grid, trends baked in); forecast skill decays with horizon; Gemini explainer backend is planned and not yet wired (`/docs-payload` likewise future). specifics: `docs/limitations.md`.
