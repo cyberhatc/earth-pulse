@@ -17,12 +17,10 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: pip install numpy scipy fastapi uvicorn httpx pydantic pytest
-      - name: Build sample store
-        run: python pipeline/run_pipeline.py --sample
-      - name: Precompute engine artifacts
-        run: python engine/run_engine.py
-      - name: Run tests
-        run: python -m pytest tests/ api/tests/ -q
+      - name: Sample → engine → tests
+        run: make sample-data engine test
+      - name: API tests
+        run: python -m pytest api/tests/ -q
 
   web:
     name: Frontend typecheck + build

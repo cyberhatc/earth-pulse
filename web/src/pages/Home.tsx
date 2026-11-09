@@ -5,10 +5,17 @@ import TimeSlider from '../components/TimeSlider'
 import LayerToggles from '../components/LayerToggles'
 import { usePlace } from '../hooks/usePlace'
 import { getLocale, setLocale, LOCALES, t, type Locale } from '../lib/i18n'
+import fallbackPayloadJson from '../lib/fallbackPayload.json'
+import type { PlacePayload } from '../types/payload'
+
+// Embedded offline fixture (constructed from docs/api-contract.md). Used only
+// when the API cannot be reached; the panel always labels it as a sample.
+const FALLBACK_PAYLOAD = fallbackPayloadJson as unknown as PlacePayload
 
 export default function Home() {
   const [selected, setSelected] = useState<{ lat: number; lon: number } | null>(null)
   const [panelOpen, setPanelOpen] = useState(false)
+  const [usingFallback, setUsingFallback] = useState(false)
   const [sliderYear, setSliderYear] = useState(2025)
   const [lowBandwidth, setLowBandwidth] = useState<boolean>(() => localStorage.getItem('ep-lb') === '1')
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -20,6 +27,7 @@ export default function Home() {
   const [gibsEnabled, setGibsEnabled] = useState<Record<string, boolean>>({ 'gibs-ndvi': false })
 
   const { data, loading, error, reload } = usePlace(selected?.lat ?? null, selected?.lon ?? null, 60)
+  const payload = usingFallback ? FALLBACK_PAYLOAD : data
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -31,8 +39,24 @@ export default function Home() {
   }, [lowBandwidth])
 
   const onSelect = useCallback((lat: number, lon: number) => {
+    setUsingFallback(false)
     setSelected({ lat, lon })
     setPanelOpen(true)
+  }, [])
+
+  const loadFallback = useCallback(() => {
+    setUsingFallback(true)
+    setPanelOpen(true)
+  }, [])
+
+  const retryLive = useCallback(() => {
+    setUsingFallback(false)
+    reload()
+  }, [reload])
+
+  const closePanel = useCallback(() => {
+    setPanelOpen(false)
+    setUsingFallback(false)
   }, [])
 
   const toggleLayer = useCallback((id: string) => {
@@ -73,17 +97,20 @@ export default function Home() {
         <div className="overlay-card hint" role="status">
           <b>{t('clickHint')}</b>
           <div style={{ marginTop: 4 }}>Past ~40 years where available · forecast with uncertainty · opposite-trend detective cases</div>
+          <button className="pill hint-sample-btn" onClick={loadFallback}>{t('offlineLoad')}</button>
         </div>
 
         <LayerToggles enabled={gibsEnabled} onToggle={toggleLayer} />
         <TimeSlider year={sliderYear} min={1985} max={2035} onChange={setSliderYear} />
 
         <PlacePanel
-          payload={panelOpen ? data : null}
-          loading={panelOpen && loading}
-          error={panelOpen ? error : null}
-          onClose={() => setPanelOpen(false)}
-          onRetry={reload}
+          payload={panelOpen ? payload : null}
+          loading={panelOpen && loading && !usingFallback}
+          error={panelOpen && !usingFallback ? error : null}
+          usingFallback={usingFallback}
+          onClose={closePanel}
+          onRetry={retryLive}
+          onUseFallback={loadFallback}
           lowBandwidth={lowBandwidth}
         />
       </main>
