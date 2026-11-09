@@ -1,12 +1,12 @@
 # One-click: AI scenario cards in Google Colab (free GPU)
 
-**Requirements:** none beyond a Google account. No API keys, no sign-ups, no credits.
+**Requirements:** just a Google account. No API keys, no sign-ups, no credits. GPU optional — the notebook auto-switches to a CPU-friendly distilled model when no GPU is available.
 
 ## Steps (about 10–15 minutes)
 
 1. Open this URL (it loads the notebook directly from the repo):
    **https://colab.research.google.com/github/cyberhatc/earth-pulse/blob/main/notebooks/04_scenario_images.ipynb**
-2. Top menu: **Runtime → Change runtime type → GPU** (T4). Click **Save**.
+2. Optional: **Runtime → Change runtime type → GPU** (T4) → Save. Not connected? Don't panic — Section 4 **auto-detects**: GPU → SD 1.5 @ 30 steps; no GPU → SD-Turbo @ 4 steps (works on CPU).
 3. Top menu: **Runtime → Run all** (or press `Ctrl+F9`).
 4. Wait for the download (~4 GB model on first run) — do nothing; it's normal.
 5. When it finishes, **Section 5 shows the three images** inline: lower / median / upper.
@@ -38,10 +38,19 @@ browner (lower), ~unchanged-ish (median), slightly greener/denser (upper) — or
 
 ## If something breaks
 
-- No GPU → you forgot step 2. Fix and re-run.
-- Download fails → network blip; **Runtime → Restart and run all**.
-- Rate limit → wait, or set `EP_SCENARIO_MODEL=<other-repo>` cell before Section 4 and re-run from there.
-- Still stuck → `models/scenario_cards.py --lat 12.97 --lon 77.59 --parameter ndvi` locally prints the exact conditioning JSON without any GPU — paste the output into an issue and I'll debug it line by line.
+**“await connected: disconnected” (runtime never connects):**
+1. Close the tab → **private/incognito window** with **extensions OFF** (ad-block/privacy extensions block `ssl.gstatic.com`); allow third-party cookies on `*.google.com`.
+2. Reload the notebook → click **Connect** → **Runtime → Run all**.
+3. Likely **free GPU quota exhausted** → wait a few hours, or let Section 4 auto-switch to CPU mode (it now picks `sd-turbo` @ 4 steps automatically when no GPU is present).
+4. **Different network** — this network dropped external hosts all evening (codeload/OSM/raw fetches failed).
+5. **Sync your system clock** — TLS handshakes to gstatic fail otherwise even when the page looks loaded.
+6. `Runtime → Restart and run all` and try again.
+
+**Other issues:**
+- No GPU → you forgot Step 2 (GPU). Section 4 auto-falls back to CPU mode regardless.
+- First run downloads ~4 GB — don't close the tab during Section 4.
+- Rate limit/429 → wait, or set `EP_SCENARIO_MODEL=<repo>` before Section 4.
+- Want more quality on CPU → `EP_SCENARIO_STEPS=8` (default CPU is 4).
 
 ## Optional: serve the images in the live app
 

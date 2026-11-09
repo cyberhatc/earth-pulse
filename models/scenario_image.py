@@ -166,6 +166,9 @@ def generate_scenario_cards(lat: float, lon: float, parameter: str,
     init_image = _load_source_image(source_image_url)
     init_image = init_image.resize((640, 640))
 
+    steps = int(os.environ.get("EP_SCENARIO_STEPS", "30"))
+    guidance = float(os.environ.get("EP_SCENARIO_GUIDANCE", "7.5"))
+
     out_dir = "models/artifacts/scenarios"
     os.makedirs(out_dir, exist_ok=True)
     slug = f"{lat:+.2f}_{lon:+.2f}_{parameter}".replace("+", "p").replace("-", "m")
@@ -174,7 +177,7 @@ def generate_scenario_cards(lat: float, lon: float, parameter: str,
         gen = torch.Generator(device="cuda" if torch.cuda.is_available() else "cpu").manual_seed(card["seed"])
         image = pipe(prompt=card["prompt"], negative_prompt=card["negative_prompt"],
                      image=init_image, strength=card["strength"],
-                     guidance_scale=7.5, num_inference_steps=30, generator=gen).images[0]
+                     guidance_scale=guidance, num_inference_steps=steps, generator=gen).images[0]
         path = os.path.join(out_dir, f"{slug}_{card['name']}.png")
         image.save(path)
         results.append({**card, "image_path": path})
