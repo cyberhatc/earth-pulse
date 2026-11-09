@@ -3,6 +3,8 @@ import type { PlacePayload } from '../types/payload'
 export default function CoverageBadge({ payload }: { payload: PlacePayload }) {
   const dc = payload.data_coverage
   const chips = Object.entries(dc.sources).slice(0, 8)
+  // docs/api-contract.md calls this `gaps`; the live API emits `gap_notes`.
+  const gaps = dc.gap_notes ?? dc.gaps ?? []
   return (
     <div className="card" aria-label="Data coverage and provenance">
       <h3>Data coverage &amp; provenance</h3>
@@ -18,9 +20,12 @@ export default function CoverageBadge({ payload }: { payload: PlacePayload }) {
           </span>
         ))}
       </div>
-      <ul style={{ fontSize: '0.72rem', color: 'var(--text-muted)', margin: '8px 0 0', paddingLeft: 16 }}>
-        {dc.gap_notes.map((g, i) => <li key={i}>{g}</li>)}
-      </ul>
+      {gaps.length > 0 && (
+        <ul style={{ fontSize: '0.72rem', color: 'var(--text-muted)', margin: '8px 0 0', paddingLeft: 16 }}>
+          {gaps.map((g, i) => <li key={i}>{g}</li>)}
+        </ul>
+      )}
+      {dc.notes && <p className="imagery-note" style={{ margin: '8px 0 0' }}>{dc.notes}</p>}
     </div>
   )
 }
