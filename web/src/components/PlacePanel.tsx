@@ -41,6 +41,7 @@ export default function PlacePanel({
   // A new place (or switching to the offline sample) always starts at Overview.
   useEffect(() => {
     setTab('overview')
+    setActive('temperature')
   }, [payload?.location.cell_index, usingFallback])
 
   return (
