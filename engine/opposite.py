@@ -48,10 +48,12 @@ def find_opposite_pairs(grid_lat: np.ndarray, grid_lon: np.ndarray, n_lats: int,
                     continue
                 if sa == 0 or sb == 0 or (sa > 0) == (sb > 0):
                     continue
-                strong = bool(ta["significant"] and tb["significant"])
+                # Keep only pairs where at least one trend is significant (unless
+                # explicitly disabled). "strong" requires BOTH slopes significant.
+                both_significant = bool(ta["significant"] and tb["significant"])
                 if require_significant_strong and not (ta["significant"] or tb["significant"]):
                     continue
-                strength = "strong" if (strong and require_significant_strong) else ("weak" if not (ta["significant"] and tb["significant"]) else "strong")
+                strength = "strong" if both_significant else "weak"
                 pairs.append({
                     "parameter": parameter,
                     "cell_a": {"index": int(a), "lat": float(grid_lat[a]), "lon": float(grid_lon[a]),

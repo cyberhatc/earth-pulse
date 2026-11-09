@@ -71,6 +71,7 @@ The unified on-click payload. Example (abridged; arrays truncated with …):
       "explanation": "Neighboring cells trend in opposite directions…"
     }
   ],
+  "climate_twin": { "cluster_id": 7, "k": 8, "features": ["temperature_mean", "precipitation_mean", "ndvi_mean", "sst_mean"] },
   "explanation": {
     "text": "…",
     "language": "en",
