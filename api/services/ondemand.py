@@ -10,15 +10,21 @@ from functools import lru_cache
 
 @lru_cache(maxsize=256)
 def power_point(lat: float, lon: float) -> dict:
-    try:
-        from pipeline.fetch_power import fetch_power_point
-        res = fetch_power_point(lat, lon, 1981, 2026)
-        if "error" in res:
-            return {"available": False, "note": res["error"]}
-        n = {p: len(s) for p, s in res["parameters"].items()}
-        return {"available": True, "months_per_parameter": n, "source": "NASA POWER API"}
-    except Exception as exc:
-        return {"available": False, "note": f"power_error: {exc}"}
+    key = f"power:{lat:.3f},{lon:.3f}"
+
+    def _produce():
+        try:
+            from pipeline.fetch_power import fetch_power_point
+            res = fetch_power_point(lat, lon, 1981, 2026)
+            if "error" in res:
+                return {"available": False, "note": res["error"]}
+            n = {p: len(s) for p, s in res["parameters"].items()}
+            return {"available": True, "months_per_parameter": n, "source": "NASA POWER API"}
+        except Exception as exc:
+            return {"available": False, "note": f"power_error: {exc}"}
+
+    from pipeline.cache import cached_json
+    return cached_json(key, ttl_seconds=int(os.environ.get("EP_CACHE_TTL", "3600")), producer=_produce)
 
 
 @lru_cache(maxsize=256)
