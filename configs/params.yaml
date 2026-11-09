@@ -1,0 +1,104 @@
+# Parameter schema consumed by engine, models, API and frontend.
+# Keep keys stable — the API payload and web types depend on them.
+parameters:
+  - key: temperature
+    label: "2m temperature"
+    unit: "°C"
+    source: merra2/nasa_power
+    coverage_approx: "1980/1981–present"
+    role: target_and_driver
+    chart: line_with_band
+
+  - key: precipitation
+    label: "Precipitation"
+    unit: "mm/month"
+    source: merra2/gpm_imerg/nasa_power
+    coverage_approx: "2000–present (GPM); 1980+ (MERRA-2)"
+    role: target_and_driver
+    chart: line_with_band
+
+  - key: ndvi
+    label: "Vegetation greenness (NDVI)"
+    unit: "index (-1..1)"
+    source: modis_ndvi
+    coverage_approx: "2000–present"
+    role: target_and_driver
+    chart: line_with_band
+
+  - key: sst
+    label: "Sea surface temperature"
+    unit: "°C"
+    source: podaac_sst
+    coverage_approx: "2002–present (MUR)"
+    role: driver_coastal
+    chart: line_with_band
+
+  - key: sea_level
+    label: "Sea level anomaly"
+    unit: "mm"
+    source: podaac_ssh
+    coverage_approx: "1993–present"
+    role: context_coastal
+    chart: line_with_band
+
+  - key: solar_radiation
+    label: "Surface solar radiation"
+    unit: "kWh/m²/day"
+    source: nasa_power
+    coverage_approx: "1981–present"
+    role: driver
+    chart: line_with_band
+
+  - key: humidity
+    label: "Relative humidity"
+    unit: "%"
+    source: nasa_power/merra2
+    coverage_approx: "1980/1981–present"
+    role: driver
+    chart: line_with_band
+
+  - key: wind
+    label: "Wind speed"
+    unit: "m/s"
+    source: nasa_power/merra2
+    coverage_approx: "1980/1981–present"
+    role: driver
+    chart: line_with_band
+
+  - key: lst
+    label: "Land surface temperature"
+    unit: "°C"
+    source: modis_lst
+    coverage_approx: "2000–present"
+    role: driver_land
+    chart: line_with_band
+
+  - key: snow_ice
+    label: "Snow / sea ice"
+    unit: "fraction"
+    source: nsidc_seaice
+    coverage_approx: "1979–present (product-dependent)"
+    role: driver_cold_regions
+    chart: line_with_band
+
+# Features derived on the fly (not source vars)
+derived_features:
+  - { key: month_sin, description: "sin(2π*month/12)" }
+  - { key: month_cos, description: "cos(2π*month/12)" }
+  - { key: year_index, description: "months since series start" }
+  - { key: lat, description: "grid latitude" }
+  - { key: lon, description: "grid longitude" }
+
+# Rules the pipeline/engine/UI must honor
+rules:
+  - "Never claim 40 years for parameters whose sensors launched later (e.g., NDVI ~2000+)."
+  - "Multivariate training uses the overlap period of selected inputs; record it in data_coverage."
+  - "Uncertainty bands (p10/p50/p90) are mandatory for forecasts."
+  - "Every number shown in UI carries a source + time range via data_coverage/provenance."
+  - "AI scenario images, when enabled, are labeled 'AI-generated scenario — not an observation'."
+
+# 40-year availability summary (for README/docs)
+coverage_summary:
+  forty_years_or_more: [merra2 (1980+), gistemp (1880+), nsidc_seaice (1979+, product-dependent), era5 (1940+)]
+  roughly_twenty_to_thirty_years: [nasa_power (~1981+, parameter-dependent), modis_ndvi (2000+), gpm_imerg (2000+), podaac_sst (2002+), podaac_ssh (1993+)]
+  imagery: [landsat (1972+, scenes), gibs (layer-dependent)]

@@ -1,0 +1,30 @@
+# Local development: API + web. The API serves the bundled sample demo offline;
+# add Earthdata credentials to .env to enable real NASA product downloads.
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - EARTHDATA_USERNAME=${EARTHDATA_USERNAME:-}
+      - EARTHDATA_PASSWORD=${EARTHDATA_PASSWORD:-}
+      - HF_TOKEN=${HF_TOKEN:-}
+      - FIRMS_MAP_KEY=${FIRMS_MAP_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    volumes:
+      - ./data:/app/data
+      - ./models/artifacts:/app/models/artifacts
+  web:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE=http://localhost:8000
+    volumes:
+      - ./web:/app
+    depends_on:
+      - api

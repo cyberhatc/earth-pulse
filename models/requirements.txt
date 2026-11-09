@@ -1,0 +1,6 @@
+numpy>=1.26
+scipy>=1.11
+# Optional GPU path (see notebooks/02_train_forecast.ipynb):
+# torch>=2.2
+# Optional explainer backend:
+# huggingface_hub>=0.22

@@ -1,0 +1,126 @@
+# NASA (and partner) data products used by Earth Pulse.
+# Every entry records the provider, what it provides, typical temporal coverage,
+# and access method so the UI can always show data_coverage honestly.
+# `access` values: opendap | power | firms | gibs | giss | earthdata | eraclient
+
+datasets:
+  - id: merra2
+    name: "MERRA-2 (Modern-Era Retrospective analysis for Research and Applications, Version 2)"
+    provider: "NASA GMAO via GES DISC"
+    variables: [t2m, prectot, t2mdew, qv2m, u10m, v10m, ps]
+    variables_note: "Logical names; check MERRA-2 collections for exact short names (e.g., M2TSMNXSLV / M2TMNXPER)."
+    coverage: { start: "1980-01", end: "present", cadence: "monthly" }
+    access: earthdata
+    daac: "GES DISC"
+    granularity: gridded
+    lag_note: "Consistent ~40+ year multi-parameter backbone. Best choice for multivariate 40-year training."
+
+  - id: nasa_power
+    name: "NASA POWER (Prediction Of Worldwide Energy Resources)"
+    provider: "NASA Langley Research Center"
+    variables: [T2M, T2M_MAX, T2M_MIN, PRECTOTCORR, RH2M, WS2M, PS, ALLSKY_SFC_SW_DWN, T2M_RANGE]
+    coverage: { start: "1981-01", end: "present", cadence: "daily/monthly" }
+    access: power
+    granularity: point
+    lag_note: "Point-and-click friendly: queried on demand for any lat/lon. Parameter coverage can vary by product; check POWER docs."
+
+  - id: gistemp
+    name: "GISTEMP Surface Temperature Analysis (GISS)"
+    provider: "NASA Goddard Institute for Space Studies"
+    variables: [surface_temperature_anomaly]
+    coverage: { start: "1880-01", end: "present", cadence: "monthly" }
+    access: giss
+    granularity: global_regional_series
+    lag_note: "Very long anomaly context record (1880+). Not a local full-field product."
+
+  - id: modis_ndvi
+    name: "MODIS Terra/Aqua Vegetation Indices (MOD13A3/MYD13A3)"
+    provider: "NASA LP DAAC"
+    variables: [NDVI, EVI]
+    coverage: { start: "2000-02", end: "present", cadence: "monthly" }
+    access: earthdata
+    daac: "LP DAAC"
+    granularity: gridded
+    lag_note: "~25 years of high-quality vegetation. For longer NDVI, blend an AVHRR-era product (requires separate licensing/consistency handling)."
+
+  - id: modis_lst
+    name: "MODIS Land Surface Temperature & Emissivity (MOD11A2)"
+    provider: "NASA LP DAAC"
+    variables: [LST_Day, LST_Night]
+    coverage: { start: "2000-02", end: "present", cadence: "8-day/monthly composite" }
+    access: earthdata
+    daac: "LP DAAC"
+    granularity: gridded
+
+  - id: gpm_imerg
+    name: "GPM IMERG Final Precipitation (0.1 deg, half-hourly; monthly here)"
+    provider: "NASA GES DISC"
+    variables: [precipitation]
+    coverage: { start: "2000-06", end: "present", cadence: "monthly" }
+    access: opendap
+    daac: "GES DISC"
+    granularity: gridded
+    lag_note: "TRMM era (1998–2015) can be stitched with care; continuity/units must be checked."
+
+  - id: podaac_sst
+    name: "PO.DAAC SST (e.g., GHRSST MUR SST)"
+    provider: "NASA Jet Propulsion Laboratory via PO.DAAC"
+    variables: [sea_surface_temperature]
+    coverage: { start: "2002-06", end: "present", cadence: "daily/monthly" }
+    access: opendap
+    daac: "PO.DAAC"
+    granularity: gridded
+
+  - id: podaac_ssh
+    name: "Satellite altimetry sea level (PO.DAAC)"
+    provider: "NASA/JPL via PO.DAAC"
+    variables: [sea_surface_height_anomaly]
+    coverage: { start: "1993-09", end: "present", cadence: "daily/monthly" }
+    access: opendap
+    daac: "PO.DAAC"
+    granularity: gridded/along-track
+    lag_note: "Satellite altimetry era (~1993+). Not 40 years."
+
+  - id: nsidc_seaice
+    name: "NSIDC sea ice concentration (e.g., Sea Ice Index / SMMR-SSM/I)"
+    provider: "NASA NSIDC / NOAA"
+    variables: [sea_ice_concentration, sea_ice_extent]
+    coverage: { start: "1979-01", end: "present", cadence: "monthly" }
+    access: earthdata
+    daac: "NSIDC"
+    granularity: gridded
+
+  - id: firms
+    name: "NASA FIRMS (Fire Information for Resource Management System) active fire hotspots"
+    provider: "NASA EOSDIS LANCE / MODAPS"
+    variables: [active_fires, fire_radiative_power]
+    coverage: { start: "2000-11", end: "present", cadence: "near-real-time / archive" }
+    access: firms
+    granularity: point_events
+    lag_note: "Needs a free FIRMS_MAP_KEY. Event series, not a continuous climate field."
+
+  - id: gibs
+    name: "NASA GIBS / Worldview raster tiles (map layers)"
+    provider: "NASA EOSDIS"
+    variables: [true_color, false_color, NDVI_tile, SST_tile, fires_tile, snow_tile]
+    coverage: { start: "varies by layer", end: "recent", cadence: "daily (layer-dependent)" }
+    access: gibs
+    granularity: map_tiles
+
+  - id: era5
+    name: "Copernicus ERA5 reanalysis (5th-gen ECMWF atmospheric reanalysis)"
+    provider: "Copernicus Climate Data Store (ECMWF) — listed in project README"
+    variables: [2m_temperature, total_precipitation, 10m_wind, surface_solar_radiation, relative_humidity, sea_surface_temperature]
+    coverage: { start: "1940-01", end: "present", cadence: "monthly" }
+    access: eraclient
+    granularity: gridded
+    lag_note: "Not NASA, but in the README as a partner dataset; useful for >40-year met backbone."
+
+  - id: landsat
+    name: "Landsat archive (USGS/NASA) via USGS EarthExplorer"
+    provider: "NASA + USGS"
+    variables: [surface_reflectance_scenes]
+    coverage: { start: "1972-07", end: "present (continuous practically from 1984)", cadence: "scene" }
+    access: opendap
+    granularity: imagery
+    lag_note: "Real historical photos of a place; heavier to process; use representative cloud-free scenes."

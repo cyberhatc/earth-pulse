@@ -1,0 +1,39 @@
+# App-level configuration for the UI and API
+app:
+  name: Earth Pulse
+  version: "0.1.0"
+  schema_version: "1.0.0"
+  tagline: "An open-source, AI-powered explorer of how every place on Earth has changed."
+  challenge: "NASA Space Apps Challenge 2026 — Be An Earth System Trend Detective"
+
+map:
+  style: "https://tiles.openfreemap.org/styles/positron"   # free, no key; fallback below
+  fallback_style:
+    version: 8
+    sources:
+      osm:
+        type: raster
+        tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"]
+        tileSize: 256
+        attribution: "© OpenStreetMap contributors"
+    layers:
+      - { id: osm, type: raster, source: osm }
+  default_center: [15, 25]
+  default_zoom: 1.8
+  gibs_projection: "GoogleMapsCompatible_Level9"
+
+languages: ["en", "hi", "kn"]     # English, Hindi, Kannada (i18n-ready; English shipped)
+low_bandwidth_mode_setting: "auto"  # auto | on | off
+
+features:
+  opposite_trend_detector: true
+  climate_twins: true
+  forecast: true
+  anomalies: true
+  scenario_images: false   # keep off unless GPU + labeled UI
+  citizen_reports: false   # Supabase-backed (future)
+  watchlist_alerts: true   # client-side (localStorage)
+
+api:
+  cors_origins: ["http://localhost:5173", "http://localhost:4173", "https://example.github.io"]
+  rate_limit_per_min: 120

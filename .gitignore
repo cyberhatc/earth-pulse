@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.pytest_cache/
+
+# Data artifacts (large) — keep samples dir small
+data/raw/*
+data/processed/*
+data/cache/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/cache/.gitkeep
+# sample npz is committed so the demo works offline; ignore if it grows
+# data/samples/*.npz
+
+# Model artifacts
+models/artifacts/*
+!models/artifacts/.gitkeep
+
+# Node / web
+node_modules/
+web/dist/
+web/.env
+dist/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.log

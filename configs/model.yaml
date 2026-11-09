@@ -1,0 +1,57 @@
+# Forecasting model configuration
+model:
+  kind: auto            # auto = torch LSTM + baseline fallback; baseline = linear/seasonal only
+  torch_lstm:
+    hidden_size: 64
+    num_layers: 2
+    dropout: 0.15
+    quantiles: [0.1, 0.5, 0.9]
+    seq_len: 24         # 24 months of history as input
+    horizon_months: 60  # 5 years
+    epochs: 40
+    lr: 0.005
+    weight_decay: 0.0001
+  baseline:
+    use_linear_trend: true
+    use_seasonal_profile: true
+    quantile_resid_sigma_scale: 1.645   # ~ p10/p90 under normal approx
+
+training:
+  overlap_note: "Multivariate fits use the intersection of input coverage (e.g., 2000–present for NDVI+GPM)."
+  val_fraction: 0.15
+  seed: 42
+
+backtest:
+  method: rolling_origin
+  folds: 3
+  test_months: 24
+  metrics: [mae, rmse, picp_p10_p90, mape_nonzero]
+  baseline_comparison: [persistence, seasonal_naive, linear_trend]
+
+anomaly:
+  method: rolling_robust_z   # robust z = (x - rolling_median) / (1.4826 * rolling_mad)
+  window_months: 61
+  threshold_abs: 3.5
+  isolation_forest:
+    enabled: false
+    contamination: 0.02
+
+opposite_trend:
+  min_abs_slope: 0.0       # report all sign-opposites; UI filters by significance
+  require_both_significant_for_strong: true
+  neighbor_radius_grid_steps: 1
+
+climate_twins:
+  algorithm: kmeans        # kmeans | hdbscan (hdbscan optional dependency)
+  k: 8
+  features: [temperature, precipitation, ndvi, sst]
+  standardize: true
+
+inference:
+  max_locations_cached: 512
+  cache_ttl_seconds: 3600
+
+scenario_image:
+  enabled: false           # opt-in; always labeled as AI-generated scenario
+  model: "runwayml/stable-diffusion-v1-5-inpainting"   # example; replace with your choice
+  note: "Produces a lower/median/upper 'what-if' visualization conditioned on predicted parameters. Never presented as observation."
