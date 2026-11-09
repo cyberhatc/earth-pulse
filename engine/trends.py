@@ -63,7 +63,9 @@ def mann_kendall(y: np.ndarray, alpha: float = 0.05) -> dict:
         z = (s + 1) / math.sqrt(var_s)
     else:
         z = 0.0
-    p = 2.0 * (1.0 - stats.norm.cdf(abs(z)))
+    # sf() = 1 - cdf() without catastrophic cancellation, so very large |z|
+    # yields a tiny p-value instead of exactly 0.
+    p = 2.0 * float(stats.norm.sf(abs(z)))
     significant = p < alpha
     trend = "no trend"
     if significant:
