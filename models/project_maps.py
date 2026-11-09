@@ -26,15 +26,37 @@ def colormap(t: float) -> str:
 
 def projected_field(store, parameter: str, slopes: dict[int, float],
                     last_date: str, year: int) -> np.ndarray:
-    """Per-cell projected value: mean(series) + slope_per_month * months_ahead."""
+    """Per-cell projected value from a linear Theil–Sen trend.
+
+    ``slopes`` MUST be in *parameter units per month*. Callers holding a
+    ``slope_per_decade`` value must divide by 120 for monthly data first (see
+    ``api/routers/imagery.py``).
+
+    The fitted line passes through (mean_time, mean_value). The projected value
+    is therefore::
+
+        mean(series) + slope * ((T-1 - mean_time) + months_ahead)
+
+    where ``T-1`` is the last observed month and ``months_ahead`` reaches June of
+    the target year. Anchoring at the mean *without* the ``T-1 - mean_time``
+    offset (the previous behaviour) systematically misplaced the projection by
+    half the record length — up to ~0.3 NDVI or tens of mm/month of rain here.
+    """
     G = len(store["grid_lat"])
     arr = store[parameter]
-    field = np.zeros(G)
+    T = arr.shape[0]
+    field = np.full(G, np.nan, dtype=np.float64)
     last_y, last_m = int(last_date[:4]), int(last_date[5:7])
     months_ahead = (year - last_y) * 12 + (6 - last_m)  # project to mid-year
     for cell in range(G):
-        mu = float(np.nanmean(arr[:, cell]))
-        field[cell] = months_ahead * slopes.get(cell, 0.0) + mu
+        series = arr[:, cell]
+        valid = np.isfinite(series)
+        if not valid.any():
+            continue
+        mu = float(series[valid].mean())
+        mean_time = float(np.flatnonzero(valid).mean())
+        slope = float(slopes.get(cell, 0.0))  # per month
+        field[cell] = mu + slope * ((T - 1 - mean_time) + months_ahead)
     return field
 
 

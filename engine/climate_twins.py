@@ -8,6 +8,11 @@ import numpy as np
 
 
 def zscore(X: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    X = np.asarray(X, dtype=np.float64)
+    col_mean = np.nanmean(X, axis=0, keepdims=True)
+    col_mean = np.where(np.isfinite(col_mean), col_mean, 0.0)
+    # fill any residual NaN/inf so clustering can never emit NaN distances
+    X = np.where(np.isfinite(X), X, col_mean)
     mean = X.mean(axis=0, keepdims=True)
     std = X.std(axis=0, keepdims=True)
     std = np.where(std == 0, 1.0, std)

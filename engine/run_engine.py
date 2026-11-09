@@ -52,6 +52,22 @@ def main() -> None:
         per_cell = {}
         for cell in range(G):
             res = analyse_series(arr[:, cell], periods_per_decade)
+            slope = float(res.get("slope_per_decade", 0.0))
+            pval = float(res.get("p_value", 1.0))
+            sig = bool(res.get("significant", False))
+            n_finite = int(np.isfinite(arr[:, cell]).sum())
+            if not np.isfinite(slope):
+                slope = 0.0
+            if not np.isfinite(pval):
+                pval = 1.0
+            if n_finite < 8:
+                sig = False
+                pval = 1.0
+                res["direction"] = "insufficient data"
+            res["slope_per_decade"] = slope
+            res["p_value"] = pval
+            res["significant"] = sig
+            res["n_finite"] = n_finite
             per_cell[str(cell)] = res
         trends[var] = per_cell
         trend_lookup = {int(k): v for k, v in per_cell.items()}
@@ -68,11 +84,26 @@ def main() -> None:
     opposite_precip = find_opposite_pairs(grid_lat, grid_lon, n_lats, n_lons, per_cell_all, "precipitation", max_pairs=120)
     print(f"[engine] opposite pairs: ndvi={len(opposite_ndvi)} precipitation={len(opposite_precip)}")
 
-    # ---- climate twins ----
-    feat = np.stack([store["temperature"].mean(axis=0),
-                     store["precipitation"].mean(axis=0),
-                     store["ndvi"].mean(axis=0),
-                     store["sst"].mean(axis=0)], axis=1)
+    # ---- climate twins (NaN-safe: fill masked params with that parameter's column mean) ----
+    def _nan_col_mean(a: np.ndarray) -> np.ndarray:
+        m = np.nanmean(a, axis=0)
+        m = np.where(np.isfinite(m), m, 0.0)
+        return m
+
+    def _filled_col(a: np.ndarray) -> np.ndarray:
+        m = _nan_col_mean(a)
+        out = a.copy()
+        for j in range(out.shape[1]):
+            col = out[:, j]
+            bad = ~np.isfinite(col)
+            if bad.any():
+                col[bad] = m[j]
+        return out
+
+    feat = np.stack([_filled_col(store["temperature"]).mean(axis=0),
+                     _filled_col(store["precipitation"]).mean(axis=0),
+                     _filled_col(store["ndvi"]).mean(axis=0),
+                     _filled_col(store["sst"]).mean(axis=0)], axis=1)
     labels, _, _, scaler = cluster_cells(feat, k=8)
     print("[engine] climate twins done")
 
@@ -94,7 +125,7 @@ def main() -> None:
     }
     out = Path(args.output) if args.output else Path("data/processed/analysis.json")
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(payload))
+    out.write_text(json.dumps(payload, allow_nan=False))
     print(f"[engine] wrote → {out} ({out.stat().st_size/1024:.0f} KB) in {time.time()-t0:.1f}s")
 
 
