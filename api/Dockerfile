@@ -18,9 +18,11 @@ RUN pip install --no-cache-dir -r api/requirements.txt
 # copy the rest of the repo
 COPY . .
 
-# build the sample store and precomputed analysis at image build time
+# build the sample store, precomputed analysis and the forecaster artifact
+# at image build time — the image then serves the full demo with zero boot work
 RUN python pipeline/run_pipeline.py --sample \
- && python engine/run_engine.py
+ && python engine/run_engine.py \
+ && python models/train.py
 
 EXPOSE 7860
 CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT}"]

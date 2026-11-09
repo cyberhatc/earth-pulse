@@ -69,7 +69,7 @@ export default function ImageryGallery({ payload, lowBandwidth, offline = false 
       ) : (
         <>
           <div className="imagery-grid">
-            {projected.map((img) => (
+            {projectedAll.map((img) => (
               <figure className="imagery-item" key={img.url}>
                 <img src={apiUrl(img.url)} loading="lazy" alt={img.label} />
                 <figcaption>{img.parameter} · {img.date} · {img.label.split('—')[0].trim()}</figcaption>

@@ -1,0 +1,13 @@
+# Keep the API build context small and the image reproducible.
+# The API image only needs the Python stack; web/ and repo tooling stay out.
+.git
+.github
+.venv
+venv
+.pytest_cache
+__pycache__/
+**/__pycache__/
+web/node_modules
+web/dist
+data/cache
+data/raw
