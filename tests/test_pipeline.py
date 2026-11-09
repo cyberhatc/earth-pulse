@@ -30,7 +30,7 @@ def test_time_features():
     dates = ["2000-01", "2000-07"]
     tf = time_features(dates)
     assert set(tf) == {"month_sin", "month_cos", "year_index", "decimal_year"}
-    assert np.isclose(tf["month_sin"][0], 0.0, atol=1e-9)
+    np.testing.assert_allclose(tf["month_sin"] ** 2 + tf["month_cos"] ** 2, np.ones(len(dates)), atol=1e-9)
     assert tf["year_index"][1] > tf["year_index"][0]
 
 
