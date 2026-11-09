@@ -228,3 +228,11 @@ docker compose up --build            # same stack in containers (image verified 
 ```
 
 **Limitations** — the demo store is synthetic (15°×15° grid, trends baked in); forecast skill decays with horizon; Gemini explainer backend is planned and not yet wired (`/docs-payload` likewise future). specifics: `docs/limitations.md`.
+
+## 15. Land/ocean mask + AI scenario cards (v0.2.0)
+
+- **Mask layer** (`pipeline/land_ocean.py`): demo store now masks SST/sea level over land and NDVI over ocean (illustrative 15° dominant-class mask, labeled). Production mask derives from real SST NaN fraction — see `docs/real-data-ingestion.md`.
+- **Tier B cache** (`pipeline/cache.py`): POWER/FIRMS responses cached in `data/cache/` (TTL `EP_CACHE_TTL`).
+- **AI scenario cards** (`models/scenario_image.py` + `models/scenario_cards.py` + notebook 04): disabled-by-default, GPU-offline pipeline; `GET /imagery/scenario` returns conditioning only — generation never happens inside HTTP. Always labeled "AI-generated scenario — not an observation". See `docs/scenario-images.md`.
+- **Strict JSON**: engine writes `allow_nan=False`; masked parameters are omitted from API payloads (UI shows explicit "No coverage").
+- Quick check: `python3 models/scenario_cards.py --lat 12.97 --lon 77.59 --parameter ndvi` (prints prompts, no GPU needed).
