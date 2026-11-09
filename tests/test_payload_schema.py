@@ -59,3 +59,25 @@ def test_engine_is_probably_synthetic():
         assert a.get("synthetic_demo") is False
     else:
         assert a.get("synthetic_demo") in (True, False)
+
+
+def test_analysis_json_is_strict_json():
+    if not ANALYSIS.exists():
+        pytest.skip("analysis.json missing")
+    raw = ANALYSIS.read_text()
+    assert "NaN" not in raw and "Infinity" not in raw, "analysis.json must not contain NaN/Infinity tokens"
+    json.loads(raw)  # strict parse must succeed
+
+
+def test_mask_land_ocean_semantics():
+    """In the bundled demo: SST/sea_level NaN over land; NDVI NaN over ocean."""
+    import numpy as np
+    from pipeline.export_store import load_store
+    store = load_store()
+    mask = store.get("ocean_mask")
+    assert mask is not None, "sample store must carry ocean_mask"
+    ocean = mask == 1
+    assert np.isnan(store["sst"][:, ~ocean]).all(), "SST must be masked over land"
+    assert np.isnan(store["sea_level"][:, ~ocean]).all(), "sea level must be masked over land"
+    assert np.isnan(store["ndvi"][:, ocean]).all(), "NDVI must be masked over ocean"
+    assert np.isfinite(store["temperature"]).all(), "temperature is atmospheric — unmasked"
