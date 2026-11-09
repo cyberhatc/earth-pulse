@@ -72,7 +72,7 @@ export default function PlacePanel({ payload, loading, error, onClose, onRetry, 
                 {Object.entries(payload.trends).map(([param, t]) => (
                   <div className="trend-cell" key={param}>
                     <div className="k">{PARAM_META[param]?.label ?? param}</div>
-                    <div className="v {trendClass(t.direction)}">{trendArrow(t.direction)} {fmtSigned(t.slope_per_decade, 2)}<small>/dec</small></div>
+                    <div className={`v ${trendClass(t.direction)}`}>{trendArrow(t.direction)} {fmtSigned(t.slope_per_decade, 2)}<small>/dec</small></div>
                     <div className="sig">{significanceNote(t.p_value, t.significant)}</div>
                   </div>
                 ))}
