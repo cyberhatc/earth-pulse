@@ -5,6 +5,7 @@ and explanatory notes instead of raising. Nothing here is fabricated.
 """
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 
 

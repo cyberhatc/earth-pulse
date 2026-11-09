@@ -16,12 +16,11 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from pipeline.export_store import load_store
+from pipeline.export_store import load_store, VARIABLES
 from pipeline.build_features import prepare_cell_matrix
 from models.forecast import make_windows, RidgeRollout
 
 SEQ_LEN = 24
-VARIABLES = ["temperature", "precipitation", "ndvi", "sst", "sea_level", "solar_radiation", "humidity", "wind"]
 
 
 def main() -> None:
