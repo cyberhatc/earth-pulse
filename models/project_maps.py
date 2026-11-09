@@ -62,10 +62,13 @@ def projected_field(store, parameter: str, slopes: dict[int, float],
 
 def svg_heatmap(lats, lons, values: np.ndarray, title: str, subtitle: str,
                 width: int = 720, height: int = 420) -> str:
-    v = values.reshape(len(lats), len(lons))
+    v = np.asarray(values, dtype=np.float64).reshape(len(lats), len(lons))
+    if np.isnan(v).all():
+        v = np.zeros_like(v)  # nothing to show; render neutral grid
     vmin, vmax = np.nanmin(v), np.nanmax(v)
     if vmax - vmin < 1e-9:
         vmin, vmax = vmin - 1e-9, vmax + 1e-9
+    v = np.nan_to_num(v, nan=(vmin + vmax) / 2.0)  # masked cells render neutral
     cw, ch = width / max(1, len(lons)), height / max(1, len(lats))
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height + 60}" role="img" aria-label="{title}">']
     parts.append(f'<rect width="{width}" height="{height + 60}" fill="#0f172a"/>')

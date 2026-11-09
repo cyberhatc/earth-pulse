@@ -1,6 +1,7 @@
 """GET /place — the unified on-click payload."""
 from __future__ import annotations
 
+import numpy as np
 from fastapi import APIRouter, Query, HTTPException
 
 from api.deps import get_store, get_analysis, ANALYSIS_PATH
@@ -27,7 +28,18 @@ def place(lat: float = Query(..., ge=-90, le=90),
         raise HTTPException(503, detail=str(exc))
 
     cell, glat, glon = svc.nearest(store, lat, lon)
-    dates, ts = svc.past_timeseries(store, cell)
+
+    # ---- per-parameter availability at this cell (land/ocean mask honesty) ----
+    finite_counts = {p: int(np.isfinite(store[p][:, cell]).sum()) for p in svc.TS_PARAMS}
+    usable = [p for p, n in finite_counts.items() if n >= 12]
+    dropped = [p for p, n in finite_counts.items() if n < 12]
+    ocean_mask = store.get("ocean_mask")
+    is_ocean_cell = bool(ocean_mask[cell] == 1) if ocean_mask is not None else None
+
+    dates, ts = svc.past_timeseries(store, cell, usable)
+    # fill interior gaps so charts/JSON stay valid; record raw coverage in data_coverage
+    from pipeline.clean import fill_missing_linear
+    ts = {p: [round(float(v), 3) for v in fill_missing_linear(store[p][:, cell])] for p in usable}
     time_range = [dates[0], dates[-1]]
     meta = store.get("meta", {})
     synthetic = bool(meta.get("synthetic", True))
@@ -46,7 +58,7 @@ def place(lat: float = Query(..., ge=-90, le=90),
             }
 
     # forecast (trained ridge artifact if present, else linear trend + season baseline)
-    fc = forecast_place(store, cell, horizon_months)
+    fc = forecast_place(store, cell, horizon_months, variables=usable)
     fc_timeseries = {
         p: {"mean": [r3(v) for v in d["mean"]],
             "lower": [r3(v) for v in d["lower"]],
