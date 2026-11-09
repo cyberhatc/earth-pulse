@@ -22,6 +22,13 @@ train: sample-data ## Train the multivariate forecaster on the sample store
 test: sample-data ## Run the Python test suite
 	EP_SAMPLE=data/samples/earth_pulse_sample.npz python3 -m pytest tests/ -q
 
+real-power: ## Build the REAL NASA POWER store (240 cells, 1981→present; ~5 min, network)
+	python3 pipeline/build_real_power_store.py
+	EP_STORE_PATH=data/processed/earth_pulse_power_real.npz python3 engine/run_engine.py \
+	    --input data/processed/earth_pulse_power_real.npz \
+	    --output data/processed/analysis_power_real.json
+	@echo "Set EP_STORE_PATH=data/processed/earth_pulse_power_real.npz EP_ANALYSIS_PATH=data/processed/analysis_power_real.json to serve the real store"
+
 api: engine ## Run the FastAPI server (http://localhost:8000)
 	. .venv/bin/activate && uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
 

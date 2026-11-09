@@ -98,7 +98,7 @@ def place(lat: float = Query(..., ge=-90, le=90),
         "parameters_unavailable": dropped,
         "ocean_cell": is_ocean_cell,
         "parameter_relevance": relevance,
-        "sources": {k: v for k, v in svc.SOURCE_MAP.items() if k in usable},
+        "sources": {k: v for k, v in svc.source_map(synthetic).items() if k in usable},
         "time_range": time_range,
         "overlap_used_for_training": ["2000-01", dates[-1]],
         "gap_notes": [

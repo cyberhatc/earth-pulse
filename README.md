@@ -236,3 +236,19 @@ docker compose up --build            # same stack in containers (image verified 
 - **AI scenario cards** (`models/scenario_image.py` + `models/scenario_cards.py` + notebook 04): disabled-by-default, GPU-offline pipeline; `GET /imagery/scenario` returns conditioning only — generation never happens inside HTTP. Always labeled "AI-generated scenario — not an observation". See `docs/scenario-images.md`.
 - **Strict JSON**: engine writes `allow_nan=False`; masked parameters are omitted from API payloads (UI shows explicit "No coverage").
 - Quick check: `python3 models/scenario_cards.py --lat 12.97 --lon 77.59 --parameter ndvi` (prints prompts, no GPU needed).
+
+## 16. REAL NASA data is now wired in — no credentials needed (v0.3.0)
+
+The demo ships a deterministic synthetic store, but the repo can now build and serve a **real, measured/modelled NASA POWER record (1981-01 → 2026-11, monthly, 240 cells, 0 failures)** with zero login:
+
+```bash
+python3 pipeline/build_real_power_store.py     # ~10 min, 240 open NASA POWER calls, cached
+python3 engine/run_engine.py --input data/processed/earth_pulse_power_real.npz \
+    --output data/processed/analysis_power_real.json
+EP_STORE_PATH=$PWD/data/processed/earth_pulse_power_real.npz \
+EP_ANALYSIS_PATH=$PWD/data/processed/analysis_power_real.json uvicorn api.main:app --port 8000
+```
+
+Highlights from the first real run: global mean warming **+0.21 °C/decade** (115/240 cells significant), Siberian cell **+0.67 °C/decade, p=0.004**; NDVI/SST/sea level honestly absent (POWER has none); strict JSON; `data_coverage` flips `synthetic_demo: false` automatically. Details & verification: `docs/power-real-store.md`.
+
+For the full real stack (NDVI/SST/sea level from MODIS/PO.DAAC + real mask) you need a free **NASA Earthdata login** — see `docs/real-data-ingestion.md`.

@@ -5,16 +5,19 @@ from pipeline.export_store import nearest_cell_index
 
 TS_PARAMS = ["temperature", "precipitation", "ndvi", "sst", "sea_level", "solar_radiation", "humidity", "wind"]
 
-SOURCE_MAP = {
-    "temperature": "merra2/nasa_power (bundled demo: synthetic)",
-    "precipitation": "gpm_imerg/merra2/nasa_power (bundled demo: synthetic)",
-    "ndvi": "lp_daac_modis_mod13a3 (bundled demo: synthetic)",
-    "sst": "podaac_ghrsst_mur (bundled demo: synthetic)",
-    "sea_level": "podaac_altimetry (bundled demo: synthetic)",
-    "solar_radiation": "nasa_power (bundled demo: synthetic)",
-    "humidity": "nasa_power/merra2 (bundled demo: synthetic)",
-    "wind": "nasa_power/merra2 (bundled demo: synthetic)",
-}
+def source_map(synthetic: bool) -> dict[str, str]:
+    tag = "synthetic demo store (deterministic, physically motivated)" if synthetic else "real: NASA POWER monthly (1981→present)"
+    unavailable = "not available from NASA POWER (intentionally NaN — never faked)"
+    return {
+        "temperature": f"NASA POWER T2M — {tag}",
+        "precipitation": f"NASA POWER PRECTOTCORR — {tag}",
+        "solar_radiation": f"NASA POWER ALLSKY_SFC_SW_DWN — {tag}",
+        "humidity": f"NASA POWER RH2M — {tag}",
+        "wind": f"NASA POWER WS2M — {tag}",
+        "ndvi": (f"synthetic NDVI — {tag}" if synthetic else unavailable),
+        "sst": (f"synthetic SST — {tag}" if synthetic else unavailable),
+        "sea_level": (f"synthetic sea level — {tag}" if synthetic else unavailable),
+    }
 
 
 def nearest(store, lat: float, lon: float):

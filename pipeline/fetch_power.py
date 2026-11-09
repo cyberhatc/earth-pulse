@@ -36,7 +36,13 @@ def fetch_power_point(lat: float, lon: float, start: int = 1981, end: int = 2026
                 if value is None:
                     continue
                 try:
-                    out[p][f"{yyyymm[:4]}-{yyyymm[4:6]}"] = float(value)
+                    year, month = int(str(yyyymm)[:4]), int(str(yyyymm)[4:6])
+                except (ValueError, TypeError):
+                    continue
+                if month < 1 or month > 12:
+                    continue  # POWER encodes the ANNUAL aggregate as month 13 — not a month
+                try:
+                    out[p][f"{year:04d}-{month:02d}"] = float(value)
                 except (ValueError, TypeError):
                     continue
         return {"lat": lat, "lon": lon, "parameters": out, "source": url}
