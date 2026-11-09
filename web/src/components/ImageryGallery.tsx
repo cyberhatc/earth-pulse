@@ -1,5 +1,6 @@
 import type { PlacePayload } from '../types/payload'
 import { apiUrl } from '../lib/api'
+import ScenarioStatus from './ScenarioStatus'
 
 interface Props {
   payload: PlacePayload

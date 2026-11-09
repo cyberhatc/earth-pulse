@@ -17,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from api.schemas import SCHEMA_VERSION
-from api.routers import place, imagery, trends, forecast, anomalies, explain, health, tierb
+from api.routers import place, imagery, trends, forecast, anomalies, explain, health, tierb, scenario
 
 app = FastAPI(
     title="Earth Pulse API",
@@ -36,7 +36,7 @@ app.add_middleware(
 )
 
 for r in (health.router, place.router, imagery.router, trends.router,
-          forecast.router, anomalies.router, explain.router, tierb.router):
+          forecast.router, anomalies.router, explain.router, tierb.router, scenario.router):
     app.include_router(r)
 
 
