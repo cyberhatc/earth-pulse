@@ -74,11 +74,13 @@ The unified on-click payload. Example (abridged; arrays truncated with …):
   "explanation": {
     "text": "…",
     "language": "en",
-    "generator": "templated|hf_inference|gemini",
+    "generator": "templated|hf_inference",
     "confidence": "low|medium|high"
   }
 }
 ```
+
+> `generator` values actually produced by `api/services/explainer.py`: `templated` (default, offline) and `hf_inference` (when `HF_TOKEN` is set and the endpoint responds). A `gemini` backend is reserved/planned and is **not yet wired**.
 
 ## Other endpoints
 | Endpoint | Returns |
@@ -91,7 +93,7 @@ The unified on-click payload. Example (abridged; arrays truncated with …):
 | `POST /explain` | `{ "facts": {…} }` → `{ text, generator, confidence }` (numbers unchanged) |
 | `GET /imagery/past?lat&lon` | GIBS URLs for several layers/dates + a Landsat EarthExplorer link |
 | `GET /imagery/projected?parameter=temperature&year=2030` | **SVG** heat-map (Theil–Sen extrapolation), labeled model-projected |
-| `GET /docs-payload` | The example payload above (for frontend dev) |
+| `GET /docs-payload` | **Planned — not yet served by the API.** Frontend dev fallback: embedded fixture `web/src/lib/fallbackPayload.json` (mirrors this contract) and the live `/openapi.json` |
 
 ## Error model
 Non-2xx responses: `{ "error": "machine_code", "detail": "human-readable", "partial": { … } }`.

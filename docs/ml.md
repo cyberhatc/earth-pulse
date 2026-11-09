@@ -36,7 +36,7 @@ skill + honest coverage — never vibes.
 - **Code:** `models/anomaly.py`.
 
 ## 6. Explainable narrative (LLM)
-- **Method:** facts-only prompt (numbers, coverage, uncertainty) → short plain-English paragraph. Backends, in order: **templated** (always works, no network) → **HF Inference API** (`HF_TOKEN`) → **Gemini free tier** (`GEMINI_API_KEY`). The LLM is forbidden to alter numbers; it only words them.
+- **Method:** facts-only prompt (numbers, coverage, uncertainty) → short plain-English paragraph. Backends currently implemented, in order: **templated** (always works, no network) → **HF Inference API** (`HF_TOKEN`). A **Gemini free tier** backend (`GEMINI_API_KEY`) is planned but **not yet wired** — the key is already plumbed through `docker-compose.yml` for when it lands. The LLM is forbidden to alter numbers; it only words them.
 - **Code:** `api/services/explainer.py`.
 
 ## 7. “Future image” — what it honest & what it isn't

@@ -56,7 +56,7 @@ Each block below is a **ready-to-paste prompt** for a separate OpenCode session 
 **Merge strategy:** each session works on the same tree; conflicts are avoided because folder ownership is exclusive. If two sessions must coordinate, agree via this file: mark session status here (`[ ] A [ ] B ...`) and record "done at <time> by <agent>" lines at the bottom.
 
 ## Status log
-- [ ] A web  —
+- [x] A web  — done at 2026-11-09 09:56 IST by Session A agent (`web/` frontend, build verified)
 - [x] B tests/ci/notebooks — done at 2026-11-09 by Session B agent
 - [ ] C accuracy review —
 - [ ] D docker/deploy/readme —

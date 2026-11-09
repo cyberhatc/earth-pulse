@@ -61,7 +61,7 @@ python3 models/download_models.py --push   # or manual hf_hub upload
 | `EARTHDATA_USERNAME/PASSWORD` | Real NASA downloads | unset → synthetic demo only |
 | `FIRMS_MAP_KEY` | Fire hotspot fetch | unset → reported unavailable |
 | `HF_TOKEN` | Push/pull weights, HF Inference | unset → templated explainer |
-| `GEMINI_API_KEY` | Optional Gemini explainer | unset → templated |
+| `GEMINI_API_KEY` | Optional Gemini explainer (**planned; not yet wired** in `explainer.py`) | unset → templated |
 | `VITE_API_BASE` | Web → API wiring | `http://localhost:8000` |
 
 **Never commit `.env`.** Use Render/Space/Vercel secret stores.
@@ -73,4 +73,4 @@ python3 models/download_models.py --push   # or manual hf_hub upload
 4. Ship; `data_coverage` will automatically reflect actual sources/years.
 
 ## 9) Submission checklist (NASA Space Apps)
-- Public GitHub repo (MIT license) · working demo URL · README quick-start · 30-sec demo video · citations (`docs/data-sources.md`) · honest limitations (`docs/ml.md`).
+- Public GitHub repo (MIT license) · working demo URL · README quick-start · 30-sec demo video · citations (`docs/data-sources.md`) · honest limitations (`docs/limitations.md`, with model-specific failure modes in `docs/ml.md`). Full pre-submission QA list: `docs/submission-checklist.md`.
