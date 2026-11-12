@@ -110,24 +110,18 @@ Everything can run at zero cost. Free plans change, so check current limits.
 
 | Day | Goal |
 |---|---|
-| Sun Nov 8 | Pick variables, register for the challenge, set up the repo |
-| Mon Nov 9 | Team sync, download and clean data |
-| Tue Nov 10 | Trend engine and Opposite Trend Detector |
-| Wed Nov 11 | Forecasting model |
-| Thu Nov 12 | Anomaly detection and web map |
-| Fri Nov 13 | Frontend polish, kick-off event |
-| Sat Nov 14 | Bonus features, README, demo video (submission opens 9:00 AM) |
-| Sun Nov 15 | Final fixes, submit before 11:59 PM |
+| Pick variables, register for the challenge, set up the repo |
+| Team sync, download and clean data |
+| Trend engine and Opposite Trend Detector |
+| Forecasting model |
+| Anomaly detection and web map |
+|  Frontend polish, kick-off event |
+|  Bonus features, README, demo video (submission opens 9:00 AM) |
+| Final fixes, submit before 11:59 PM |
 
 ## 9. Team Roles
 
-| Person | Role | Owns |
-|---|---|---|
-| Devil | Lead and architect | Overall design, trend engine, Opposite Trend Detector, integration |
-| Experienced teammate | Machine learning | Forecasting and anomaly detection |
-| Teammate at lead's level | Data pipeline | Earthdata download, cleaning with xarray, climate twins |
-| Frontend teammate | Frontend | Map, time slider, charts, case file view |
-| Beginner teammate | Support | README, testing, screenshots, demo video, explainer |
+
 
 Agree on a shared JSON format for trend results on day one.
 
