@@ -1,4 +1,4 @@
-"""Download/upload model weights from Hugging Face Hub (free).
+﻿"""Download/upload model weights from Hugging Face Hub (free).
 
 Usage:
   python3 models/download_models.py             # pull artifact into models/artifacts/
@@ -42,12 +42,12 @@ def main() -> int:
             print(f"[models] nothing to push: {src} missing (run models/train.py first)")
             return 2
         url = upload_file(path_or_fileobj=str(src), path_in_repo=FILENAME, repo_id=repo, token=token)
-        print(f"[models] pushed → {url}")
+        print(f"[models] pushed -> {url}")
         return 0
 
     dest = hf_hub_download(repo_id=repo, filename=FILENAME, token=token,
                            local_dir=str(ARTIFACTS))
-    print(f"[models] downloaded → {dest}")
+    print(f"[models] downloaded -> {dest}")
     return 0
 
 

@@ -1,4 +1,4 @@
-"""Tiny file cache for Tier B fetches (data/cache/).
+﻿"""Tiny file cache for Tier B fetches (data/cache/).
 
 Usage:
     from pipeline.cache import cached_json
@@ -33,7 +33,7 @@ def cached_json(key: str, ttl_seconds: int, producer: Callable[[], dict]) -> dic
                 body["payload"]["_cache"] = "hit"
                 return body["payload"]
         except Exception:
-            pass  # corrupt cache entry → refetch
+            pass  # corrupt cache entry -> refetch
     payload = producer()
     try:
         fp.write_text(json.dumps({"cached_at": time.time(), "payload": payload}))

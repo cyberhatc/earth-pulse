@@ -112,4 +112,5 @@ export interface PlacePayload {
   opposite_trends: OppositePair[]
   climate_twin: { cluster_id: number | null; k: number; features: string[] } | null
   explanation: Explanation
+  next_move?: Record<string, { delta_over_horizon: number; direction: string; magnitude_in_std: number }>
 }

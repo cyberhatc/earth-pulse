@@ -1,4 +1,4 @@
-"""Trend engine correctness tests (synthetic, seeded)."""
+﻿"""Trend engine correctness tests (synthetic, seeded)."""
 from __future__ import annotations
 
 import numpy as np
@@ -40,7 +40,7 @@ def test_mann_kendall_flat_series_not_significant():
 
 
 def test_analyse_series_units():
-    y = _series_with_trend(0.01, n=240, noise=0.05)  # +0.01/month → +1.2/decade
+    y = _series_with_trend(0.01, n=240, noise=0.05)  # +0.01/month -> +1.2/decade
     res = analyse_series(y, periods_per_decade=120.0)
     assert abs(res["slope_per_decade"] - 1.2) < 0.3
 

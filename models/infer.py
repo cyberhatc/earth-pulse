@@ -1,7 +1,7 @@
-"""Model inference for one grid cell.
+﻿"""Model inference for one grid cell.
 
 Priority: trained RidgeRollout artifact (models/artifacts/forecaster.npz)
-→ transparent LinearTrendSeasonal fallback. Always returns p10/p50/p90 bands.
+-> transparent LinearTrendSeasonal fallback. Always returns p10/p50/p90 bands.
 """
 from __future__ import annotations
 
@@ -85,11 +85,23 @@ def _forecast_with_baseline(X: np.ndarray, variables: list[str], horizon: int,
 def forecast_place(store, cell: int, horizon_months: int = 60,
                    variables: list[str] | None = None) -> dict:
     requested = list(variables) if variables else list(STORE_VARIABLES)
+    _BOUNDS = {"precipitation": (0.0, None), "ndvi": (0.0, 1.0),
+                "humidity": (0.0, 100.0), "wind": (0.0, None),
+                "solar_radiation": (0.0, None)}
+
+    def _clip_series(ts, lo, hi):
+        for key in ("mean", "lower", "upper"):
+            arr = np.asarray(ts[key], dtype=float)
+            if lo is not None:
+                arr = np.maximum(arr, lo)
+            if hi is not None:
+                arr = np.minimum(arr, hi)
+            ts[key] = arr.tolist()
+        return ts
+
     if artifact_available():
         model = RidgeRollout.load(ARTIFACT)
         model_vars, seq_len = _artifact_config()
-        # Prepare the model's training columns in the model's training order,
-        # regardless of the order/subset the caller asked for.
         dates, X = prepare_cell_matrix(store, cell, model_vars)
         fc = _forecast_with_ridge(model, X, model_vars, horizon_months, dates, seq_len)
         if requested != model_vars:
@@ -97,6 +109,13 @@ def forecast_place(store, cell: int, horizon_months: int = 60,
             if missing:
                 raise KeyError(f"Requested variables absent from trained artifact: {missing}")
             fc["timeseries"] = {v: fc["timeseries"][v] for v in requested}
+        for v, ts in fc["timeseries"].items():
+            lo, hi = _BOUNDS.get(v, (None, None))
+            _clip_series(ts, lo, hi)
         return fc
     dates, X = prepare_cell_matrix(store, cell, requested)
-    return _forecast_with_baseline(X, requested, horizon_months, dates)
+    fc = _forecast_with_baseline(X, requested, horizon_months, dates)
+    for v, ts in fc["timeseries"].items():
+        lo, hi = _BOUNDS.get(v, (None, None))
+        _clip_series(ts, lo, hi)
+    return fc

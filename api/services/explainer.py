@@ -1,4 +1,4 @@
-"""Plain-English explainer.
+﻿"""Plain-English explainer.
 
 The LLM never computes numbers — it receives a `facts` dict assembled from the
 payload (trends, forecast deltas, anomaly count, opposite-trend count, coverage)
@@ -16,7 +16,7 @@ def templated_explain(facts: dict) -> dict:
     t = facts.get("trends", {})
     parts = [f"Place: {facts.get('lat', 0):.2f}°, {facts.get('lon', 0):.2f}° (nearest grid cell {facts.get('grid_lat')}, {facts.get('grid_lon')})."]
     trange = facts.get("time_range", ["?", "?"])
-    parts.append(f"Record: {trange[0]} → {trange[1]} ({'synthetic demo' if facts.get('synthetic') else 'NASA/partner products'}).")
+    parts.append(f"Record: {trange[0]} -> {trange[1]} ({'synthetic demo' if facts.get('synthetic') else 'NASA/partner products'}).")
 
     def fmt(param: str, label: str, unit: str):
         rec = t.get(param)

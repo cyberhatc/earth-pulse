@@ -1,4 +1,4 @@
-"""Build a REAL NASA POWER store for the demo grid (no login required).
+﻿"""Build a REAL NASA POWER store for the demo grid (no login required).
 
 Fetches monthly POWER data (1981-01 .. present) for the 15°×15° demo grid used by
 the synthetic store — 240 cells × 8 POWER parameters — and writes a store with the
@@ -7,7 +7,7 @@ same npz layout (`dates`, `lats`, `lons`, `grid_lat`, `grid_lon`, parameters …
 Honest scope:
   REAL (measured/modelled by NASA POWER, 1981+): temperature, precipitation,
     solar_radiation, humidity, wind.
-  NOT from POWER → left as NaN (never faked): ndvi, sst, sea_level.
+  NOT from POWER -> left as NaN (never faked): ndvi, sst, sea_level.
 
 POWER is agroclimatology built from satellite + model output (CERES/GEWOS-class),
 not raw native satellite — it is real published NASA data and ideal for a 40-year
@@ -116,19 +116,19 @@ def main() -> int:
             for i, d in enumerate(dates):
                 if d in series:
                     v = float(series[d])
-                    vec[i] = np.nan if v <= -999.0 else v  # POWER fill value → NaN
+                    vec[i] = np.nan if v <= -999.0 else v  # POWER fill value -> NaN
             arrays[dst][:, j] = vec
-        arrays["precipitation"][:, j] = arrays["precipitation"][:, j] * days_in_month  # mean mm/day → total mm
+        arrays["precipitation"][:, j] = arrays["precipitation"][:, j] * days_in_month  # mean mm/day -> total mm
         if j % 20 == 19:
             print(f"[real-store] {j+1}/{G} cells fetched ({time.time()-t0:.0f}s)")
         time.sleep(args.pause)
 
-    # unit sanity: POWER metric solar is MJ/m²/day → convert to kWh/m²/day to match store schema
+    # unit sanity: POWER metric solar is MJ/m²/day -> convert to kWh/m²/day to match store schema
     solar = arrays["solar_radiation"]
     finite = solar[np.isfinite(solar)]
     if finite.size and float(np.nanmedian(finite)) > 10.0:
         arrays["solar_radiation"] = solar / 3.6
-        print("[real-store] solar converted MJ → kWh (÷3.6)")
+        print("[real-store] solar converted MJ -> kWh (÷3.6)")
 
     arrays.update({
         "dates": np.array(dates),
@@ -159,7 +159,7 @@ def main() -> int:
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     np.savez(out, **arrays)
-    print(f"[real-store] wrote → {out} ({out.stat().st_size/1e6:.1f} MB) · "
+    print(f"[real-store] wrote -> {out} ({out.stat().st_size/1e6:.1f} MB) · "
           f"T={T} months ({dates[0]}..{dates[-1]}) · G={G} cells · failed={failures} · "
           f"real params: temperature, precipitation, solar_radiation, humidity, wind")
     return 0 if failures == 0 else 1

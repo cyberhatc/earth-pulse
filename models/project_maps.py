@@ -1,4 +1,4 @@
-"""Render model-projected heat maps as dependency-free SVG.
+﻿"""Render model-projected heat maps as dependency-free SVG.
 
 These are **model extrapolations** (Theil–Sen slope), never observations and never a
 guaranteed future. Used by GET /imagery/projected?parameter=..&year=..
@@ -9,7 +9,7 @@ import math
 
 import numpy as np
 
-# diverging palette: cool (blue) → neutral → warm (red)
+# diverging palette: cool (blue) -> neutral -> warm (red)
 _STOPS = [(59, 76, 192), (141, 176, 254), (221, 221, 221), (254, 173, 128), (204, 34, 34)]
 
 
@@ -72,7 +72,7 @@ def svg_heatmap(lats, lons, values: np.ndarray, title: str, subtitle: str,
     cw, ch = width / max(1, len(lons)), height / max(1, len(lats))
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height + 60}" role="img" aria-label="{title}">']
     parts.append(f'<rect width="{width}" height="{height + 60}" fill="#0f172a"/>')
-    for i, lat in enumerate(lats):  # lats ordered N→S for display
+    for i, lat in enumerate(lats):  # lats ordered N->S for display
         for j, lon in enumerate(lons):
             t = (v[i, j] - vmin) / (vmax - vmin)
             parts.append(f'<rect x="{j * cw:.1f}" y="{i * ch:.1f}" width="{cw + 0.5:.1f}" height="{ch + 0.5:.1f}" fill="{colormap(t)}"/>')

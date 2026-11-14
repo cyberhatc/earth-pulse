@@ -1,4 +1,4 @@
-"""Scenario image generation (OPTIONAL, DISABLED by default).
+﻿"""Scenario image generation (OPTIONAL, DISABLED by default).
 
 The honest version of "generate a picture of the future": **AI scenario cards**
 (lower / median / upper) — constrained, labeled illustrations conditioned on (a) a
@@ -6,7 +6,7 @@ recent REAL map tile and (b) the model's predicted deltas. Never presented as an
 observation or a guaranteed future.
 
 Guardrails enforced here:
-1. Refuses unless configs/model.yaml → scenario_image.enabled: true (or EP_SCENARIO_IMAGES=1).
+1. Refuses unless configs/model.yaml -> scenario_image.enabled: true (or EP_SCENARIO_IMAGES=1).
 2. Refuses without acknowledge_not_observation=True.
 3. Always carries label: "AI-generated scenario — not an observation".
 4. Refuses without a source image (the latest real GIBS tile for that point).
@@ -163,7 +163,16 @@ def generate_scenario_cards(lat: float, lon: float, parameter: str,
         pipe = pipe.to("cuda")
     pipe.set_progress_bar_config(disable=True)
 
-    init_image = _load_source_image(source_image_url)
+    try:
+        init_image = _load_source_image(source_image_url)
+    except Exception as exc:
+        return {
+            "status": "no_source_image",
+            "reason": f"Could not fetch/decode the source image: {exc}",
+            "label": LABEL,
+            "conditioning": conditioning,
+            "cards": [],
+        }
     init_image = init_image.resize((640, 640))
 
     steps = int(os.environ.get("EP_SCENARIO_STEPS", "30"))

@@ -3,6 +3,8 @@ import type { PlacePayload } from '../types/payload'
 import CoverageBadge from './CoverageBadge'
 import Charts from './Charts'
 import ImageryGallery from './ImageryGallery'
+import TimeLapse from './TimeLapse'
+import { apiUrl } from '../lib/api'
 import OppositeCard from './OppositeCard'
 import ExplainerBox from './ExplainerBox'
 import AlertsPanel from './AlertsPanel'
@@ -36,12 +38,14 @@ export default function PlacePanel({
 }: Props) {
   const [active, setActive] = useState<string>('temperature')
   const [tab, setTab] = useState<Tab>('overview')
+  const [showGif, setShowGif] = useState<boolean>(false)
   const open = !!(payload || loading || error)
 
   // A new place (or switching to the offline sample) always starts at Overview.
   useEffect(() => {
     setTab('overview')
     setActive('temperature')
+    setShowGif(false)
   }, [payload?.location.cell_index, usingFallback])
 
   return (
@@ -146,6 +150,26 @@ export default function PlacePanel({
                     </div>
                   </div>
 
+                  {payload.next_move && (
+                    <div className="card">
+                      <h3>Next 5 years — predicted move (point model)</h3>
+                      <div className="trend-grid">
+                        {Object.entries(payload.next_move).map(([param, m]) => (
+                          <div className="trend-cell" key={param}>
+                            <div className="k">{PARAM_META[param]?.label ?? param}</div>
+                            <div className={`v ${m.direction === 'rising' ? 'up' : m.direction === 'falling' ? 'down' : ''}`}>
+                              {m.direction === 'rising' ? '↗' : m.direction === 'falling' ? '↘' : '→'} {m.delta_over_horizon > 0 ? '+' : ''}{m.delta_over_horizon}
+                            </div>
+                            <div className="sig">{m.magnitude_in_std}σ over horizon</div>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="imagery-note" style={{ marginTop: 8 }}>
+                        Probabilistic outlook from the point-level model (p10–p90 bands in charts). Not a certain future.
+                      </p>
+                    </div>
+                  )}
+
                   <p className="imagery-note">
                     Climate twins: this place belongs to cluster <b>#{payload.climate_twin?.cluster_id ?? '—'}</b>
                     {' '}(K-Means, k={payload.climate_twin?.k ?? '—'}) of similar climate signatures.
@@ -156,7 +180,36 @@ export default function PlacePanel({
               )}
 
               {tab === 'imagery' && (
-                <ImageryGallery payload={payload} lowBandwidth={lowBandwidth} offline={usingFallback} />
+                <>
+                  <ImageryGallery payload={payload} lowBandwidth={lowBandwidth} offline={usingFallback} />
+                  {!usingFallback && payload && (
+                    <>
+                      <TimeLapse lat={payload.location.lat} lon={payload.location.lon} />
+                      <div className="card">
+                        <h3>Time-lapse video (animated GIF)</h3>
+                        <p className="imagery-note">
+                          A real animated GIF of MODIS true-colour tiles, 2015→2024, for this place.
+                          Generated on the server from observed satellite imagery.
+                        </p>
+                        <button className="icon-btn" onClick={() => setShowGif((v) => !v)}>
+                          {showGif ? 'Hide video' : '▶ Generate & show video'}
+                        </button>
+                        {showGif && (
+                          <div style={{ marginTop: 10, textAlign: 'center' }}>
+                            <img
+                              src={apiUrl(`/imagery/timelapse.gif?lat=${payload.location.lat}&lon=${payload.location.lon}&start_year=2015&end_year=2024`)}
+                              alt="Time-lapse video"
+                              style={{ width: '100%', maxWidth: 320, borderRadius: 8, border: '1px solid var(--border, #ccc)' }}
+                            />
+                            <p className="imagery-note" style={{ marginTop: 6 }}>
+                              Auto-plays in the browser. ~20 s to generate on first request (cached afterwards).
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </>
               )}
 
               {tab === 'opposite' && <OppositeCard pairs={payload.opposite_trends} />}

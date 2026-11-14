@@ -52,6 +52,6 @@ inference:
   cache_ttl_seconds: 3600
 
 scenario_image:
-  enabled: false           # opt-in; always labeled as AI-generated scenario
+  enabled: true            # enabled; always labeled as AI-generated scenario (not an observation)
   model: "runwayml/stable-diffusion-v1-5-inpainting"   # example; replace with your choice
   note: "Produces a lower/median/upper 'what-if' visualization conditioned on predicted parameters. Never presented as observation."

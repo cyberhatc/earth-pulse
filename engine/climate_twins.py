@@ -1,4 +1,4 @@
-"""Climate twins: cluster grid cells with similar multivariate climate signatures.
+﻿"""Climate twins: cluster grid cells with similar multivariate climate signatures.
 
 Standalone NumPy K-Means (seeded, deterministic). HDBSCAN is optional via config.
 """
@@ -48,7 +48,7 @@ def kmeans(X: np.ndarray, k: int = 8, iters: int = 100, seed: int = 42):
 
 
 def cluster_cells(feature_matrix: np.ndarray, k: int = 8, seed: int = 42):
-    """feature_matrix: (n_cells, n_features) → (labels, standardized, centers)."""
+    """feature_matrix: (n_cells, n_features) -> (labels, standardized, centers)."""
     Xs, mean, std = zscore(feature_matrix)
     labels, centers = kmeans(Xs, k=k, seed=seed)
     return labels, Xs, centers, {"mean": mean.ravel().tolist(), "std": std.ravel().tolist()}

@@ -1,4 +1,4 @@
-"""Earth Pulse pipeline entry point.
+﻿"""Earth Pulse pipeline entry point.
 
 Usage:
   python3 pipeline/run_pipeline.py --sample                 # generate offline demo store
@@ -21,7 +21,7 @@ from pipeline.export_store import generate_sample, DEFAULT_SAMPLE_PATH
 
 def cmd_sample(args) -> None:
     out = generate_sample(args.output)
-    print(f"[pipeline] sample store written → {out}")
+    print(f"[pipeline] sample store written -> {out}")
 
 
 def cmd_power(args) -> None:
@@ -69,7 +69,7 @@ def main() -> None:
     ran = False
     if args.sample is not None:
         generate_sample(args.sample)
-        print(f"[pipeline] sample store written → {args.sample}")
+        print(f"[pipeline] sample store written -> {args.sample}")
         ran = True
     if args.power:
         cmd_power(argparse.Namespace(lat=args.power[0], lon=args.power[1],

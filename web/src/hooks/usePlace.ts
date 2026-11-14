@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { fetchPlace } from '../lib/api'
+import { fetchPlace, fetchPoint } from '../lib/api'
 import type { PlacePayload } from '../types/payload'
 
 export interface UsePlaceState {
@@ -9,7 +9,7 @@ export interface UsePlaceState {
   reload: () => void
 }
 
-export function usePlace(lat: number | null, lon: number | null, horizonMonths = 60): UsePlaceState {
+export function usePlace(lat: number | null, lon: number | null, horizonMonths = 60, mode: 'grid' | 'point' = 'grid'): UsePlaceState {
   const [data, setData] = useState<PlacePayload | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -26,9 +26,9 @@ export function usePlace(lat: number | null, lon: number | null, horizonMonths =
     const myId = ++abort.current
     setLoading(true)
     setError(null)
-    // Never show a previous location's payload while the new one loads/fails.
     setData(null)
-    fetchPlace(lat, lon, horizonMonths)
+    const req = mode === 'point' ? fetchPoint(lat, lon, horizonMonths) : fetchPlace(lat, lon, horizonMonths)
+    req
       .then((payload) => {
         if (abort.current !== myId) return
         setData(payload)
@@ -39,7 +39,7 @@ export function usePlace(lat: number | null, lon: number | null, horizonMonths =
         setError(err.message)
         setLoading(false)
       })
-  }, [lat, lon, horizonMonths, tick])
+  }, [lat, lon, horizonMonths, tick, mode])
 
   return { data, loading, error, reload: () => setTick((n) => n + 1) }
 }

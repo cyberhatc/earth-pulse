@@ -246,3 +246,18 @@ EP_ANALYSIS_PATH=$PWD/data/processed/analysis_power_real.json uvicorn api.main:a
 Highlights from the first real run: global mean warming **+0.21 °C/decade** (115/240 cells significant), Siberian cell **+0.67 °C/decade, p=0.004**; NDVI/SST/sea level honestly absent (POWER has none); strict JSON; `data_coverage` flips `synthetic_demo: false` automatically. Details & verification: `docs/power-real-store.md`.
 
 For the full real stack (NDVI/SST/sea level from MODIS/PO.DAAC + real mask) you need a free **NASA Earthdata login** — see `docs/real-data-ingestion.md`.
+
+## 17. High-resolution, real-data path (Belgaum case study)
+
+Sub-kilometre analysis for a single place is now supported via the point-level
+pipeline:
+
+```bash
+python3 scripts/build_belgaum.py            # builds data/processed/point_15m8497_74m4977.npz + .json
+uvicorn api.main:app --port 8000
+# GET /point?lat=15.8497&lon=74.4977&horizon_months=60
+```
+
+See `docs/highres-belgaum.md` for the resolution ladder (POWER 40-yr point series,
+MODIS 250 m NDVI, Sentinel-2 10 m imagery), the AI scenario-card image
+generation pipeline, and the frontend 🛰 Hi-Res / 📍 Belgaum controls.

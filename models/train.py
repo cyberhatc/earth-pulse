@@ -1,4 +1,4 @@
-"""Train the multivariate forecaster (pooled across all grid cells).
+﻿"""Train the multivariate forecaster (pooled across all grid cells).
 
 Usage: python3 models/train.py [--input data/samples/earth_pulse_sample.npz]
                                [--output models/artifacts/forecaster.npz]
@@ -42,7 +42,7 @@ def main() -> None:
         ys_all.append(ys)
     Xs = np.vstack(xs_all)
     Ys = np.vstack(ys_all)
-    print(f"[train] pooled samples: {Xs.shape} → targets {Ys.shape}")
+    print(f"[train] pooled samples: {Xs.shape} -> targets {Ys.shape}")
 
     model = RidgeRollout(lam=args.lam).fit(Xs, Ys)
     print(f"[train] fitted ridge in {time.time()-t0:.1f}s; resid_std (raw units) = {np.round(model.resid_std, 3)}")
@@ -59,7 +59,7 @@ def main() -> None:
         "note": "Ridge rollout trained on pooled cells. For PyTorch LSTM see notebooks/02_train_forecast.ipynb.",
     }
     (out.parent / "forecaster_meta.json").write_text(json.dumps(meta, indent=2))
-    print(f"[train] wrote → {out} (+ forecaster_meta.json)")
+    print(f"[train] wrote -> {out} (+ forecaster_meta.json)")
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-"""Forecasting models.
+﻿"""Forecasting models.
 
 Two honest paths:
 - RidgeRollout (default): closed-form ridge on lag features, autoregressive rollout,
@@ -84,7 +84,7 @@ class RidgeRollout:
         return ys * self.y_std + self.y_mean
 
     def rollout(self, init_window: np.ndarray, horizon: int) -> np.ndarray:
-        """Autoregressive rollout. init_window: (seq_len, n_targets) → returns (horizon, n_targets)."""
+        """Autoregressive rollout. init_window: (seq_len, n_targets) -> returns (horizon, n_targets)."""
         window = init_window.copy().astype(np.float64)
         out = []
         for _ in range(horizon):
@@ -116,7 +116,7 @@ class RidgeRollout:
 
 
 def make_windows(X: np.ndarray, seq_len: int) -> tuple[np.ndarray, np.ndarray]:
-    """X: (T, F) → windows (T-seq_len, seq_len*F), targets (T-seq_len, F)."""
+    """X: (T, F) -> windows (T-seq_len, seq_len*F), targets (T-seq_len, F)."""
     T, F = X.shape
     xs, ys = [], []
     for t in range(T - seq_len):

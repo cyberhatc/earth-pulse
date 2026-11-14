@@ -1,4 +1,4 @@
-"""Precompute engine outputs → data/processed/analysis.json
+﻿"""Precompute engine outputs -> data/processed/analysis.json
 
 Computes, for every grid cell and parameter:
   trends:        Theil–Sen slope per decade + Mann–Kendall significance
@@ -126,7 +126,7 @@ def main() -> None:
     out = Path(args.output) if args.output else Path("data/processed/analysis.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, allow_nan=False))
-    print(f"[engine] wrote → {out} ({out.stat().st_size/1024:.0f} KB) in {time.time()-t0:.1f}s")
+    print(f"[engine] wrote -> {out} ({out.stat().st_size/1024:.0f} KB) in {time.time()-t0:.1f}s")
 
 
 if __name__ == "__main__":

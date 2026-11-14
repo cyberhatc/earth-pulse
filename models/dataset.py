@@ -1,11 +1,11 @@
-"""Supervised windowing for model training."""
+﻿"""Supervised windowing for model training."""
 from __future__ import annotations
 
 import numpy as np
 
 
 def make_supervised(X: np.ndarray, seq_len: int) -> tuple[np.ndarray, np.ndarray]:
-    """X: (T, F) → (samples, seq_len*F), (samples, F) of next-step targets."""
+    """X: (T, F) -> (samples, seq_len*F), (samples, F) of next-step targets."""
     T, F = X.shape
     xs, ys = [], []
     for t in range(T - seq_len):

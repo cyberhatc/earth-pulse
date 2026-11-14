@@ -43,6 +43,22 @@ export function fetchPlace(lat: number, lon: number, horizonMonths = 60): Promis
   return getJson<PlacePayload>(`/place?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&horizon_months=${horizonMonths}`, 60000)
 }
 
+export function fetchPoint(lat: number, lon: number, horizonMonths = 60): Promise<PlacePayload> {
+  return getJson<PlacePayload>(`/point?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&horizon_months=${horizonMonths}`, 120000)
+}
+
 export function fetchHealth(): Promise<{ status: string }> {
   return getJson('/health', 8000)
+}
+
+export interface TimeLapseFrame {
+  year: number
+  date: string
+  kind: 'observed' | 'projected'
+  url: string
+  label: string
+}
+
+export function fetchTimeLapse(lat: number, lon: number, startYear = 2000, endYear = 2030): Promise<{ point: { lat: number; lon: number }; frames: TimeLapseFrame[]; note: string }> {
+  return getJson(`/imagery/timelapse?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&start_year=${startYear}&end_year=${endYear}`, 30000)
 }

@@ -25,8 +25,11 @@ export default function Home() {
   })
   const [locale, setLocaleState] = useState<Locale>(getLocale())
   const [gibsEnabled, setGibsEnabled] = useState<Record<string, boolean>>({ 'gibs-ndvi': false })
+  const [highRes, setHighRes] = useState<boolean>(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searching, setSearching] = useState(false)
 
-  const { data, loading, error, reload } = usePlace(selected?.lat ?? null, selected?.lon ?? null, 60)
+  const { data, loading, error, reload } = usePlace(selected?.lat ?? null, selected?.lon ?? null, 60, highRes ? 'point' : 'grid')
   const payload = usingFallback ? FALLBACK_PAYLOAD : data
 
   useEffect(() => {
@@ -43,6 +46,25 @@ export default function Home() {
     setSelected({ lat, lon })
     setPanelOpen(true)
   }, [])
+
+  const geocode = useCallback(async (q: string) => {
+    const trimmed = q.trim()
+    if (!trimmed) return
+    setSearching(true)
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(trimmed)}&format=json&limit=1`, {
+        headers: { 'Accept-Language': 'en' },
+      })
+      const arr = (await res.json()) as Array<{ lat: string; lon: string; display_name: string }>
+      if (arr && arr.length) {
+        onSelect(parseFloat(arr[0].lat), parseFloat(arr[0].lon))
+      }
+    } catch {
+      // ignore; user can click the map instead
+    } finally {
+      setSearching(false)
+    }
+  }, [onSelect])
 
   const loadFallback = useCallback(() => {
     setUsingFallback(true)
@@ -82,6 +104,28 @@ export default function Home() {
             {LOCALES.map((l) => <option key={l.id} value={l.id}>{l.label}</option>)}
           </select>
         </label>
+        <button className="icon-btn" onClick={() => setHighRes((v) => !v)} aria-pressed={highRes} title="High-res point mode: real NASA point data + 5-year forecast (slower)">
+          {highRes ? '🛰 Hi-Res' : '🗺 Grid'}
+        </button>
+        <button className="icon-btn" onClick={() => onSelect(15.8497, 74.4977)} title="Belgaum (Belagavi), Karnataka — high-res demo">
+          📍 Belgaum
+        </button>
+        <form
+          onSubmit={(e) => { e.preventDefault(); geocode(searchQuery) }}
+          style={{ display: 'flex', gap: 4, alignItems: 'center' }}
+        >
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search any place…"
+            aria-label="Search place"
+            style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid var(--border, #ccc)', minWidth: 160 }}
+          />
+          <button type="submit" className="icon-btn" disabled={searching}>
+            {searching ? '…' : '🔍'}
+          </button>
+        </form>
         <button className="icon-btn" onClick={() => setLowBandwidth((v) => !v)} aria-pressed={lowBandwidth} title="Low-bandwidth mode: hide imagery, charts first">
           {lowBandwidth ? '📶 Low-BW' : '🖼 Full'}
         </button>

@@ -1,4 +1,4 @@
-"""Store helpers: nearest cell, series extraction, trend/coverage lookup."""
+﻿"""Store helpers: nearest cell, series extraction, trend/coverage lookup."""
 from __future__ import annotations
 
 from pipeline.export_store import nearest_cell_index
@@ -6,7 +6,7 @@ from pipeline.export_store import nearest_cell_index
 TS_PARAMS = ["temperature", "precipitation", "ndvi", "sst", "sea_level", "solar_radiation", "humidity", "wind"]
 
 def source_map(synthetic: bool) -> dict[str, str]:
-    tag = "synthetic demo store (deterministic, physically motivated)" if synthetic else "real: NASA POWER monthly (1981→present)"
+    tag = "synthetic demo store (deterministic, physically motivated)" if synthetic else "real: NASA POWER monthly (1981->present)"
     unavailable = "not available from NASA POWER (intentionally NaN — never faked)"
     return {
         "temperature": f"NASA POWER T2M — {tag}",

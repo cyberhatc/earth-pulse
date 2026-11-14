@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-"""End-to-end offline verification: sample → engine → forecast → payload keys.
+﻿#!/usr/bin/env python3
+"""End-to-end offline verification: sample -> engine -> forecast -> payload keys.
 
 Exit 0 on success, non-zero with a message on failure. Safe to run in CI.
 Usage: python3 scripts/verify_offline.py

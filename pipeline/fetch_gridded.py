@@ -1,7 +1,7 @@
-"""Gridded NASA product fetch (Tier B), via earthaccess + OPeNDAP/xarray.
+﻿"""Gridded NASA product fetch (Tier B), via earthaccess + OPeNDAP/xarray.
 
 This module is *not* exercised by the offline demo. It documents and automates the
-real path: discover products at a point/date → subset → return xarray Dataset.
+real path: discover products at a point/date -> subset -> return xarray Dataset.
 Requires: pip install earthaccess xarray netCDF4 zarr
 """
 from __future__ import annotations
