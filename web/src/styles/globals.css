@@ -171,10 +171,10 @@ body {
 .chart-box { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 10px; }
 .chart-note { font-size: 0.66rem; color: var(--text-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
 
-.imagery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-.imagery-item { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface); }
-.imagery-item img { width: 100%; height: 110px; object-fit: cover; display: block; }
-.imagery-item figcaption { font-size: 0.62rem; padding: 4px 6px; color: var(--text-muted); }
+.imagery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.imagery-item { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface); display: flex; flex-direction: column; }
+.imagery-item img { width: 100%; height: 120px; object-fit: cover; display: block; background: var(--surface-2); }
+.imagery-item figcaption { font-size: 0.62rem; padding: 4px 6px; color: var(--text-muted); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .imagery-note { font-size: 0.68rem; color: var(--text-muted); margin-top: 6px; }
 .btn-link { display: inline-block; font-size: 0.74rem; margin-top: 6px; color: var(--accent-strong); }
 

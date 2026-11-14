@@ -9,8 +9,15 @@ from pathlib import Path
 import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-SAMPLE_PATH = Path(os.environ.get("EP_STORE_PATH", REPO_ROOT / "data" / "samples" / "earth_pulse_sample.npz"))
-ANALYSIS_PATH = Path(os.environ.get("EP_ANALYSIS_PATH", REPO_ROOT / "data" / "processed" / "analysis.json"))
+# Prefer the real NASA POWER store when present, else the bundled synthetic sample.
+_default_store = REPO_ROOT / "data" / "processed" / "earth_pulse_power_real.npz"
+if not _default_store.exists():
+    _default_store = REPO_ROOT / "data" / "samples" / "earth_pulse_sample.npz"
+SAMPLE_PATH = Path(os.environ.get("EP_STORE_PATH", _default_store))
+_default_analysis = REPO_ROOT / "data" / "processed" / "analysis_power_real.json"
+if not _default_analysis.exists():
+    _default_analysis = REPO_ROOT / "data" / "processed" / "analysis.json"
+ANALYSIS_PATH = Path(os.environ.get("EP_ANALYSIS_PATH", _default_analysis))
 
 
 @lru_cache(maxsize=1)

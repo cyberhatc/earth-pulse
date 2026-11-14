@@ -101,12 +101,16 @@ def place(lat: float = Query(..., ge=-90, le=90),
         "sources": {k: v for k, v in svc.source_map(synthetic).items() if k in usable},
         "time_range": time_range,
         "overlap_used_for_training": ["2000-01", dates[-1]],
-        "gap_notes": [
-            "Bundled demo uses a deterministic SYNTHETIC store — replace with real products (docs/data-sources.md) for research use.",
-            "NDVI/SST/sea level records start later than 1985 in reality (≈2000/2002/1993 respectively).",
-            "Sea level & SST are ocean parameters; NDVI is a land parameter. Shown only where relevant." if is_ocean_cell is not None else "",
-            (f"Parameters unavailable at this cell (masked or non-finite): {', '.join(dropped)}" if dropped else ""),
-        ],
+        "gap_notes": (
+            (["Bundled demo uses a deterministic SYNTHETIC store - replace with real products (docs/data-sources.md) for research use."]
+             if synthetic else
+             ["Served from real NASA POWER monthly data (1981 to present). NDVI/SST/sea level are not available from POWER and are intentionally NaN - never faked."])
+            + [
+                "NDVI/SST/sea level records start later than 1985 in reality (approx 2000/2002/1993 respectively).",
+                "Sea level & SST are ocean parameters; NDVI is a land parameter. Shown only where relevant." if is_ocean_cell is not None else "",
+                (f"Parameters unavailable at this cell (masked or non-finite): {', '.join(dropped)}" if dropped else ""),
+            ]),
+
         "notes": "Tier A: served from precomputed store + engine artifacts. Tier B (POWER/FIRMS/CMR) is opt-in via /tier-b and cached in data/cache/.",
     }
     data_coverage["gap_notes"] = [n for n in data_coverage["gap_notes"] if n]

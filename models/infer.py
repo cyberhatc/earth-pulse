@@ -19,7 +19,8 @@ from pipeline.build_features import prepare_cell_matrix
 from pipeline.export_store import VARIABLES as STORE_VARIABLES
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-ARTIFACT = REPO_ROOT / "models" / "artifacts" / "forecaster.npz"
+_real_artifact = REPO_ROOT / "models" / "artifacts" / "forecaster_real.npz"
+ARTIFACT = _real_artifact if _real_artifact.exists() else (REPO_ROOT / "models" / "artifacts" / "forecaster.npz")
 ARTIFACT_META = ARTIFACT.parent / "forecaster_meta.json"
 SEQ_LEN = 24
 

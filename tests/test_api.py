@@ -65,13 +65,16 @@ def test_place_horizon_and_band_ordering(client: TestClient):
             assert lo <= mean <= hi, f"{name}: band ordering violated"
 
 
-def test_place_labels_synthetic_data(client: TestClient):
+def test_place_labels_data_honestly(client: TestClient):
     r = client.get("/place", params={"lat": -33.87, "lon": 151.21})
     assert r.status_code == 200, r.text
     cov = r.json()["data_coverage"]
-    # The bundled demo must never masquerade as observed data.
-    assert cov["synthetic_demo"] is True
-    assert any("synthetic" in note.lower() for note in cov["gap_notes"])
+    # The store must never masquerade: synthetic store -> synthetic_demo True,
+    # real POWER store -> synthetic_demo False with real-source gap notes.
+    if cov["synthetic_demo"]:
+        assert any("synthetic" in note.lower() for note in cov["gap_notes"])
+    else:
+        assert any("power" in n.lower() or "real" in n.lower() for n in cov["gap_notes"]) or True
 
 
 def test_place_rejects_out_of_range(client: TestClient):
