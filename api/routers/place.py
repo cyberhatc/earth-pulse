@@ -73,6 +73,7 @@ def place(lat: float = Query(..., ge=-90, le=90),
                         "picp_p10_p90": round(picp, 3), "note": "ridge vs prefix, horizon 12"}
     except Exception as e:
         backtest_out = None
+        raise e
     fc_timeseries = {
         p: {"mean": [r3(v) for v in d["mean"]],
             "lower": [r3(v) for v in d["lower"]],
