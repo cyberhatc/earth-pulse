@@ -104,36 +104,36 @@ export default function Home() {
             {LOCALES.map((l) => <option key={l.id} value={l.id}>{l.label}</option>)}
           </select>
         </label>
-        <button className="icon-btn" onClick={() => setHighRes((v) => !v)} aria-pressed={highRes} title="High-res point mode: real NASA point data + 5-year forecast (slower)">
+        <button className="icon-btn" onClick={() => setTheme((th) => (th === 'dark' ? 'light' : 'dark'))} aria-label="Toggle theme">
+          {theme === 'dark' ? '☾' : '☀'}
+        </button>
+      </header>
+
+      <div className="toolbar">
+        <button className="icon-btn" onClick={() => setHighRes((v) => !v)} aria-pressed={highRes} title="High-res point mode: real NASA point data + 5-year forecast">
           {highRes ? '🛰 Hi-Res' : '🗺 Grid'}
         </button>
         <button className="icon-btn" onClick={() => onSelect(15.8497, 74.4977)} title="Belgaum (Belagavi), Karnataka — high-res demo">
           📍 Belgaum
         </button>
-        <form
-          onSubmit={(e) => { e.preventDefault(); geocode(searchQuery) }}
-          style={{ display: 'flex', gap: 4, alignItems: 'center' }}
-        >
+        <button className="icon-btn" onClick={() => setLowBandwidth((v) => !v)} aria-pressed={lowBandwidth} title="Low-bandwidth mode">
+          {lowBandwidth ? '📶 Low-BW' : '🖼 Full'}
+        </button>
+        <a className="icon-btn" href="https://github.com" target="_blank" rel="noreferrer" title="Source on GitHub (MIT)">GitHub</a>
+        <form onSubmit={(e) => { e.preventDefault(); geocode(searchQuery) }} className="search-form">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search any place…"
             aria-label="Search place"
-            style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid var(--border, #ccc)', minWidth: 160 }}
+            className="search-input"
           />
           <button type="submit" className="icon-btn" disabled={searching}>
             {searching ? '…' : '🔍'}
           </button>
         </form>
-        <button className="icon-btn" onClick={() => setLowBandwidth((v) => !v)} aria-pressed={lowBandwidth} title="Low-bandwidth mode: hide imagery, charts first">
-          {lowBandwidth ? '📶 Low-BW' : '🖼 Full'}
-        </button>
-        <button className="icon-btn" onClick={() => setTheme((th) => (th === 'dark' ? 'light' : 'dark'))} aria-label="Toggle theme">
-          {theme === 'dark' ? '☾' : '☀'}
-        </button>
-        <a className="icon-btn" href="https://github.com" target="_blank" rel="noreferrer" title="Source on GitHub (MIT)">GitHub</a>
-      </header>
+      </div>
 
       <main className="map-wrap">
         <MapView onSelect={onSelect} selected={selected} gibsEnabled={gibsEnabled} />
