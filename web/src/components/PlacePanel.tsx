@@ -181,34 +181,36 @@ export default function PlacePanel({
 
               {tab === 'imagery' && (
                 <>
-                  <ImageryGallery payload={payload} lowBandwidth={lowBandwidth} offline={usingFallback} />
                   {!usingFallback && payload && (
-                    <>
-                      <TimeLapse lat={payload.location.lat} lon={payload.location.lon} />
-                      <div className="card">
-                        <h3>Time-lapse video (animated GIF)</h3>
-                        <p className="imagery-note">
-                          A real animated GIF of MODIS true-colour tiles, 2015→2024, for this place.
-                          Generated on the server from observed satellite imagery.
-                        </p>
-                        <button className="icon-btn" onClick={() => setShowGif((v) => !v)}>
-                          {showGif ? 'Hide video' : '▶ Generate & show video'}
-                        </button>
-                        {showGif && (
-                          <div style={{ marginTop: 10, textAlign: 'center' }}>
-                            <img
-                              src={apiUrl(`/imagery/timelapse.gif?lat=${payload.location.lat}&lon=${payload.location.lon}&start_year=2015&end_year=2024`)}
-                              alt="Time-lapse video"
-                              style={{ width: '100%', maxWidth: 320, borderRadius: 8, border: '1px solid var(--border, #ccc)' }}
-                            />
-                            <p className="imagery-note" style={{ marginTop: 6 }}>
-                              Auto-plays in the browser. ~20 s to generate on first request (cached afterwards).
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </>
+                    <div className="card" style={{ border: '2px solid var(--accent)', background: 'var(--surface-2)' }}>
+                      <h3>🎬 Time-lapse video (animated GIF)</h3>
+                      <p className="imagery-note">
+                        Real animated GIF of MODIS true-colour satellite tiles, 2015→2024, for this exact place.
+                        Generated on the server from observed satellite imagery. Auto-plays in the browser.
+                      </p>
+                      <button
+                        className="icon-btn"
+                        style={{ background: 'var(--accent)', color: 'var(--on-accent, #fff)', fontWeight: 700, padding: '8px 14px' }}
+                        onClick={() => setShowGif((v) => !v)}
+                      >
+                        {showGif ? '⏹ Hide video' : '▶ Generate & show video (≈20s first time)'}
+                      </button>
+                      {showGif && (
+                        <div style={{ marginTop: 12, textAlign: 'center' }}>
+                          <img
+                            src={apiUrl(`/imagery/timelapse.gif?lat=${payload.location.lat}&lon=${payload.location.lon}&start_year=2015&end_year=2024`)}
+                            alt="Time-lapse video"
+                            style={{ width: '100%', maxWidth: 320, borderRadius: 8, border: '1px solid var(--border, #ccc)' }}
+                          />
+                          <p className="imagery-note" style={{ marginTop: 6 }}>
+                            Loops automatically. Cached after first generation.
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   )}
+                  <TimeLapse lat={payload ? payload.location.lat : 0} lon={payload ? payload.location.lon : 0} />
+                  <ImageryGallery payload={payload} lowBandwidth={lowBandwidth} offline={usingFallback} />
                 </>
               )}
 
