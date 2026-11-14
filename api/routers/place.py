@@ -59,6 +59,20 @@ def place(lat: float = Query(..., ge=-90, le=90),
 
     # forecast (trained ridge artifact if present, else linear trend + season baseline)
     fc = forecast_place(store, cell, horizon_months, variables=usable)
+    # rolling-origin backtest on nearest cell (populates payload.backtest as documented)
+    try:
+        from pipeline.build_features import prepare_cell_matrix
+        from models.backtest import backtest_cell
+        _, Xbt = prepare_cell_matrix(store, cell, list(fc["timeseries"].keys()))
+        bt = backtest_cell(Xbt, list(fc["timeseries"].keys()), seq_len=24, test_months=12, horizon=12)
+        pv = list(bt["per_parameter"].values())
+        mae = sum(d["mae"] for d in pv) / len(pv)
+        rmse = sum(d["rmse"] for d in pv) / len(pv)
+        picp = sum(d["picp_p10_p90"] for d in pv) / len(pv)
+        backtest_out = {"mae": round(mae, 3), "rmse": round(rmse, 3),
+                        "picp_p10_p90": round(picp, 3), "note": "ridge vs prefix, horizon 12"}
+    except Exception as e:
+        backtest_out = None
     fc_timeseries = {
         p: {"mean": [r3(v) for v in d["mean"]],
             "lower": [r3(v) for v in d["lower"]],
@@ -79,6 +93,32 @@ def place(lat: float = Query(..., ge=-90, le=90),
     for a in anomalies:
         a["z"] = r3(a["z"])
     anomalies = anomalies[-20:]
+    # Optional Isolation Forest for multivariate tabular anomalies (configs/model.yaml)
+    try:
+        from sklearn.ensemble import IsolationForest
+        import yaml
+        cfg = yaml.safe_load(open('configs/model.yaml', 'r', encoding='utf-8')) or {}
+        if_cfg = (cfg.get('anomaly', {}) or {}).get('isolation_forest', {})
+        if if_cfg.get('enabled'):
+            # build matrix of past timeseries for usable params
+            usable_params = list(ts.keys())
+            Xmat = np.column_stack([np.nan_to_num(store[p][:, cell], nan=0.0) for p in usable_params])
+            # standardize
+            mu = Xmat.mean(axis=0)
+            std = Xmat.std(axis=0)
+            std = np.where(std == 0, 1.0, std)
+            Xs = (Xmat - mu) / std
+            clf = IsolationForest(contamination=float(if_cfg.get('contamination', 0.02)), random_state=42)
+            labels = clf.fit_predict(Xs)
+            scores = clf.decision_function(Xs)
+            for idx, (lab, score) in enumerate(zip(labels, scores)):
+                if lab == -1:
+                    d = dates[idx]
+                    anomalies.append({'parameter': 'multivariate', 'date': d, 'z': round(float(score), 3),
+                                      'severity': 'high', 'kind': 'high'})
+    except Exception:
+        pass
+
 
     opposite = svc.opposite_near(analysis, cell, limit=4)
     for o in opposite:
@@ -147,7 +187,7 @@ def place(lat: float = Query(..., ge=-90, le=90),
             "trained_artifact": artifact_available(),
             "dates": fc["dates"],
             "timeseries": fc_timeseries,
-            "backtest": None,
+            "backtest": backtest_out,
             "projected_images": projected_images,
             "scenarios": [],
         },

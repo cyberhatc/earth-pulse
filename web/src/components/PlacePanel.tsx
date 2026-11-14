@@ -41,12 +41,17 @@ export default function PlacePanel({
   const [showGif, setShowGif] = useState<boolean>(false)
   const open = !!(payload || loading || error)
 
-  // A new place (or switching to the offline sample) always starts at Overview.
   useEffect(() => {
     setTab('overview')
     setActive('temperature')
     setShowGif(false)
   }, [payload?.location.cell_index, usingFallback])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && open) onClose() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose])
 
   return (
     <>

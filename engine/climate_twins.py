@@ -47,8 +47,26 @@ def kmeans(X: np.ndarray, k: int = 8, iters: int = 100, seed: int = 42):
     return labels, C
 
 
-def cluster_cells(feature_matrix: np.ndarray, k: int = 8, seed: int = 42):
-    """feature_matrix: (n_cells, n_features) -> (labels, standardized, centers)."""
+def _hdbscan_labels(Xs, min_cluster_size=10):
+    try:
+        import hdbscan
+    except ImportError:
+        return None
+    clusterer = hdbscan.HDBSCAN(min_cluster_size=min_cluster_size)
+    return clusterer.fit_predict(Xs)
+
+
+def cluster_cells(feature_matrix, k: int = 8, seed: int = 42, algorithm: str = 'kmeans'):
     Xs, mean, std = zscore(feature_matrix)
+    if algorithm == 'hdbscan':
+        labels = _hdbscan_labels(Xs, min_cluster_size=min(10, max(5, len(Xs) // 5)))
+        if labels is not None:
+            mapped = np.array([l if l != -1 else -1 for l in labels], dtype=np.int64)
+            # remap noise (-1) to its own cluster id per cell order
+            noise_idx = np.where(mapped == -1)[0]
+            mapped[noise_idx] = len(set(mapped)) + np.arange(len(noise_idx))
+            centers = np.array([Xs[mapped == i].mean(axis=0) for i in range(mapped.max() + 1)])
+            return mapped, Xs, centers, {'mean': mean.ravel().tolist(), 'std': std.ravel().tolist(),
+                                          'algorithm': 'hdbscan', 'noise_labels': int((labels == -1).sum())}
     labels, centers = kmeans(Xs, k=k, seed=seed)
-    return labels, Xs, centers, {"mean": mean.ravel().tolist(), "std": std.ravel().tolist()}
+    return labels, Xs, centers, {'mean': mean.ravel().tolist(), 'std': std.ravel().tolist(), 'algorithm': 'kmeans'}
