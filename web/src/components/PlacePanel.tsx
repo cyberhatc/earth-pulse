@@ -51,16 +51,34 @@ export default function PlacePanel({
   return (
     <aside className={`panel ${open ? 'open' : ''}`} role="dialog" aria-modal="false" aria-label={t('panelTitle')}>
       <div className="panel-head">
-        <div>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <h2>{t('panelTitle')}</h2>
           <code>
             {payload
-              ? `${payload.location.lat.toFixed(3)}, ${payload.location.lon.toFixed(3)} → grid ${payload.location.grid_lat.toFixed(1)}, ${payload.location.grid_lon.toFixed(1)} · cell #${payload.location.cell_index}`
+              ? `${payload.location.lat.toFixed(3)}, ${payload.location.lon.toFixed(3)}`
               : t('panelHint')}
           </code>
         </div>
         <button className="icon-btn" onClick={onClose} aria-label="Close panel">✕</button>
       </div>
+
+      {payload && !loading && (
+        <div className="panel-tabs" role="tablist" aria-label="Place briefing sections" style={{ padding: '0 var(--space-4)', background: 'var(--surface-2)' }}>
+          {TABS.map((item) => (
+            <button
+              key={item.id}
+              id={`tab-${item.id}`}
+              role="tab"
+              aria-selected={tab === item.id}
+              aria-controls={`tabpanel-${item.id}`}
+              className="panel-tab"
+              onClick={() => setTab(item.id)}
+            >
+              {t(item.labelKey)}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="panel-body">
         {loading && (
@@ -97,22 +115,6 @@ export default function PlacePanel({
             )}
 
             <CoverageBadge payload={payload} />
-
-            <div className="panel-tabs" role="tablist" aria-label="Place briefing sections">
-              {TABS.map((item) => (
-                <button
-                  key={item.id}
-                  id={`tab-${item.id}`}
-                  role="tab"
-                  aria-selected={tab === item.id}
-                  aria-controls={`tabpanel-${item.id}`}
-                  className="panel-tab"
-                  onClick={() => setTab(item.id)}
-                >
-                  {t(item.labelKey)}
-                </button>
-              ))}
-            </div>
 
             <div
               className="tab-content"
