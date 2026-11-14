@@ -186,34 +186,34 @@ body {
   width: 18px; height: 18px; color: var(--accent); flex: 0 0 auto;
 }
 .imagery-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px;
 }
 .imagery-item {
   position: relative; border: 1px solid var(--border); border-radius: var(--radius-md);
   overflow: hidden; background: var(--surface); display: flex; flex-direction: column;
   transition: transform 0.25s ease, box-shadow 0.25s ease; cursor: pointer;
 }
-.imagery-item:hover { transform: translateY(-3px) scale(1.02); box-shadow: var(--shadow); z-index: 2; }
+.imagery-item:hover { transform: translateY(-4px) scale(1.03); box-shadow: var(--shadow); z-index: 2; }
 .imagery-item img {
-  width: 100%; height: 140px; object-fit: cover; display: block;
+  width: 100%; height: 220px; object-fit: cover; display: block;
   background: var(--surface-2); transition: transform 0.3s ease;
 }
-.imagery-item:hover img { transform: scale(1.06); }
+.imagery-item:hover img { transform: scale(1.08); }
 .imagery-item figcaption {
-  font-size: 0.58rem; padding: 5px 7px; color: var(--text-muted);
+  font-size: 0.62rem; padding: 6px 8px; color: var(--text-muted);
   text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   border-top: 1px solid var(--border); background: var(--surface-2);
 }
 .imagery-item .year-badge {
-  position: absolute; top: 6px; left: 6px;
-  font-size: 0.55rem; font-weight: 800; letter-spacing: 0.5px;
-  background: rgba(0,0,0,0.55); color: #fff; padding: 2px 6px;
+  position: absolute; top: 8px; left: 8px;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.5px;
+  background: rgba(0,0,0,0.6); color: #fff; padding: 3px 8px;
   border-radius: 4px; backdrop-filter: blur(2px);
 }
 .imagery-item .layer-label {
-  position: absolute; top: 6px; right: 6px;
-  font-size: 0.5rem; font-weight: 700; letter-spacing: 0.5px;
-  background: var(--accent); color: var(--on-accent); padding: 2px 6px;
+  position: absolute; top: 8px; right: 8px;
+  font-size: 0.58rem; font-weight: 700; letter-spacing: 0.5px;
+  background: var(--accent); color: var(--on-accent); padding: 3px 8px;
   border-radius: 4px; text-transform: uppercase;
 }
 .imagery-count {
