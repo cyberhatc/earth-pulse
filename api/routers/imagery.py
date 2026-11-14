@@ -78,15 +78,17 @@ def imagery_timelapse_gif(lat: float = Query(..., ge=-90, le=90),
     from PIL import Image, ImageDraw, ImageFont
     from pipeline.fetch_gibs import lon_lat_to_tile, tile_url
 
-    x, y = lon_lat_to_tile(lon, lat, 4)
+    # z=6 -> ~1 km per pixel (higher detail for the requested location)
+    z = 6
+    x, y = lon_lat_to_tile(lon, lat, z)
     frames = []
     for yr in range(start_year, end_year + 1):
         date = f"{yr}-07-15"
-        url = tile_url("true_color", date, 4, x, y)
+        url = tile_url("true_color", date, z, x, y)
         try:
             with urllib.request.urlopen(url, timeout=20) as resp:
                 raw = resp.read()
-            img = Image.open(BytesIO(raw)).convert("RGB").resize((256, 256))
+            img = Image.open(BytesIO(raw)).convert("RGB").resize((384, 384))
         except Exception:
             # skip missing years
             continue

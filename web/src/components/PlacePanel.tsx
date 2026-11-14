@@ -49,7 +49,9 @@ export default function PlacePanel({
   }, [payload?.location.cell_index, usingFallback])
 
   return (
-    <aside className={`panel ${open ? 'open' : ''}`} role="dialog" aria-modal="false" aria-label={t('panelTitle')}>
+    <>
+      {open && <div className="panel-backdrop" onClick={onClose} aria-hidden="true" />}
+      <aside className={`panel ${open ? 'open' : ''}`} role="dialog" aria-modal="true" aria-label={t('panelTitle')}>
       <div className="panel-head">
         <div style={{ flex: 1, minWidth: 0 }}>
           <h2>{t('panelTitle')}</h2>
@@ -242,5 +244,6 @@ export default function PlacePanel({
         )}
       </div>
     </aside>
+    </>
   )
 }
