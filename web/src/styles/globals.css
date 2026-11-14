@@ -171,12 +171,71 @@ body {
 .chart-box { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 10px; }
 .chart-note { font-size: 0.66rem; color: var(--text-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
 
-.imagery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
-.imagery-item { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface); display: flex; flex-direction: column; }
-.imagery-item img { width: 100%; height: 120px; object-fit: cover; display: block; background: var(--surface-2); }
-.imagery-item figcaption { font-size: 0.62rem; padding: 4px 6px; color: var(--text-muted); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.imagery-note { font-size: 0.68rem; color: var(--text-muted); margin-top: 6px; }
-.btn-link { display: inline-block; font-size: 0.74rem; margin-top: 6px; color: var(--accent-strong); }
+/* ---------- professional imagery section ---------- */
+.imagery-card { padding: var(--space-4); }
+.imagery-section-header {
+  display: flex; align-items: center; gap: var(--space-2);
+  margin-bottom: var(--space-3); padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+.imagery-section-header h3 {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-muted); margin: 0; font-weight: 700;
+}
+.imagery-section-icon {
+  width: 18px; height: 18px; color: var(--accent); flex: 0 0 auto;
+}
+.imagery-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px;
+}
+.imagery-item {
+  position: relative; border: 1px solid var(--border); border-radius: var(--radius-md);
+  overflow: hidden; background: var(--surface); display: flex; flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease; cursor: pointer;
+}
+.imagery-item:hover { transform: translateY(-3px) scale(1.02); box-shadow: var(--shadow); z-index: 2; }
+.imagery-item img {
+  width: 100%; height: 140px; object-fit: cover; display: block;
+  background: var(--surface-2); transition: transform 0.3s ease;
+}
+.imagery-item:hover img { transform: scale(1.06); }
+.imagery-item figcaption {
+  font-size: 0.58rem; padding: 5px 7px; color: var(--text-muted);
+  text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  border-top: 1px solid var(--border); background: var(--surface-2);
+}
+.imagery-item .year-badge {
+  position: absolute; top: 6px; left: 6px;
+  font-size: 0.55rem; font-weight: 800; letter-spacing: 0.5px;
+  background: rgba(0,0,0,0.55); color: #fff; padding: 2px 6px;
+  border-radius: 4px; backdrop-filter: blur(2px);
+}
+.imagery-item .layer-label {
+  position: absolute; top: 6px; right: 6px;
+  font-size: 0.5rem; font-weight: 700; letter-spacing: 0.5px;
+  background: var(--accent); color: var(--on-accent); padding: 2px 6px;
+  border-radius: 4px; text-transform: uppercase;
+}
+.imagery-count {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.7rem; color: var(--text-muted); margin-bottom: var(--space-2);
+}
+.imagery-count b { color: var(--accent-strong); }
+.imagery-timeline {
+  display: flex; align-items: center; gap: 4px; margin-top: var(--space-2);
+  padding: var(--space-2); background: var(--surface); border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.imagery-timeline-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--border);
+  flex: 0 0 auto;
+}
+.imagery-timeline-dot.observed { background: var(--trend-up); }
+.imagery-timeline-dot.projected { background: var(--trend-down); }
+.imagery-timeline-line { flex: 1; height: 2px; background: var(--border); }
+.imagery-timeline-label {
+  font-size: 0.55rem; color: var(--text-muted); white-space: nowrap; margin: 0 4px;
+}
 
 .case-file { border: 2px solid var(--anomaly); border-radius: var(--radius-md); padding: var(--space-3); background: var(--surface); }
 .case-file .case-head { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; color: var(--anomaly); text-transform: uppercase; }
