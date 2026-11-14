@@ -76,7 +76,7 @@ Tier B (`api/services/ondemand.py`) does bounded live discovery via CMR and cach
 ## Data store formats
 **Sample/demo (`data/samples/earth_pulse_sample.npz`)** — deterministic synthetic gridded multivariate series (see `pipeline/export_store.py`). Keys: `dates`, `lats`, `lons`, `grid_lat`, `grid_lon`, and one array per parameter `(T, G)`.
 
-**Real-data path** — `run_pipeline.py --gridded` (requires Earthdata login) would write a consolidated Zarr store (`pipeline/export_store.py::export_zarr`) and the engine reads it with the same variable layout. The demo intentionally ships a tiny synthetic store so anyone can run the project offline.
+**Real-data path** — `run_pipeline.py --sample` (or `--gridded` for real Earthdata path) would write a consolidated Zarr store (`pipeline/export_store.py::export_zarr`) and the engine reads it with the same variable layout. The demo intentionally ships a tiny synthetic store so anyone can run the project offline.
 
 ## Unified payload contract
 See `docs/api-contract.md`. `schema_version` is versioned (`1.0.0`); the frontend types in `web/src/types/payload.ts` mirror it.

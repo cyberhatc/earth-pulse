@@ -73,7 +73,7 @@ per-parameter coverage instead of hiding the differences.
 - The LLM only re-words numbers; it never computes them.
 
 ## 10. Deployment/operational limits
-- API is read-mostly (`GET` + `POST /explain`), no auth/rate limiting — built for
+- API is read-mostly (`GET` + `POST /explain`), in-process rate limiting; no auth — built for
   demo scale, not hostile public traffic.
 - Free tiers sleep (Render) or force cold rebuilds (HF Spaces); first request may
   be slow.

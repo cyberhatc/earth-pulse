@@ -1,6 +1,6 @@
 # AI scenario cards — the honest "future image" feature
 
-**What this is:** an optional, disabled-by-default pipeline that produces three labeled **scenario images** (lower / median / upper) of a place, conditioned on the latest real map tile and the model's predicted parameter deltas.
+**What this is:** an optional, currently-enabled pipeline (disable via config) that produces three labeled **scenario images** (lower / median / upper) of a place, conditioned on the latest real map tile and the model's predicted parameter deltas.
 
 **What this is not:** a photograph of the future; a prediction of actual events; a replacement for observed data. The label `AI-generated scenario — not an observation` travels with every card (UI badge, file-level context, and this doc).
 
@@ -8,7 +8,7 @@
 
 1. OFF unless `configs/model.yaml → scenario_image.enabled: true` **or** `EP_SCENARIO_IMAGES=1`.
 2. Every call must pass `acknowledge_not_observation=True` (CLI sets it; HTTP never generates).
-3. Generation happens **offline** (Colab/Kaggle GPU), never inside an API request — the endpoint `/imagery/scenario` only returns the deterministic conditioning (prompts, deltas, source tile) and enablement status.
+3. Generation happens **offline** (GPU optional; SD-Turbo (CPU, 4-bit) works, SD v1.5 (GPU, 30 steps) is recommended), never inside an API request — the endpoint `/imagery/scenario` only returns the deterministic conditioning (prompts, deltas, source tile) and enablement status.
 4. Negative prompt bans text/borders/people/fake buildings; geography (coastline, rivers, roads, settlements) must be preserved; only land-cover color balance shifts.
 5. Strength: lower 0.25 / median 0.35 / upper 0.45 — lower variants are nearer the source tile, so they are conservative.
 
@@ -21,9 +21,9 @@
 | `notebooks/04_scenario_images.ipynb` | Colab/Kaggle walkthrough + HF Hub push |
 | `api/routers/scenario.py` | `GET /imagery/scenario?lat&lon&parameter=ndvi` → status + conditioning; never generates |
 | `web/src/components/ScenarioStatus.tsx` | "Check scenario pipeline" button + prompt viewer in the panel |
-| `configs/model.yaml` | `scenario_image.enabled: false` by default |
+| `configs/model.yaml` | `scenario_image.enabled: true (repo state; set false to disable)` by default |
 
-## Run it (Colab / Kaggle, free GPU)
+## Run it (GPU recommended; SD-Turbo works on CPU)
 
 ```bash
 pip install diffusers transformers accelerate pillow requests torch
@@ -53,4 +53,4 @@ The prompt fixes the **same terrain** and asks only for a parameter-driven land-
 
 1. Generate the three PNGs offline; push to HF Hub (`huggingface-cli upload <you>/earth-pulse-scenarios ./models/artifacts/scenarios`).
 2. Serve the folder statically or from the Space; reference URLs in the payload's `forecast.scenarios` array.
-3. Keep `scenario_image.enabled: false` by default; demos enable per-event.
+3. Keep `scenario_image.enabled: true (repo state; set false to disable)` by default; demos enable per-event.
