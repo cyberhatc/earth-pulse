@@ -78,29 +78,48 @@ def imagery_timelapse_gif(lat: float = Query(..., ge=-90, le=90),
     from PIL import Image, ImageDraw, ImageFont
     from pipeline.fetch_gibs import lon_lat_to_tile, tile_url
 
-    # z=6 -> ~1 km per pixel (higher detail for the requested location)
+    # z=6 -> ~1 km per pixel. Mosaic 4x4 tiles (~1024x1024 = ~1000 km) to cover
+    # a large region (e.g. south India) around the clicked point.
     z = 6
-    x, y = lon_lat_to_tile(lon, lat, z)
+    cx, cy = lon_lat_to_tile(lon, lat, z)
+    n = 2  # radius in tiles -> 2*n+1 = 5x5 mosaic (~1280 km)
+    grid = 2 * n + 1
+    tile_px = 256
+    mosaic_px = grid * tile_px
     frames = []
     for yr in range(start_year, end_year + 1):
         date = f"{yr}-07-15"
-        url = tile_url("true_color", date, z, x, y)
-        try:
-            with urllib.request.urlopen(url, timeout=20) as resp:
-                raw = resp.read()
-            img = Image.open(BytesIO(raw)).convert("RGB").resize((384, 384))
-        except Exception:
-            # skip missing years
+        mosaic = Image.new("RGB", (mosaic_px, mosaic_px), (0, 0, 0))
+        ok = False
+        for dy in range(-n, n + 1):
+            for dx in range(-n, n + 1):
+                url = tile_url("true_color", date, z, cx + dx, cy + dy)
+                try:
+                    with urllib.request.urlopen(url, timeout=20) as resp:
+                        raw = resp.read()
+                    tile = Image.open(BytesIO(raw)).convert("RGB").resize((tile_px, tile_px))
+                    mosaic.paste(tile, ((dx + n) * tile_px, (dy + n) * tile_px))
+                    ok = True
+                except Exception:
+                    # leave black tile for missing
+                    pass
+        if not ok:
             continue
-        # label
-        draw = ImageDraw.Draw(img)
+        # mark the clicked point
+        px = (cx - (cx - n))  # not needed
+        # draw a crosshair at the center tile center
+        draw = ImageDraw.Draw(mosaic)
+        mx, my = (n * tile_px + tile_px // 2, n * tile_px + tile_px // 2)
+        draw.ellipse([(mx - 8, my - 8), (mx + 8, my + 8)], outline=(255, 0, 0), width=3)
         try:
-            font = ImageFont.truetype("arial.ttf", 16)
+            font = ImageFont.truetype("arial.ttf", 28)
         except Exception:
             font = ImageFont.load_default()
-        draw.rectangle([(0, 0), (60, 22)], fill=(0, 0, 0, 180))
-        draw.text((6, 4), str(yr), fill=(255, 255, 255), font=font)
-        frames.append(img)
+        draw.rectangle([(0, 0), (160, 36)], fill=(0, 0, 0, 180))
+        draw.text((10, 6), str(yr), fill=(255, 255, 255), font=font)
+        # downscale for gif size
+        mosaic = mosaic.resize((512, 512))
+        frames.append(mosaic)
 
     if not frames:
         raise HTTPException(503, detail="no frames available")
