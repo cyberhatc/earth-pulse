@@ -189,6 +189,147 @@ body {
 .skel { animation: pulse 1.4s ease-in-out infinite; background: var(--surface-2); border-radius: var(--radius-sm); }
 @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
 
+/* ---------- animations ---------- */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes bounceIn { 0% { opacity: 0; transform: scale(0.3); } 50% { transform: scale(1.05); } 70% { transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes glow { 0%,100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 40%, transparent); } 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent); } }
+
+.animate-fade { animation: fadeIn 0.4s ease-out both; }
+.animate-slide-up { animation: slideUp 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.animate-scale { animation: scaleIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.animate-bounce { animation: bounceIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+/* ---------- enhanced panel ---------- */
+.panel { backdrop-filter: blur(4px); }
+.panel.open { animation: slideInRight 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.panel-backdrop { animation: fadeIn 0.25s ease-out; }
+
+/* ---------- enhanced cards ---------- */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent); }
+
+/* ---------- enhanced tabs ---------- */
+.panel-tab {
+  transition: all 0.2s ease;
+  position: relative;
+}
+.panel-tab[aria-selected='true'] {
+  animation: scaleIn 0.25s ease-out;
+}
+.panel-tab:hover { transform: translateY(-1px); }
+
+/* ---------- enhanced imagery ---------- */
+.imagery-item {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: scaleIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.imagery-item:hover { transform: scale(1.03); box-shadow: var(--shadow); }
+.imagery-item img { transition: transform 0.3s ease; }
+.imagery-item:hover img { transform: scale(1.08); }
+
+/* ---------- enhanced trend cells ---------- */
+.trend-cell {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: slideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.trend-cell:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+
+/* ---------- enhanced buttons ---------- */
+.icon-btn { transition: all 0.2s ease; }
+.icon-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 6px color-mix(in srgb, var(--accent) 20%, transparent); }
+.icon-btn:active { transform: translateY(0) scale(0.97); }
+
+.pill { transition: all 0.2s ease; }
+.pill:hover { transform: scale(1.05); }
+.pill[aria-pressed='true'] { animation: bounceIn 0.4s ease-out; }
+
+/* ---------- enhanced header ---------- */
+.header { transition: box-shadow 0.3s ease; }
+.logo svg { transition: transform 0.3s ease; }
+.logo:hover svg { transform: rotate(-8deg) scale(1.1); }
+
+/* ---------- enhanced overlay cards ---------- */
+.overlay-card { animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; transition: box-shadow 0.2s ease; }
+.overlay-card:hover { box-shadow: var(--shadow); }
+
+/* ---------- enhanced error box ---------- */
+.error-box { animation: bounceIn 0.4s ease-out; }
+
+/* ---------- enhanced fallback banner ---------- */
+.fallback-banner { animation: slideUp 0.3s ease-out; }
+
+/* ---------- shimmer for skeletons ---------- */
+.skel {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface) 50%, var(--surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ---------- enhanced footer ---------- */
+.footer { transition: background 0.3s ease; }
+
+/* ---------- enhanced select ---------- */
+.select { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+.select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent); }
+
+/* ---------- chart box ---------- */
+.chart-box { transition: box-shadow 0.2s ease; }
+.chart-box:hover { box-shadow: var(--shadow); }
+
+/* ---------- btn-link ---------- */
+.btn-link { transition: color 0.2s ease, transform 0.2s ease; display: inline-block; }
+.btn-link:hover { transform: translateX(4px); }
+
+/* ---------- case-file ---------- */
+.case-file { transition: transform 0.2s ease, box-shadow 0.2s ease; animation: slideUp 0.4s ease-out both; }
+.case-file:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+
+/* ---------- explainer ---------- */
+.explainer { animation: fadeIn 0.5s ease-out; }
+
+/* ---------- coverage badge ---------- */
+.coverage-badge { animation: scaleIn 0.35s ease-out; }
+
+/* ---------- watchlist ---------- */
+.watchlist-item { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.watchlist-item:hover { transform: translateX(4px); }
+
+/* ---------- smooth scroll ---------- */
+.panel-body { scroll-behavior: smooth; }
+
+/* ---------- time slider ---------- */
+.time-slider { transition: box-shadow 0.2s ease; }
+.time-slider:hover { box-shadow: var(--shadow); }
+
+/* ---------- layer toggles ---------- */
+.layer-toggles label { transition: color 0.15s ease; }
+.layer-toggles label:hover { color: var(--accent-strong); }
+
+/* ---------- param pills ---------- */
+.param-pills { animation: fadeIn 0.3s ease-out; }
+.pill { transition: all 0.2s ease; }
+.pill:hover { transform: scale(1.05); box-shadow: 0 2px 6px color-mix(in srgb, var(--accent) 20%, transparent); }
+
+/* ---------- tab content transition ---------- */
+.tab-content { animation: fadeIn 0.3s ease-out; }
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 .footer { flex: 0 0 auto; display: flex; gap: var(--space-4); align-items: center; padding: 6px var(--space-4); border-top: 1px solid var(--border); font-size: 0.68rem; color: var(--text-muted); overflow-x: auto; white-space: nowrap; }
 .footer a { color: var(--accent-strong); text-decoration: none; }
 
