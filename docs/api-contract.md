@@ -105,10 +105,10 @@ The unified on-click payload. Example (abridged; arrays truncated with …):
 }
 ```
 
-> `generator` values actually produced by `api/services/explainer.py`: `templated` (default for `/place`), `ollama` (local LLM), `hf-rag` (when `EP_RAG_BACKEND=hf` and the Hugging Face RAG Space answers — retrieval over the bundled knowledge base + a small instruct model), `hf_inference` (when `HF_TOKEN` is set and the endpoint responds), and `templated-guard` (the LLM failed a post-generation fact check, so deterministic prose was substituted). A `gemini` backend is reserved/planned and is **not yet wired**. The forecast block includes `artifact` (e.g. `forecaster_power_real.npz`) so callers can see which trained model produced it. See `docs/rag.md` for the RAG design and runbook.
+> `generator` values actually produced by `api/services/explainer.py`: `templated` (default for `/place`), `ollama` (local LLM), `hf-router` (when `EP_RAG_BACKEND=hf-router`: local BM25 retrieval over the bundled knowledge base + HF serverless inference), `hf-rag` (when `EP_RAG_BACKEND=hf` and the Hugging Face RAG Space answers), `hf_inference` (when `HF_TOKEN` is set and the endpoint responds), and `templated-guard` (the LLM failed a post-generation fact check, so deterministic prose was substituted). A `gemini` backend is reserved/planned and is **not yet wired**. The forecast block includes `artifact` (e.g. `forecaster_power_real.npz`) so callers can see which trained model produced it. See `docs/rag.md` for the RAG design and runbook.
 
 ## `POST /chat`
-Conversational, facts-locked narration backed by the Hugging Face RAG Space (when `EP_RAG_BACKEND=hf`), a local Ollama model (default), or deterministic templated prose (fallback). The server assembles the facts (trends, forecast deltas, anomalies, opposite pairs, climate twin, coverage) from the same store and engine as `/place`; the model only re-words them and never computes or changes a number. With `EP_RAG_BACKEND=hf`, retrieval runs over a bundled BM25 knowledge base (repo docs + NASA POWER / method notes + store-derived coverage facts) and answers carry `sources: [{id, title, source}]`. Every draft passes the same post-generation guards regardless of backend.
+Conversational, facts-locked narration backed by the Hugging Face serverless router (when `EP_RAG_BACKEND=hf-router`), the Hugging Face RAG Space (when `EP_RAG_BACKEND=hf`), a local Ollama model (default), or deterministic templated prose (fallback). The server assembles the facts (trends, forecast deltas, anomalies, opposite pairs, climate twin, coverage) from the same store and engine as `/place`; the model only re-words them and never computes or changes a number. With a RAG backend enabled, retrieval runs over a BM25 knowledge base (repo docs + NASA POWER / method notes + store-derived coverage facts) and answers carry `sources: [{id, title, source}]`. Every draft passes the same post-generation guards regardless of backend.
 
 Request:
 ```json
@@ -152,7 +152,7 @@ Forecast deltas are **net change across the full horizon**, not per-decade rates
 | `GET /forecast?lat&lon&horizon_months=60` | Just the `forecast` block |
 | `GET /anomalies?lat&lon` | Rolling robust-z anomalies per parameter |
 | `POST /explain` | `{ "facts": {…} }` → `{ text, generator, confidence }` (numbers unchanged) |
-| `POST /chat` | Facts-locked conversation via HF RAG Space or local Ollama; falls back to templated prose. Replies may carry `sources` (RAG citations) |
+| `POST /chat` | Facts-locked conversation via HF serverless RAG / Space / local Ollama; falls back to templated prose. Replies may carry `sources` (RAG citations) |
 | `GET /imagery/past?lat&lon` | GIBS URLs for several layers/dates + a Landsat EarthExplorer link |
 | `GET /imagery/projected?parameter=temperature&year=2030` | **SVG** heat-map (Theil–Sen extrapolation), labeled model-projected |
 | `GET /docs-payload` | **Planned — not yet served by the API.** Frontend dev fallback: embedded fixture `web/src/lib/fallbackPayload.json` (mirrors this contract) and the live `/openapi.json` |

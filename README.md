@@ -264,12 +264,13 @@ generation pipeline, and the frontend 🛰 Hi-Res / 📍 Belgaum controls.
 
 ## 18. RAG chatbot — retrieval-augmented, facts-locked narration (v0.4.0)
 
-`POST /chat` now has an optional retrieval layer and a Hugging Face Space backend, keeping the facts-locked design (the LLM never computes a number; guards reject certainty claims, p-value misuse, band misuse, non-significant-as-significant, and invented numbers — on every backend):
+`POST /chat` now has an optional retrieval layer, keeping the facts-locked design (the LLM never computes a number; guards reject certainty claims, p-value misuse, band misuse, non-significant-as-significant, and invented numbers — on every backend):
 
 ```bash
-python3 scripts/build_rag_kb.py --sync-space   # builds data/rag/kb.json (BM25 KB: docs + NASA POWER/method notes + store-derived coverage) and syncs hf-space/
-# after creating a Space at huggingface.co/spaces (Docker SDK, free CPU):
-EP_RAG_BACKEND=hf HF_RAG_SPACE_URL=https://<you>-earth-pulse-rag.hf.space uvicorn api.main:app --port 8000
+python3 scripts/build_rag_kb.py --sync-space   # build data/rag/kb.json (BM25 KB: docs + NASA POWER/method notes + store-derived coverage)
+# in nasa/.env (not committed): EP_RAG_BACKEND=hf-router   # or hf + HF_RAG_SPACE_URL
+#   (needs HF_TOKEN with "Make calls to Inference Providers" — huggingface.co → Settings → Access Tokens → edit token)
+uvicorn api.main:app --port 8000
 ```
 
-With `EP_RAG_BACKEND=hf`, answers carry `sources: [{id, title, source}]` (rendered as a muted "Sources" line in the chat UI); with the Space down, chat falls back to Ollama, then to templated prose — never a hard failure. Design, deploy runbook, token setup and rollback: `docs/rag.md`.
+With `EP_RAG_BACKEND=hf-router`, answers carry `sources: [{id, title, source}]` (rendered as a muted "Sources" line in the chat UI); local BM25 retrieval + HF serverless inference — no servers, $0 hosting. If the RAG backend is down, chat falls back to Ollama, then to templated prose — never a hard failure. Design, deploy runbook, token setup and rollback: `docs/rag.md`.

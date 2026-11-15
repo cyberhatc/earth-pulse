@@ -2,10 +2,11 @@
 
 The LLM never computes numbers — it receives a `facts` dict assembled from the
 payload (trends, forecast deltas, anomaly count, opposite-trend count, coverage)
-and only re-words them. `/chat` prefers the Hugging Face RAG Space when
-EP_RAG_BACKEND=hf (retrieval over the bundled knowledge base + a small instruct
-model on free CPU), then the local Ollama model; deterministic templated prose is
-used when no LLM is available. Every LLM answer passes post-generation guards
+and only re-words them. `/chat` prefers a Hugging Face RAG backend when
+EP_RAG_BACKEND=hf-router (local BM25 retrieval over the bundled knowledge base +
+HF serverless inference) or EP_RAG_BACKEND=hf (a Space that does retrieval +
+generation), then the local Ollama model; deterministic templated prose is used
+when no LLM is available. Every LLM answer passes post-generation guards
 (certainty claims, p-value/band misuse, false significance claims, unverified
 numbers) before it is returned.
 """
@@ -746,9 +747,9 @@ def _guarded_llm_reply(text: str, model: str | None, generator: str,
 def chat(messages: list[dict], facts: dict, language: str = "en") -> dict:
     """Conversational facts-locked explainer.
 
-    Order of attempts: HF RAG Space (if EP_RAG_BACKEND=hf) -> local Ollama ->
-    deterministic templated prose. Every model draft passes the same fact
-    guards, whichever backend produced it.
+    Order of attempts: HF RAG backend (EP_RAG_BACKEND=hf-router or hf) -> local
+    Ollama -> deterministic templated prose. Every model draft passes the same
+    fact guards, whichever backend produced it.
     """
     safe_messages = [
         {"role": m.get("role", "user"), "content": str(m.get("content", ""))[:4000]}
@@ -762,13 +763,19 @@ def chat(messages: list[dict], facts: dict, language: str = "en") -> dict:
     facts_summary = _facts_summary(facts, card_kind)
 
     if rag.rag_enabled():
-        result = rag.rag_chat(safe_messages, facts_summary, card_kind,
-                              language, max_new_tokens=170)
+        if rag.router_enabled():
+            result = rag.router_chat(safe_messages, facts_summary, card_kind,
+                                     language, max_new_tokens=170)
+            generator = "hf-router"
+        else:
+            result = rag.rag_chat(safe_messages, facts_summary, card_kind,
+                                  language, max_new_tokens=170)
+            generator = "hf-rag"
         if result and result.get("text"):
             return _guarded_llm_reply(result["text"], result.get("model"),
-                                      "hf-rag", safe_messages, facts,
+                                      generator, safe_messages, facts,
                                       card_kind, result.get("sources"))
-        # Space unreachable/failed: fall through to Ollama, then templated.
+        # RAG backend unreachable/failed: fall through to Ollama, then templated.
 
     system = (
         "You are Earth Pulse, a careful climate-data interpreter embedded in a NASA satellite trend explorer. "

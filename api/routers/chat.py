@@ -1,11 +1,12 @@
 """POST /chat — conversational, facts-locked LLM narration.
 
 The backend assembles the FACTS (trends, forecast deltas, anomalies, coverage)
-from the same store/engine used by /place. With EP_RAG_BACKEND=hf the query goes
-to the Hugging Face RAG Space (retrieval over the bundled knowledge base + a
-small instruct model); otherwise a local Ollama model re-words those facts. The
-model never computes or changes a number. If no LLM is available the endpoint
-falls back to a deterministic templated answer. Every LLM draft passes the same
+from the same store/engine used by /place. With EP_RAG_BACKEND=hf-router,
+retrieval runs locally over the bundled knowledge base and generation runs on
+HF's serverless router; with EP_RAG_BACKEND=hf the query goes to the Hugging
+Face RAG Space. Otherwise a local Ollama model re-words those facts. The model
+never computes or changes a number. If no LLM is available the endpoint falls
+back to a deterministic templated answer. Every LLM draft passes the same
 guards regardless of backend.
 """
 from __future__ import annotations

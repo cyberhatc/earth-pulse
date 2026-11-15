@@ -1,6 +1,6 @@
 {
  "version": "1.0",
- "generated_at": "2026-11-15T15:19:10+00:00",
+ "generated_at": "2026-11-15T15:44:06+00:00",
  "generator": "scripts/build_rag_kb.py",
  "sources": [
   "README.md",
@@ -117,14 +117,14 @@
    "title": "6. Architecture",
    "source": "README.md",
    "topic": "readme",
-   "text": "6. Architecture\n- **Data layer:** download from Earthdata, clean with xarray, store as Zarr or NetCDF\n- **Analysis layer:** Python with NumPy, SciPy, pymannkendall, scikit-learn, PyTorch\n- **API layer:** FastAPI serving trends, forecasts, and anomalies per location\n- **Frontend:** React with MapLibre GL or Leaflet, plus Plotly or D3 for charts\n- **Deployment:** Vercel, Netlify, or GitHub Pages for the frontend, Hugging Face Spaces or Render for the API\nEverything can run at zero cost. Free plans change, so check current limits."
+   "text": "6. Architecture\n- **Data layer:** download from Earthdata, clean with xarray, store as Zarr or NetCDF\n- **Analysis layer:** Python with NumPy, SciPy, pymannkendall, scikit-learn, PyTorch\n- **API layer:** FastAPI serving trends, forecasts, and anomalies per location\n- **Frontend:** React with MapLibre GL or Leaflet, plus Plotly or D3 for charts\n- **Deployment:** one Render Docker web service (`render.yaml`) — FastAPI serves the built Vite app **and** the API from the same URL; GitHub Pages / Vercel / Netlify remain possible for the frontend only\nEverything can run at zero cost. Free plans change, so check current limits."
   },
   {
    "id": "readme-7-free-tier-stack",
    "title": "7. Free-Tier Stack",
    "source": "README.md",
    "topic": "readme",
-   "text": "7. Free-Tier Stack\n- Code: GitHub\n- Frontend hosting: Vercel, Netlify, or GitHub Pages\n- API hosting: Hugging Face Spaces or Render\n- Training: Google Colab and Kaggle notebooks\n- Models and datasets: Hugging Face Hub\n- Database for citizen reports: Supabase free tier\n- Maps: MapLibre GL with OpenStreetMap tiles\n- Language explainer: open models on Hugging Face or a free Gemini tier"
+   "text": "7. Free-Tier Stack\n- Code: GitHub\n- Frontend hosting: same-service on Render (recommended) · Vercel / Netlify / GitHub Pages optional\n- API hosting: Hugging Face Spaces or Render\n- Training: Google Colab and Kaggle notebooks\n- Models and datasets: Hugging Face Hub\n- Database for citizen reports: Supabase free tier\n- Maps: MapLibre GL with OpenStreetMap tiles\n- Language explainer: open models on Hugging Face or a free Gemini tier"
   },
   {
    "id": "readme-7-free-tier-stack-2",
@@ -187,7 +187,7 @@
    "title": "14. What's implemented in this repo (v0.1.0)",
    "source": "README.md",
    "topic": "readme",
-   "text": "14. What's implemented in this repo (v0.1.0)\n- **`api/`** — FastAPI serving **unified `GET /place?lat&lon` payload** (trends, forecast, anomalies, opposite trends, GIBS past imagery, projected SVG maps, explainer), `/imagery/projected`, `/tier-b`, `/health` (including local-LLM status), and **`POST /chat`** (facts-locked Ollama conversation). Dockerfile for HF Spaces/Render free tier.\n- **`web/`** — React + Vite + TypeScript + **MapLibre GL** frontend (click anywhere → charts with uncertainty ribbon, imagery gallery, case-file cards, coverage badge, EN/HI/KN, low-bandwidth mode, localStorage watchlist). `cd web && npm install && npm run dev`.\n- **`docs/`** — architecture, data sources (with the honest 40-year coverage check), API contract, ML/accuracy notes, UI/UX spec, free deployment guide, parallel-session prompts."
+   "text": "14. What's implemented in this repo (v0.1.0)\n- **`api/`** — FastAPI serving **unified `GET /place?lat&lon` payload** (trends, forecast, anomalies, opposite trends, GIBS past imagery, projected SVG maps, explainer), `/imagery/projected`, `/tier-b`, `/health` (including local-LLM status), and **`POST /chat`** (facts-locked Ollama conversation). Dockerfile for HF Spaces/Render free tier.\n- **`web/`** — React + Vite + TypeScript frontend (**Leaflet** map, conversation-first UI, fact-locked Ollama chat, live coverage/forecast/opposite/twin/evidence cards, dark theme, localStorage dossier). In dev it proxies `/api` → `:8000`; in production the backend serves `web/dist` directly from the same origin. `cd web && npm install && npm run dev` (http://localhost:3000).\n- **`docs/`** — architecture, data sources (with the honest 40-year coverage check), API contract, ML/accuracy notes, UI/UX spec, free deployment guide, parallel-session prompts."
   },
   {
    "id": "readme-14-what-s-implemented-in-this-repo-v0-1-0-4",
@@ -201,7 +201,7 @@
    "title": "Quickstart (offline)",
    "source": "README.md",
    "topic": "readme",
-   "text": "Quickstart (offline)\n```bash\npip install numpy scipy fastapi uvicorn httpx pydantic pytest\nmake sample-data engine train test   # deterministic demo store → analysis.json → artifact → tests\nmake api                             # http://localhost:8000 (try /place?lat=12.97&lon=77.59)\ncd web && npm install && npm run dev # http://localhost:5173\n```\n`docker compose up` works too (API + web). See `docs/deploy.md` for free hosting (HF Spaces + Vercel/Netlify/Pages)."
+   "text": "Quickstart (offline)\n```bash\npip install numpy scipy fastapi uvicorn httpx pydantic pytest\nmake sample-data engine train test   # deterministic demo store → analysis.json → artifact → tests\nmake api                             # http://localhost:8000 (try /place?lat=12.97&lon=77.59)\ncd web && npm install && npm run dev  # http://localhost:3000 (Vite proxies /api -> :8000)\n```\n`docker compose up --build api` runs the **single-service** image on :8000 (API + built frontend), or run native: `npm run build` in `web/` first, then `uvicorn api.main:app --port 8000` — same URL for the app and `/api/*`. `render.yaml` deploys that image to Render as one free Docker web service (`healthCheckPath: /api/health`); see `docs/deploy.md`."
   },
   {
    "id": "readme-honest-limitations",
@@ -229,7 +229,7 @@
    "title": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)",
    "source": "README.md",
    "topic": "readme",
-   "text": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)\n| `web/` | React + Vite + TS + MapLibre; `npm run build` = 51 modules / 1.0 MB JS (286 KB gzip) |\n| `docs/` | architecture, api-contract, data-sources, deploy, ml, ui-ux, **limitations (new)**, **submission-checklist (new)** |\n**Verified today (actual outputs, not claims)**"
+   "text": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)\n| `web/` | React + Vite + TS + Leaflet; `npm run build` → ~366 KB JS (114 KB gzip); served same-origin by the API in production |\n| `docs/` | architecture, api-contract, data-sources, deploy, ml, ui-ux, **limitations (new)**, **submission-checklist (new)** |\n**Verified today (actual outputs, not claims)**"
   },
   {
    "id": "readme-15-implementation-status-verified-2026-11-09-10--4",
@@ -323,6 +323,34 @@
    "text": "GET /point?lat=15.8497&lon=74.4977&horizon_months=60\nSee `docs/highres-belgaum.md` for the resolution ladder (POWER 40-yr point series,\nMODIS 250 m NDVI, Sentinel-2 10 m imagery), the AI scenario-card image\ngeneration pipeline, and the frontend 🛰 Hi-Res / 📍 Belgaum controls."
   },
   {
+   "id": "readme-18-rag-chatbot-retrieval-augmented-facts-locked-",
+   "title": "18. RAG chatbot — retrieval-augmented, facts-locked narration (v0.4.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "18. RAG chatbot — retrieval-augmented, facts-locked narration (v0.4.0)\n`POST /chat` now has an optional retrieval layer and a Hugging Face Space backend, keeping the facts-locked design (the LLM never computes a number; guards reject certainty claims, p-value misuse, band misuse, non-significant-as-significant, and invented numbers — on every backend):"
+  },
+  {
+   "id": "readme-18-rag-chatbot-retrieval-augmented-facts-locked--2",
+   "title": "18. RAG chatbot — retrieval-augmented, facts-locked narration (v0.4.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "18. RAG chatbot — retrieval-augmented, facts-locked narration (v0.4.0)\n```bash\npython3 scripts/build_rag_kb.py --sync-space   # builds data/rag/kb.json (BM25 KB: docs + NASA POWER/method notes + store-derived coverage) and syncs hf-space/"
+  },
+  {
+   "id": "readme-after-creating-a-space-at-huggingface-co-spaces-",
+   "title": "after creating a Space at huggingface.co/spaces (Docker SDK, free CPU):",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "after creating a Space at huggingface.co/spaces (Docker SDK, free CPU):\nEP_RAG_BACKEND=hf HF_RAG_SPACE_URL=https://<you>-earth-pulse-rag.hf.space uvicorn api.main:app --port 8000\n```"
+  },
+  {
+   "id": "readme-after-creating-a-space-at-huggingface-co-spaces--2",
+   "title": "after creating a Space at huggingface.co/spaces (Docker SDK, free CPU):",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "after creating a Space at huggingface.co/spaces (Docker SDK, free CPU):\nWith `EP_RAG_BACKEND=hf`, answers carry `sources: [{id, title, source}]` (rendered as a muted \"Sources\" line in the chat UI); with the Space down, chat falls back to Ollama, then to templated prose — never a hard failure. Design, deploy runbook, token setup and rollback: `docs/rag.md`."
+  },
+  {
    "id": "docs-api-contract-api-contract-get-place-and-friends",
    "title": "API contract — `GET /place` and friends",
    "source": "docs/api-contract.md",
@@ -369,14 +397,14 @@
    "title": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`",
    "source": "docs/api-contract.md",
    "topic": "docs-api-contract",
-   "text": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`\n> `generator` values actually produced by `api/services/explainer.py`: `templated` (default for `/place`), `ollama` (local LLM), `hf_inference` (when `HF_TOKEN` is set and the endpoint responds), and `templated-guard` (the LLM failed a post-generation fact check, so deterministic prose was substituted). A `gemini` backend is reserved/planned and is **not yet wired**. The forecast block includes `artifact` (e.g. `forecaster_power_real.npz`) so callers can see which trained model produced it."
+   "text": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`\n> `generator` values actually produced by `api/services/explainer.py`: `templated` (default for `/place`), `ollama` (local LLM), `hf-rag` (when `EP_RAG_BACKEND=hf` and the Hugging Face RAG Space answers — retrieval over the bundled knowledge base + a small instruct model), `hf_inference` (when `HF_TOKEN` is set and the endpoint responds), and `templated-guard` (the LLM failed a post-generation fact check, so deterministic prose was substituted). A `gemini` backend is reserved/planned and is **not yet wired**. The forecast block includes `artifact` (e.g. `forecaster_power_real.npz`) so callers can see which trained model produced it. See `docs/rag.md` for the RAG design and runbook."
   },
   {
    "id": "docs-api-contract-post-chat",
    "title": "`POST /chat`",
    "source": "docs/api-contract.md",
    "topic": "docs-api-contract",
-   "text": "`POST /chat`\nConversational, facts-locked narration backed by a local Ollama model. The server assembles the facts (trends, forecast deltas, anomalies, opposite pairs, climate twin, coverage) from the same store and engine as `/place`; the model only re-words them and never computes or changes a number."
+   "text": "`POST /chat`\nConversational, facts-locked narration backed by the Hugging Face RAG Space (when `EP_RAG_BACKEND=hf`), a local Ollama model (default), or deterministic templated prose (fallback). The server assembles the facts (trends, forecast deltas, anomalies, opposite pairs, climate twin, coverage) from the same store and engine as `/place`; the model only re-words them and never computes or changes a number. With `EP_RAG_BACKEND=hf`, retrieval runs over a bundled BM25 knowledge base (repo docs + NASA POWER / method notes + store-derived coverage facts) and answers carry `sources: [{id, title, source}]`. Every draft passes the same post-generation guards regardless of backend."
   },
   {
    "id": "docs-api-contract-post-chat-2",
@@ -390,7 +418,7 @@
    "title": "`POST /chat`",
    "source": "docs/api-contract.md",
    "topic": "docs-api-contract",
-   "text": "`POST /chat`\nResponse:\n```json\n{\n\"text\": \"The 5-year forecast indicates a net increase in temperature of +0.165 °C over 60 months …\",\n\"generator\": \"ollama\",\n\"model\": \"qwen2.5:1.5b\",\n\"confidence\": \"medium\",\n\"card_kind\": \"forecast\",\n\"llm_available\": true,\n\"guard_reason\": null,\n\"guard_numbers\": [],\n\"facts\": { \"trends\": {}, \"forecast_deltas\": {}, \"parameters_unavailable\": [] }\n}\n```\n`guard_reason` and `guard_numbers` are always present; the latter is empty unless a numeric guard rejected a draft."
+   "text": "`POST /chat`\nResponse:\n```json\n{\n\"text\": \"The 5-year forecast indicates a net increase in temperature of +0.165 °C over 60 months …\",\n\"generator\": \"ollama\",\n\"model\": \"qwen2.5:1.5b\",\n\"confidence\": \"medium\",\n\"card_kind\": \"forecast\",\n\"llm_available\": true,\n\"guard_reason\": null,\n\"guard_numbers\": [],\n\"sources\": [{ \"id\": \"S1\", \"title\": \"Earth Pulse methodology\", \"source\": \"docs/rag-corpus/earth-pulse-method.md\" }],\n\"facts\": { \"trends\": {}, \"forecast_deltas\": {}, \"parameters_unavailable\": [] }\n}\n```\n`guard_reason` and `guard_numbers` are always present; the latter is empty unless a numeric guard rejected a draft."
   },
   {
    "id": "docs-api-contract-post-chat-4",
@@ -404,14 +432,14 @@
    "title": "Other endpoints",
    "source": "docs/api-contract.md",
    "topic": "docs-api-contract",
-   "text": "Other endpoints\n| Endpoint | Returns |\n|---|---|\n| `GET /trends/cell?lat&lon` | Trends for every parameter at the nearest cell |\n| `GET /trends/opposite?lat&lon` | Opposite-trend pairs involving the nearest neighborhood |\n| `GET /twins?lat&lon` | KMeans cluster id + the cells sharing it (\\\"climate twins\\\") |\n| `GET /forecast?lat&lon&horizon_months=60` | Just the `forecast` block |\n| `GET /anomalies?lat&lon` | Rolling robust-z anomalies per parameter |\n| `POST /explain` | `{ \"facts\": {…} }` → `{ text, generator, confidence }` (numbers unchanged) |\n| `POST /chat` | Facts-locked conversation via local Ollama; falls back to templated prose |\n| `GET /imagery/past?lat&lon` | GIBS URLs for several layers/dates + a Landsat EarthExplorer link |\n| `GET /imagery/projected?parameter=temperature&year=2030` | **SVG** heat-map (Theil–Sen extrapolation), labeled model-projected |"
+   "text": "Other endpoints\n| Endpoint | Returns |\n|---|---|\n| `GET /trends/cell?lat&lon` | Trends for every parameter at the nearest cell |\n| `GET /trends/opposite?lat&lon` | Opposite-trend pairs involving the nearest neighborhood |\n| `GET /twins?lat&lon` | KMeans cluster id + the cells sharing it (\\\"climate twins\\\") |\n| `GET /forecast?lat&lon&horizon_months=60` | Just the `forecast` block |\n| `GET /anomalies?lat&lon` | Rolling robust-z anomalies per parameter |\n| `POST /explain` | `{ \"facts\": {…} }` → `{ text, generator, confidence }` (numbers unchanged) |\n| `POST /chat` | Facts-locked conversation via HF RAG Space or local Ollama; falls back to templated prose. Replies may carry `sources` (RAG citations) |\n| `GET /imagery/past?lat&lon` | GIBS URLs for several layers/dates + a Landsat EarthExplorer link |"
   },
   {
    "id": "docs-api-contract-other-endpoints-2",
    "title": "Other endpoints",
    "source": "docs/api-contract.md",
    "topic": "docs-api-contract",
-   "text": "Other endpoints\n| `GET /docs-payload` | **Planned — not yet served by the API.** Frontend dev fallback: embedded fixture `web/src/lib/fallbackPayload.json` (mirrors this contract) and the live `/openapi.json` |"
+   "text": "Other endpoints\n| `GET /imagery/projected?parameter=temperature&year=2030` | **SVG** heat-map (Theil–Sen extrapolation), labeled model-projected |\n| `GET /docs-payload` | **Planned — not yet served by the API.** Frontend dev fallback: embedded fixture `web/src/lib/fallbackPayload.json` (mirrors this contract) and the live `/openapi.json` |"
   },
   {
    "id": "docs-api-contract-error-model",
@@ -645,6 +673,27 @@
    "text": "Deployment — free, open, reproducible\nEverything below stays at **$0**. Free-tier limits change; verify current terms before submission."
   },
   {
+   "id": "docs-deploy-recommended-one-render-docker-web-service-fronte",
+   "title": "Recommended: ONE Render Docker web service (frontend + API together)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "Recommended: ONE Render Docker web service (frontend + API together)\nThe repo root has a multi-stage `Dockerfile` (Node build of `web/` → Python runtime) and a\n`render.yaml` Blueprint. One service serves both:\n- `/` → the built frontend (`web/dist`), with SPA deep-link fallback\n- `/api/*` → the FastAPI endpoints (the same handlers are also mounted at `/` for back-compat)"
+  },
+  {
+   "id": "docs-deploy-recommended-one-render-docker-web-service-fronte-2",
+   "title": "Recommended: ONE Render Docker web service (frontend + API together)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "Recommended: ONE Render Docker web service (frontend + API together)\nRender deploys it directly: New → Blueprint → select this repo (root dir), or\n`render.yaml` is picked up automatically. Plan: **free** Docker web service;\n`healthCheckPath: /api/health`. No `VITE_API_BASE` is needed (same origin).\nRender injects `PORT`; the image already honors it. Data: the bundled synthetic\nsample store is built at image time; for real NASA POWER data, build\n`earth_pulse_power_real.npz` once and mount it or pass\n`EP_STORE_PATH`/`EP_ANALYSIS_PATH` as env vars."
+  },
+  {
+   "id": "docs-deploy-recommended-one-render-docker-web-service-fronte-3",
+   "title": "Recommended: ONE Render Docker web service (frontend + API together)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "Recommended: ONE Render Docker web service (frontend + API together)\n```bash\ndocker build -t earth-pulse .\ndocker run --rm -p 8000:8000 -e PORT=8000 earth-pulse\n```"
+  },
+  {
    "id": "docs-deploy-prerequisites",
    "title": "Prerequisites",
    "source": "docs/deploy.md",
@@ -656,7 +705,7 @@
    "title": "1) Run locally (5 minutes)",
    "source": "docs/deploy.md",
    "topic": "docs-deploy",
-   "text": "1) Run locally (5 minutes)\n```bash\npython3 -m venv .venv && . .venv/bin/activate\npip install numpy scipy fastapi uvicorn httpx pytest\nmake sample-data      # deterministic synthetic store (offline)\nmake engine           # precompute trends / opposite / twins → data/processed/analysis.json\nmake test             # pytest suite\nmake api              # http://localhost:8000  (docs at /docs)\n# second terminal:\ncd web && npm install && npm run dev   # http://localhost:5173\n```\n`docker compose up` alternative (see `docker-compose.yml`) — API + web together."
+   "text": "1) Run locally (5 minutes)\n```bash\npython3 -m venv .venv && . .venv/bin/activate\npip install numpy scipy fastapi uvicorn httpx pytest\nmake sample-data      # deterministic synthetic store (offline)\nmake engine           # precompute trends / opposite / twins → data/processed/analysis.json\nmake test             # pytest suite\nmake api              # http://localhost:8000  (docs at /docs)\n# second terminal:\ncd web && npm install && npm run dev   # http://localhost:3000\n```\n`docker compose up --build api` alternative (see `docker-compose.yml`) — single-service image on :8000, or the hot-reload dev flow with `web` (:3000 → proxies /api to :8000)."
   },
   {
    "id": "docs-deploy-2-host-the-api-for-free",

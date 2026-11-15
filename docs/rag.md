@@ -2,159 +2,145 @@
 
 `POST /chat` used to answer from a hand-built FACTS summary (trends, forecast
 deltas, anomalies, coverage) re-worded by a small local Ollama model. The RAG
-change adds **retrieval** on top of that, keeps the **facts-locked** design,
-and can run on **Hugging Face Spaces** (free CPU) instead of Ollama.
+change adds **retrieval**, keeps the **facts-locked** design, and runs on
+**Hugging Face** via its serverless inference router — $0 hosting, no servers.
 
-**Nothing is deployed until you explicitly approve it.** This document is the
-runbook.
+**Live status:** not wired to the running backend until `EP_RAG_BACKEND` is set
+in `nasa/.env` (see "Enabling it"). Until then chat behaves exactly as before.
 
 ## Architecture
 
 ```
 Browser → frontend (/api/chat) → Earth Pulse FastAPI  (this repo)
                                      │  1. build FACTS from the store/analysis
-                                     │  2. EP_RAG_BACKEND=hf?
-                                     ▼
-                        ┌─ yes ─▶ Hugging Face Space   (hf-space/)
-                        │            · BM25 retrieve top-k passages from kb.json
-                        │            · small instruct model (default Qwen2.5-0.5B-Instruct)
-                        │            · returns {text, model, sources:[S1..]}
-                        │         ◀──┘
-                        │  3. re-apply guards (certainty / stat misuse / band misuse /
-                        │     unverified numbers) — identical to the Ollama path
-                        │  4. on Space failure → Ollama → templated prose
-                        └─ no ──▶ Ollama (default) → templated fallback
+                                     │  2. EP_RAG_BACKEND?
+                                     ├─ hf-router ─▶ BM25 retrieval over local kb.json (BM25, pure Python)
+                                     │                 + POST router.huggingface.co/v1/chat/completions
+                                     │                   (model = HF_ROUTER_MODEL, Bearer HF_TOKEN)
+                                     │             ◀── {text, model, sources:[S1..]}
+                                     ├─ hf        ─▶ HF Space (hf-space/) — same contract; needs PRO
+                                     │             ◀── {text, model, sources:[S1..]}
+                                     │  3. re-apply guards (certainty / stat misuse / band misuse /
+                                     │     significance misread / unverified numbers) — identical on every path
+                                     │  4. RAG backend failed → Ollama → templated prose
+                                     └─ otherwise   ─▶ Ollama (default) → templated fallback
 ```
 
-Key points, deliberately unchanged from the pre-RAG design:
+Key points, unchanged from the pre-RAG design:
 
 - The model **never computes or changes a number**. Numbers come only from the
   backend's FACTS dict.
-- Every LLM draft — Ollama or HF RAG — passes the **same post-generation
-  guards**. A failure substitutes deterministic templated prose
+- Every LLM draft — Ollama, HF Space, HF serverless — passes the **same
+  post-generation guards**. A failure substitutes deterministic templated prose
   (`generator: "templated-guard"`), never a risky answer.
 - `[S1]`-style citation markers are stripped before the numeric guard counts
   numbers, so citations cannot trip it.
-- Fallbacks are layered: Space → Ollama → templated. The endpoint never 5xxs
-  because an LLM misbehaved.
+- Fallbacks are layered: RAG backend → Ollama → templated. The endpoint never
+  5xxs because an LLM misbehaved.
 
 ## What retrieval adds
 
 - **Domain knowledge** the local model lacks: NASA POWER methodology and
-  parameters, data-source history tables, limitations, and the repo's own
-  method notes (Theil–Sen, Mann–Kendall, robust-z anomalies, PICP bands,
-  climate twins, guardrail rationale). Curated, plain-English, and clearly
-  labeled in `docs/rag-corpus/`.
-- **Store-derived facts** from the active store/analysis
-  (`analysis_power_real.json` or `analysis.json`): provenance, coverage window,
-  grid shape, per-parameter trend coverage / significant-cell counts, climate
-  twin clustering parameters, opposite-trend counts. No raw series are embedded
-  — only summaries.
-- **Citations**: the Space returns `sources: [{id, title, source, score}]`;
-  the backend passes them through; the chat UI renders a muted "Sources" line
-  under the answer.
+  parameters, data-source history tables, limitations, and the repo's method
+  notes (Theil–Sen, Mann–Kendall, robust-z anomalies, PICP bands, climate
+  twins, guardrail rationale). Curated, plain-English, labeled in
+  `docs/rag-corpus/`.
+- **Store-derived facts** from the active store/analysis: provenance, coverage
+  window, grid shape, per-parameter trend coverage / significant-cell counts,
+  twin clustering, opposite-trend counts. No raw series are embedded.
+- **Citations**: passages used are returned as `sources: [{id, title, source,
+  score}]` and rendered as a muted "Sources" line in the chat UI.
 
 ## Building the knowledge base
 
 ```bash
 cd nasa
-python3 scripts/build_rag_kb.py            # → data/rag/kb.json
+python3 scripts/build_rag_kb.py               # → data/rag/kb.json (229 chunks, 16 sources)
 python3 scripts/build_rag_kb.py --sync-space  # also copies kb.json + rag_core.py into hf-space/
 ```
 
-Deterministic; rerun whenever the docs or analysis JSON change, then re-push
-the Space. The KB is ~140 KB (`data/rag/kb.json`) and safe to commit; the same
-file is bundled inside the Space.
+Deterministic; rerun whenever docs or the analysis JSON change. Retrieval is
+BM25 (pure Python, `api/services/rag_core.py`) — no embedding model, no extra
+dependencies, fast. Curated store-derived chunks carry a small score boost.
 
-Current size: **222 chunks / 16 sources**. Retrieval is BM25 (pure Python,
-`api/services/rag_core.py`) — no embedding model, no extra dependencies, fast
-on free CPU. Curated store-derived chunks carry a small score boost (1.25×).
+## Enabling it (serverless — the recommended free path)
 
-## Running the Space locally (no HF account needed)
+1. Give the HF token in `nasa/.env` the inference permission (it can't call the
+   router today): huggingface.co → **Settings → Access Tokens** → edit the
+   fine-grained **nasa** token → enable **Make calls to Inference Providers**
+   → Save. (Or create a new token with that scope and replace `HF_TOKEN` in
+   `nasa/.env`.)
+2. `nasa/.env`:
+   ```
+   EP_RAG_BACKEND=hf-router
+   # HF_ROUTER_MODEL=meta-llama/Llama-3.1-8B-Instruct   # any model an inference provider offers for this account
+   ```
+   (`HF_TOKEN` is already there; the app does not load dotenv itself, but the
+   RAG client falls back to reading `nasa/.env` directly — see `api/services/rag.py`.)
+3. Restart the API and check `/health` — expect:
+   `"rag": {"backend": "hf-router", "enabled": true, "kb_chunks": 229, "model": ...}`
+   The chat engine badge shows "Live backend · HF serverless RAG · <model>".
+4. List models your account can actually call:
+   `curl -H "Authorization: Bearer $HF_TOKEN" https://router.huggingface.co/v1/models`
+   then set `HF_ROUTER_MODEL` accordingly.
+
+Cost: serverless inference draws from your monthly free credit (small models
+are effectively free for hackathon volume). No hosting, nothing to keep alive.
+
+Honest caveat: provider availability and exact free allowances change; if a
+model isn't served for your account, the router answers 404/403 and chat
+silently falls back to Ollama. `/health → rag.model` + the server logs tell you
+which model actually answered.
+
+## Enabling it (HF Space — optional, needs PRO)
+
+Hugging Face requires a **PRO subscription** for Docker/Gradio Spaces on free
+cpu-basic ("Static Spaces are free for everyone" but can't run a model). If you
+subscribe (or use an existing Team/paid org):
 
 ```bash
-cd hf-space
-pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
-uvicorn app:app --host 0.0.0.0 --port 7860
-curl localhost:7860/health
-curl -X POST localhost:7860/rag/chat -H 'Content-Type: application/json' \
-  -d '{"messages":[{"role":"user","content":"Is the trend significant?"}],"facts_summary":"…","card_kind":"caveat"}'
+huggingface-cli repo create earth-pulse-rag --type space --space_sdk docker --exist-ok
+cd hf-space && git init -b main && git add -A && git commit -m "Earth Pulse RAG space"
+git remote add origin https://huggingface.co/spaces/<you>/earth-pulse-rag
+git push -u origin main
 ```
 
-Verified offline in this change-set with a stubbed model (full HTTP roundtrip,
-prompt assembly, citations, 503 failure path). Real weights were **not**
-downloaded locally — PyPI was unreachable from this machine; the model is
-fetched by the Space's Docker build instead. Expect first boot to download
-~1 GB (Qwen2.5-0.5B-Instruct, fp32).
+Then in `nasa/.env`: `EP_RAG_BACKEND=hf` and
+`HF_RAG_SPACE_URL=https://<you>-earth-pulse-rag.hf.space`, restart the API.
+Free-CPU generation with Qwen2.5-0.5B-Instruct takes tens of seconds per answer.
 
-## Creating + pushing the Space (only after approval)
-
-1. Create the token (see README section in this doc: "HF token setup").
-2. `huggingface-cli login` (or `HF_TOKEN=hf_… huggingface-cli upload`), or:
-   ```bash
-   huggingface-cli repo create earth-pulse-rag --type space --space_sdk docker --exist-ok
-   cd hf-space && git init && git remote add origin https://huggingface.co/spaces/<you>/earth-pulse-rag && git push origin HEAD:main --force
-   ```
-3. Wait for the Space build (~2–5 min incl. model download). `GET /health`
-   should report `"model_loaded": true`.
-4. Wire the backend:
-   ```bash
-   # nasa/.env (never committed)
-   EP_RAG_BACKEND=hf
-   HF_RAG_SPACE_URL=https://<you>-earth-pulse-rag.hf.space
-   # optional, if the Space is private: HF_TOKEN=hf_…
-   ```
-   Restart uvicorn (`make api` / previous process). `/health` will then show a
-   `rag` block with `"enabled": true`, `"backend": "hf-rag"`, `"kb_chunks": 222`.
-   The frontend needs no rebuild beyond the sources UI; it picks up
-   `rag`/`sources` automatically.
+The Space was built and verified offline with a stubbed model (full HTTP
+contract); real weights were not downloaded locally because PyPI/HF were
+unreliable from this machine at build time.
 
 ## Environment variables
 
 | Var | Default | Meaning |
 |---|---|---|
-| `EP_RAG_BACKEND` | `ollama` | `ollama` · `hf` · `templated` |
-| `HF_RAG_SPACE_URL` | — | Space base URL (required when backend=hf) |
-| `HF_TOKEN` | — | Optional bearer for a private Space |
-| `EP_RAG_TIMEOUT` | `90` | Seconds before giving up on the Space |
-| `EP_RAG_KB_PATH` | `data/rag/kb.json` | /health stats only |
-| `EP_RAG_TOP_K` | `4` | Informational; enforced Space-side |
-| Space-side: `MODEL_ID` | `Qwen/Qwen2.5-0.5B-Instruct` | Any causal instruct model on the Hub |
-| Space-side: `KB_TOP_K` | `4` | Passages retrieved per query |
-| Space-side: `RAG_PRELOAD` | `1` | Preload the model at boot (background thread) |
-| Space-side: `MAX_NEW_TOKENS_CAP` | `300` | Server-side generation cap |
-
-## HF token setup (what you asked me to walk through)
-
-1. Log in at https://huggingface.co → avatar (top right) → **Settings** →
-   **Access Tokens** → **Create new token**.
-2. Choose **Fine-grained** or **Write** role; for creating/pushing a Space you
-   need write access. Scope to just what you need if fine-grained
-   (Repositories → create/write). Copy `hf_…` immediately.
-3. Put it in `nasa/.env` as `HF_TOKEN=hf_…` (or pass it to `huggingface-cli
-   login`). It is **never** committed — `.gitignore` in this repo excludes
-   `.env`, and I have not written it anywhere.
-4. To let the backend *call* a private Space, the same token works
-   (`Authorization: Bearer`). For a public Space, no token is needed at runtime.
-5. Optional: push a different `MODEL_ID` as a private model repo and set
-   `MODEL_ID` on the Space via its **Settings → Variables**.
+| `EP_RAG_BACKEND` | `ollama` | `ollama` · `hf-router` · `hf` · `templated` |
+| `HF_TOKEN` | — | Bearer token (hf-router required) |
+| `HF_ROUTER_MODEL` | `meta-llama/Llama-3.1-8B-Instruct` | Router model id |
+| `HF_RAG_SPACE_URL` | — | Space base URL (backend=hf) |
+| `EP_RAG_TIMEOUT` | `90` | Seconds before giving up on the backend |
+| `EP_RAG_KB_PATH` | `data/rag/kb.json` | KB path |
+| `EP_RAG_TOP_K` | `4` | Retrieved passages |
+| Space-side: `MODEL_ID` | `Qwen/Qwen2.5-0.5B-Instruct` | Model served by the Space |
+| Space-side: `KB_TOP_K` | `4` | Passages the Space retrieves |
+| Space-side: `RAG_PRELOAD` | `1` | Preload the model at boot |
 
 ## Rollback
 
-- Set `EP_RAG_BACKEND=ollama` (or delete it) and restart the backend → exactly
-  the pre-RAG behaviour. The frontend degrades gracefully too.
-- `hf-space/` can be deleted entirely; the repo has no other dependencies on
-  it. `data/rag/kb.json` can stay or be regenerated.
+- Delete `EP_RAG_BACKEND` (or set `ollama`) → exact pre-RAG behaviour.
+- `hf-space/` can be deleted; nothing else depends on it.
+- `data/rag/kb.json` can stay (it only feeds the RAG path / `/health`).
 
 ## Honest limitations
 
-- Free CPU Space (2 vCPU): **tens of seconds per answer** with the 0.5B model.
-  If that's too slow, use `Qwen/Qwen2.5-0.5B-Instruct` still, or upgrade the
-  Space to a paid tier / use Ollama locally instead (`EP_RAG_BACKEND=ollama`).
-- The 0.5B model is weak; the guards exist precisely so its output is only
-  published when it re-words facts correctly. Expect occasional `templated-guard`.
-- KB is a snapshot of the docs at build time — drift is real. Rebuild + re-push
-  on doc changes.
-- Citations tell you *which local passage* was used, not external verification.
-- BM25 ≠ semantic search: rare-word lookups are great, subtle paraphrases are
-  not. If recall quality matters, add `sentence-transformers` embeddings Space-side.
+- BM25 ≠ semantic search — great on rare words, weaker on paraphrase. Add
+  `sentence-transformers` embeddings later if recall matters.
+- Citations show *which local passage* was used, not external verification.
+- The KB is a snapshot of the docs — rebuild + re-push/redeploy on doc changes.
+- Serverless inference quality ≠ a dedicated endpoint; small models will
+  occasionally trip a guard and serve `templated-guard` — by design.
+- The chat UI shows at most 3 source titles; full ids are in the message's
+  `sources` array for the curious.

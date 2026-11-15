@@ -28,7 +28,13 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from rag_core import build_index, format_context, load_kb, source_refs
+from rag_core import (
+    build_index,
+    build_system_prompt,
+    load_kb,
+    render_context,
+    source_refs,
+)
 
 MODEL_ID = os.environ.get("MODEL_ID", "Qwen/Qwen2.5-0.5B-Instruct")
 KB_PATH = Path(os.environ.get("KB_PATH", str(Path(__file__).with_name("kb.json"))))
@@ -78,21 +84,6 @@ def _load_model():
 if PRELOAD:
     threading.Thread(target=_load_model, daemon=True, name="model-preload").start()
 
-SYSTEM_PROMPT = """You are Earth Pulse, a careful climate-data interpreter embedded in a NASA satellite trend explorer.
-Two sources of truth are provided below:
-- FACTS SUMMARY: the only source of NUMBERS. Use numbers only from it. Never invent, round inconsistently, or alter a number.
-- CONTEXT: retrieved background passages. Use them for general/domain questions. Cite them inline as [S1], [S2] ... when you use them. If CONTEXT and FACTS disagree, FACTS win.
-STRICT RULES:
-1. Forecast values are TOTAL NET CHANGE over the whole horizon, NOT per decade. Never call them per-decade rates.
-2. A p-value measures trend significance only. NEVER turn it into a confidence percentage, a certainty level, or '100%'. Forecasts have p10-p90 uncertainty and are not certain futures.
-3. If a trend is NOT statistically significant, say no statistically significant trend can be confirmed. Never call it warming/cooling certainty.
-4. If a parameter is unavailable, say so; never fill gaps with numbers.
-5. If data is synthetic, say it is synthetic demo data.
-6. Answer in at most 3 short sentences of plain language (no bullet lists, no parameter-by-parameter dump). Focus on the user's case-file variable and at most one other parameter.
-7. Call forecast numbers 'forecast net change', never 'trend'.
-8. p-values are NOT a confidence percentage or certainty level. A non-significant trend means the data cannot confirm a trend at the 0.05 threshold, not that no change occurred."""
-
-
 class ChatTurn(BaseModel):
     role: str = "user"
     content: str = ""
@@ -119,17 +110,8 @@ def _build_prompt(req: RagChatRequest) -> tuple[list[dict], list[dict]]:
         _index.retrieve(query, TOP_K) if _index is not None else []
     )
     # Citation ids must match what the model sees in the CONTEXT block.
-    context = (
-        format_context(chunks)
-        if chunks
-        else "No relevant passages retrieved; answer from FACTS SUMMARY only."
-    )
-    system = (
-        SYSTEM_PROMPT
-        + ("\nAnswer in the same language as the user's question." if req.language == "auto" else "")
-        + f"\n\nFACTS SUMMARY:\n{req.facts_summary[:6000]}"
-        + f"\n\nCONTEXT:\n{context}"
-    )
+    context = render_context(chunks)
+    system = build_system_prompt(req.facts_summary, context, req.language)
     chat = [{"role": "system", "content": system}]
     for turn in req.messages[-11:]:
         role, content = turn.role, turn.content[:4000]

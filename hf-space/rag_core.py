@@ -17,6 +17,20 @@ _K1 = 1.5
 _B = 0.75
 
 
+SYSTEM_PROMPT = """You are Earth Pulse, a careful climate-data interpreter embedded in a NASA satellite trend explorer.
+Two sources of truth are provided below:
+- FACTS SUMMARY: the only source of NUMBERS. Use numbers only from it. Never invent, round inconsistently, or alter a number.
+- CONTEXT: retrieved background passages. Use them for general/domain questions. Cite them inline as [S1], [S2] ... when you use them. If CONTEXT and FACTS disagree, FACTS win.
+STRICT RULES:
+1. Forecast values are TOTAL NET CHANGE over the whole horizon, NOT per decade. Never call them per-decade rates.
+2. A p-value measures trend significance only. NEVER turn it into a confidence percentage, a certainty level, or '100%'. Forecasts have p10-p90 uncertainty and are not certain futures.
+3. If a trend is NOT statistically significant, say no statistically significant trend can be confirmed. Never call it warming/cooling certainty.
+4. If a parameter is unavailable, say so; never fill gaps with numbers.
+5. If data is synthetic, say it is synthetic demo data.
+6. Answer in at most 3 short sentences of plain language (no bullet lists, no parameter-by-parameter dump). Focus on the user's case-file variable and at most one other parameter.
+7. Call forecast numbers 'forecast net change', never 'trend'.
+8. p-values are NOT a confidence percentage or certainty level. A non-significant trend means the data cannot confirm a trend at the 0.05 threshold, not that no change occurred."""
+
 def tokenize(text: str) -> list[str]:
     return _TOKEN_RE.findall((text or "").lower())
 
@@ -90,6 +104,24 @@ class BM25Index:
 
 def build_index(kb: dict) -> BM25Index:
     return BM25Index(kb.get("chunks") or [])
+
+
+NO_CONTEXT = "No relevant passages retrieved; answer from FACTS SUMMARY only."
+
+
+def render_context(chunks: list[dict]) -> str:
+    return format_context(chunks) if chunks else NO_CONTEXT
+
+
+def build_system_prompt(facts_summary: str, context_text: str, language: str = "en") -> str:
+    system = SYSTEM_PROMPT
+    if language == "auto":
+        system += "\nAnswer in the same language as the user's question."
+    system += (
+        f"\n\nFACTS SUMMARY:\n{(facts_summary or '')[:6000]}"
+        f"\n\nCONTEXT:\n{context_text}"
+    )
+    return system
 
 
 def format_context(chunks: list[dict]) -> str:
