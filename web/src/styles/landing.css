@@ -1,4 +1,18 @@
-/* Landing page — premium editorial Earth-observation upgrade (aligned with existing tokens) */
+﻿/* Compatibility mappings for current Earth Pulse theme variables */
+.landing {
+  --text: var(--ink);
+  --text-muted: var(--ink-soft);
+  --border: var(--line);
+  --surface: var(--surface-card);
+  --surface-2: var(--surface-sunk);
+  --bg: var(--surface);
+  --on-accent: var(--btn-ink);
+  --accent-strong: var(--accent-hover);
+  --shadow: 0 10px 30px rgba(0,0,0,0.12);
+  font-family: var(--font-ui);
+}
+.landing h1, .landing h2, .landing h3 { font-family: var(--font-display, var(--font-ui)); }
+/* Landing page â€” premium editorial Earth-observation upgrade (aligned with existing tokens) */
 :root { --nav-h: 64px; }
 .landing { min-height: 100%; background: var(--bg); color: var(--text); overflow-x: clip; }
 .landing main { display: block; }
@@ -234,3 +248,4 @@
   .reveal { opacity: 1 !important; transform: none !important; }
   .hero-enter { opacity: 1 !important; transform: none !important; }
 }
+
