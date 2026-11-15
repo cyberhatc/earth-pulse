@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Link } from "react-router-dom";
 
 const NAV_ITEMS = [
@@ -14,9 +14,12 @@ const NAV_ITEMS = [
   { href: "#transparency", label: "Transparency" },
 ];
 
+const MOBILE_NAV_BREAKPOINT = 1200;
+
 export function LandingNav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [active, setActive] = useState<string>("#hero");
+  const navId = useId();
 
   useEffect(() => {
     const ids = [
@@ -52,25 +55,42 @@ export function LandingNav() {
 
   useEffect(() => {
     const onResize = () => {
-      if (window.innerWidth > 960) setMenuOpen(false);
+      if (window.innerWidth > MOBILE_NAV_BREAKPOINT) setMenuOpen(false);
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    if (window.innerWidth <= MOBILE_NAV_BREAKPOINT) {
+      document.body.style.overflow = "hidden";
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [menuOpen]);
+
   return (
     <header className="topbar landing-nav-wrap">
       <div className="topbar-inner landing-nav-inner">
-        <div className="topbar-left">
-          <Link to="/" className="wordmark" aria-label="Earth System Trend Detective home">
-            Earth System Trend Detective
+        <div className="topbar-left landing-brand">
+          <Link to="/" className="wordmark landing-wordmark" aria-label="Earth System Trend Detective home">
+            <span className="landing-wordmark-full">Earth System Trend Detective</span>
+            <span className="landing-wordmark-short" aria-hidden="true">Earth Pulse</span>
           </Link>
         </div>
         <button
           type="button"
           className="landing-menu-toggle"
           aria-expanded={menuOpen}
-          aria-controls="landing-nav-links"
+          aria-controls={navId}
           aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
           onClick={() => setMenuOpen((v) => !v)}
         >
@@ -78,7 +98,7 @@ export function LandingNav() {
           <span className="landing-menu-text">{menuOpen ? "Close" : "Menu"}</span>
         </button>
         <nav
-          id="landing-nav-links"
+          id={navId}
           className={`topbar-nav landing-section-nav ${menuOpen ? "open" : ""}`}
           aria-label="Landing page sections"
         >

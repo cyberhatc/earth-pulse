@@ -163,10 +163,10 @@ export function DataSourcesSection() {
                   <tbody>
                     {g.rows.map((r) => (
                       <tr key={r.name}>
-                        <th scope="row">{r.name}</th>
-                        <td>{r.provides}</td>
-                        <td>{r.use}</td>
-                        <td>
+                        <th scope="row" data-label="Source">{r.name}</th>
+                        <td data-label="What it provides">{r.provides}</td>
+                        <td data-label="How Earth Pulse uses it">{r.use}</td>
+                        <td data-label="Link / attribution">
                           {r.link ? (
                             <p>
                               <a href={r.link} target="_blank" rel="noreferrer">
