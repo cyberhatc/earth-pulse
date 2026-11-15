@@ -2,6 +2,26 @@
 
 Everything below stays at **$0**. Free-tier limits change; verify current terms before submission.
 
+## Recommended: ONE Render Docker web service (frontend + API together)
+The repo root has a multi-stage `Dockerfile` (Node build of `web/` → Python runtime) and a
+`render.yaml` Blueprint. One service serves both:
+- `/` → the built frontend (`web/dist`), with SPA deep-link fallback
+- `/api/*` → the FastAPI endpoints (the same handlers are also mounted at `/` for back-compat)
+
+Render deploys it directly: New → Blueprint → select this repo (root dir), or
+`render.yaml` is picked up automatically. Plan: **free** Docker web service;
+`healthCheckPath: /api/health`. No `VITE_API_BASE` is needed (same origin).
+Render injects `PORT`; the image already honors it. Data: the bundled synthetic
+sample store is built at image time; for real NASA POWER data, build
+`earth_pulse_power_real.npz` once and mount it or pass
+`EP_STORE_PATH`/`EP_ANALYSIS_PATH` as env vars.
+
+```bash
+docker build -t earth-pulse .
+docker run --rm -p 8000:8000 -e PORT=8000 earth-pulse
+# open http://localhost:8000  — the app AND /api/health on one origin
+```
+
 ## Prerequisites
 - GitHub repo (public) — code, issues, CI, GitHub Pages.
 - Python ≥ 3.10, Node ≥ 18.
@@ -18,9 +38,9 @@ make engine           # precompute trends / opposite / twins → data/processed/
 make test             # pytest suite
 make api              # http://localhost:8000  (docs at /docs)
                      # second terminal:
-cd web && npm install && npm run dev   # http://localhost:5173
+cd web && npm install && npm run dev   # http://localhost:3000
 ```
-`docker compose up` alternative (see `docker-compose.yml`) — API + web together.
+`docker compose up --build api` alternative (see `docker-compose.yml`) — single-service image on :8000, or the hot-reload dev flow with `web` (:3000 → proxies /api to :8000).
 
 ## 2) Host the API for free
 **Option A — Hugging Face Spaces (recommended)**

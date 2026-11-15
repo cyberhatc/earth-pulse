@@ -20,7 +20,7 @@ jobs:
       - name: Sample → engine → tests
         run: make sample-data engine test
       - name: API tests
-        run: python -m pytest api/tests/ -q
+        run: python -m pytest tests/ -q
 
   web:
     name: Frontend typecheck + build
@@ -36,7 +36,7 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Typecheck
         run: npm run typecheck
       - name: Build

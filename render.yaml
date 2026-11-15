@@ -1,0 +1,17 @@
+# Render Blueprint — one web service: FastAPI backend + built frontend.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: earth-pulse
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      # Real NASA POWER store instead of the bundled synthetic sample:
+      # - key: EP_STORE_PATH
+      #   value: /app/data/processed/earth_pulse_power_real.npz
+      # - key: EP_ANALYSIS_PATH
+      #   value: /app/data/processed/analysis_power_real.json
+      - key: CORS_ORIGINS
+        value: "*"

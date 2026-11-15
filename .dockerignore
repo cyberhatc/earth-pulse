@@ -1,5 +1,4 @@
-# Keep the API build context small and the image reproducible.
-# The API image only needs the Python stack; web/ and repo tooling stay out.
+# Build context for the single-service image (Dockerfile).
 .git
 .github
 .venv
@@ -11,3 +10,13 @@ web/node_modules
 web/dist
 data/cache
 data/raw
+data/processed
+data/forecasts
+data/forecasts_full
+hf-space
+.env
+.env.*
+!.env.example
+*.err
+*.log
+*.bak

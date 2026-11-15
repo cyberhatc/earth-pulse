@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from api.schemas import SCHEMA_VERSION
 from api.routers import place, imagery, trends, forecast, anomalies, explain, health, tierb, scenario, point, chat
@@ -64,14 +64,26 @@ for r in (health.router, place.router, imagery.router, trends.router,
           point.router, chat.router):
     app.include_router(r)
 
+# Same handlers under /api so the production single-service frontend build
+# (Vite default base "/api") works same-origin. Root paths stay for back-compat.
+for r in (health.router, place.router, imagery.router, trends.router,
+          forecast.router, anomalies.router, explain.router, tierb.router, scenario.router,
+          point.router, chat.router):
+    app.include_router(r, prefix="/api")
+
 
 @app.exception_handler(RuntimeError)
 async def runtime_error_handler(_: Request, exc: RuntimeError):
     return JSONResponse(status_code=503, content={"error": "runtime_error", "detail": str(exc)})
 
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
+WEB_DIST = REPO_ROOT / "web" / "dist"
+
 @app.get("/")
 def root():
+    if WEB_DIST.is_dir():
+        return FileResponse(WEB_DIST / "index.html")
     return {
         "name": "Earth Pulse API",
         "schema_version": SCHEMA_VERSION,
@@ -81,3 +93,23 @@ def root():
         "chat": "POST /chat",
         "projected_svg": "/imagery/projected?parameter=temperature&year=2030",
     }
+
+
+# ---------------------------------------------------------------------------
+# Single-service deployment: serve the built frontend (web/dist) + API together.
+# Anything that is not an explicit API route falls back to the SPA bundle so
+# BrowserRouter deep links work. /api/* paths NEVER fall back — they 404 JSON.
+# ---------------------------------------------------------------------------
+if WEB_DIST.is_dir():
+    from fastapi.staticfiles import StaticFiles
+
+    app.mount("/assets", StaticFiles(directory=str(WEB_DIST / "assets")), name="assets")
+
+    @app.get("/{full_path:path}")
+    def spa(full_path: str):
+        if full_path.startswith("api/") or full_path == "api":
+            return JSONResponse(status_code=404, content={"error": "not_found", "detail": f"unknown API route: {full_path}"})
+        candidate = WEB_DIST / full_path
+        if full_path and candidate.is_file():
+            return FileResponse(str(candidate))
+        return FileResponse(str(WEB_DIST / "index.html"))

@@ -89,14 +89,14 @@ Suggested variables: sea surface temperature, vegetation greenness (NDVI), preci
 - **Analysis layer:** Python with NumPy, SciPy, pymannkendall, scikit-learn, PyTorch
 - **API layer:** FastAPI serving trends, forecasts, and anomalies per location
 - **Frontend:** React with MapLibre GL or Leaflet, plus Plotly or D3 for charts
-- **Deployment:** Vercel, Netlify, or GitHub Pages for the frontend, Hugging Face Spaces or Render for the API
+- **Deployment:** one Render Docker web service (`render.yaml`) — FastAPI serves the built Vite app **and** the API from the same URL; GitHub Pages / Vercel / Netlify remain possible for the frontend only
 
 ## 7. Free-Tier Stack
 
 Everything can run at zero cost. Free plans change, so check current limits.
 
 - Code: GitHub
-- Frontend hosting: Vercel, Netlify, or GitHub Pages
+- Frontend hosting: same-service on Render (recommended) · Vercel / Netlify / GitHub Pages optional
 - API hosting: Hugging Face Spaces or Render
 - Training: Google Colab and Kaggle notebooks
 - Models and datasets: Hugging Face Hub
@@ -171,7 +171,7 @@ This repository now contains a **working offline-first implementation** of the E
 - **`engine/`** — Theil–Sen + Mann–Kendall trends for all grid cells, **Opposite Trend Detector** (NDVI/precipitation), K-Means **climate twins** → `data/processed/analysis.json`.
 - **`models/`** — multivariate ridge-rollout forecaster with p10–p90 bands (real-POWER artifact `data/processed/forecaster_power_real.npz`, synthetic demo artifact `models/artifacts/forecaster.npz`; the loader picks the one trained on the same store distribution), transparent linear-trend fallback, rolling robust-z anomalies, rolling-origin backtest, dependency-free **SVG projected maps**, optional (disabled-by-default) AI scenario module.
 - **`api/`** — FastAPI serving **unified `GET /place?lat&lon` payload** (trends, forecast, anomalies, opposite trends, GIBS past imagery, projected SVG maps, explainer), `/imagery/projected`, `/tier-b`, `/health` (including local-LLM status), and **`POST /chat`** (facts-locked Ollama conversation). Dockerfile for HF Spaces/Render free tier.
-- **`web/`** — React + Vite + TypeScript + **MapLibre GL** frontend (click anywhere → charts with uncertainty ribbon, imagery gallery, case-file cards, coverage badge, EN/HI/KN, low-bandwidth mode, localStorage watchlist). `cd web && npm install && npm run dev`.
+- **`web/`** — React + Vite + TypeScript frontend (**Leaflet** map, conversation-first UI, fact-locked Ollama chat, live coverage/forecast/opposite/twin/evidence cards, dark theme, localStorage dossier). In dev it proxies `/api` → `:8000`; in production the backend serves `web/dist` directly from the same origin. `cd web && npm install && npm run dev` (http://localhost:3000).
 - **`docs/`** — architecture, data sources (with the honest 40-year coverage check), API contract, ML/accuracy notes, UI/UX spec, free deployment guide, parallel-session prompts.
 - **`notebooks/`, `tests/`, CI** — 01 explore NASA POWER/GIBS · 02 train · 03 backtest; pytest suite; GitHub Actions CI + Pages deploy.
 
@@ -180,9 +180,9 @@ This repository now contains a **working offline-first implementation** of the E
 pip install numpy scipy fastapi uvicorn httpx pydantic pytest
 make sample-data engine train test   # deterministic demo store → analysis.json → artifact → tests
 make api                             # http://localhost:8000 (try /place?lat=12.97&lon=77.59)
-cd web && npm install && npm run dev # http://localhost:5173
+cd web && npm install && npm run dev  # http://localhost:3000 (Vite proxies /api -> :8000)
 ```
-`docker compose up` works too (API + web). See `docs/deploy.md` for free hosting (HF Spaces + Vercel/Netlify/Pages).
+`docker compose up --build api` runs the **single-service** image on :8000 (API + built frontend), or run native: `npm run build` in `web/` first, then `uvicorn api.main:app --port 8000` — same URL for the app and `/api/*`. `render.yaml` deploys that image to Render as one free Docker web service (`healthCheckPath: /api/health`); see `docs/deploy.md`.
 
 ### Honest limitations
 Bundled demo data is **synthetic** (physically motivated, deterministic). Real accuracy requires real products (`docs/data-sources.md`) and overlap-period training; forecasts are probabilistic (p10–p90), not certain futures. Never claim "40 years" for NDVI/SST/sea level (~2000/2002/1993 onward).
@@ -201,7 +201,7 @@ Everything below was **run and verified on this tree on Nov 9, 2026**; see `docs
 | `engine/` | Theil–Sen + Mann–Kendall per cell → `data/processed/analysis.json` (407 KB), Opposite Trend Detector (120+120 candidate pairs), K-Means climate twins |
 | `models/` | ridge-rollout forecaster; real-POWER artifact `forecaster_power_real.npz` (126,480 pooled samples), synthetic demo artifact `forecaster.npz`, p10–p90 bands, backtest, projected SVG maps; store-matched artifact selection |
 | `api/` | FastAPI `GET /health` (LLM status), `/place`, `/imagery/past|projected`, `/trends/cell|/opposite`, `/twins`, `/forecast`, `/anomalies`, `/tier-b`, `POST /explain`, **`POST /chat`** (local Ollama) — schema_version `1.0.0` |
-| `web/` | React + Vite + TS + MapLibre; `npm run build` = 51 modules / 1.0 MB JS (286 KB gzip) |
+| `web/` | React + Vite + TS + Leaflet; `npm run build` → ~366 KB JS (114 KB gzip); served same-origin by the API in production |
 | `docs/` | architecture, api-contract, data-sources, deploy, ml, ui-ux, **limitations (new)**, **submission-checklist (new)** |
 
 **Verified today (actual outputs, not claims)**
