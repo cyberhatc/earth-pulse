@@ -1,7 +1,7 @@
 {
   "buildCommand": "cd web && npm install && npm run build",
   "outputDirectory": "web/dist",
-  "installCommand": "npm install --prefix web",
+  "installCommand": "echo 'dependencies installed in build step'",
   "framework": null,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
