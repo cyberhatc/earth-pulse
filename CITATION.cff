@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use Earth Pulse in your work, please cite this software repository."
+title: "Earth Pulse"
+type: software
+authors:
+  - name: "Earth Pulse Contributors"
+repository-code: "https://github.com/cyberhatc/earth-pulse"
+url: "https://earth-pulse-kkud.vercel.app/"
+abstract: >-
+  Earth Pulse is an open-source environmental investigation platform for the
+  NASA Space Apps Challenge 2026 (Be An Earth System Trend Detective). It
+  combines Earth observation data workflows, robust statistical analysis,
+  machine-learning forecasting and anomaly detection, geospatial exploration,
+  and evidence-grounded explanations to help users investigate place-based
+  environmental change with explicit provenance, uncertainty, and limitations.
+keywords:
+  - climate
+  - earth-observation
+  - nasa-space-apps
+  - environmental-data
+  - trend-analysis
+  - forecasting
+  - geospatial
+  - open-source
+  - fastapi
+  - react
+license: MIT
+date-released: 2026-11-16
