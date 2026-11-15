@@ -35,8 +35,8 @@ export function TopBar({ backHref, backLabel }: TopBarProps) {
     <header className="topbar">
       <div className="topbar-inner">
         <div className="topbar-left">
-          <Link to="/" className="wordmark">
-            Earth Trend Detective
+          <Link to="/" className="wordmark" aria-label="Earth System Trend Detective home">
+            Earth System Trend Detective
           </Link>
           {backHref && backLabel ? (
             <>

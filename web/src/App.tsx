@@ -11,18 +11,23 @@ export default function App() {
   return (
     <InvestigationProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/regions" element={<RegionsPage />} />
-          <Route path="/region/:slug" element={<RegionHubPage />} />
-          <Route path="/region/:slug/chat" element={<RegionChatPage />} />
-          <Route path="/region/:slug/map" element={<RegionMapPage />} />
-          <Route
-            path="/region/:slug/notebook"
-            element={<RegionNotebookPage />}
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
+        <div id="main-content" tabIndex={-1}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/regions" element={<RegionsPage />} />
+            <Route path="/region/:slug" element={<RegionHubPage />} />
+            <Route path="/region/:slug/chat" element={<RegionChatPage />} />
+            <Route path="/region/:slug/map" element={<RegionMapPage />} />
+            <Route
+              path="/region/:slug/notebook"
+              element={<RegionNotebookPage />}
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </InvestigationProvider>
   );

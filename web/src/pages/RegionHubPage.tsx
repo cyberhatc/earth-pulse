@@ -116,7 +116,17 @@ export function RegionHubPage() {
               onClick={() => handleLaunchPrompt("Show the trend fingerprint")}
             >
               <span className="hub-tool-tag">Module A</span>
-              <span className="hub-tool-name">Earth Trend Fingerprint →</span>
+              <span className="hub-tool-name">Trend Fingerprint →</span>
+            </button>
+            <button
+              type="button"
+              className="hub-tool-btn"
+              onClick={() =>
+                handleLaunchPrompt("Where are the opposite trends in this neighborhood?")
+              }
+            >
+              <span className="hub-tool-tag">Module B</span>
+              <span className="hub-tool-name">Opposite Trend Detector →</span>
             </button>
             <button
               type="button"
@@ -126,8 +136,15 @@ export function RegionHubPage() {
               }
             >
               <span className="hub-tool-tag">Module C</span>
-              <span className="hub-tool-name">Earth Anomaly Detective →</span>
+              <span className="hub-tool-name">Anomaly Detective →</span>
             </button>
+            <Link
+              to={`/region/${region.slug}/notebook`}
+              className="hub-tool-btn"
+            >
+              <span className="hub-tool-tag">Module D</span>
+              <span className="hub-tool-name">Reproducible Notebook →</span>
+            </Link>
             <button
               type="button"
               className="hub-tool-btn"
@@ -136,7 +153,7 @@ export function RegionHubPage() {
               }
             >
               <span className="hub-tool-tag">Module E</span>
-              <span className="hub-tool-name">Earth Twin Finder →</span>
+              <span className="hub-tool-name">Climate Twin Finder →</span>
             </button>
             <button
               type="button"
@@ -150,13 +167,6 @@ export function RegionHubPage() {
                 Local Stories (EN · हिन्दी · ಕನ್ನಡ) →
               </span>
             </button>
-            <Link
-              to={`/region/${region.slug}/notebook`}
-              className="hub-tool-btn"
-            >
-              <span className="hub-tool-tag">Module D</span>
-              <span className="hub-tool-name">Reproducible Notebook →</span>
-            </Link>
           </section>
 
           <section className="starter-box" aria-label="Starter questions">

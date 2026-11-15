@@ -107,14 +107,14 @@ export function RegionsPage() {
             ))}
           </div>
 
-          <div className="divider" role="separator">
+          <div className="divider" role="separator" aria-label="Alternative">
             <span>or</span>
           </div>
 
-          <div className="custom-note">
-            Custom bounding-box selection is not yet wired in this build. Pick a
-            case file above, then pin any point on its regional map to query the
-            live backend at that coordinate.
+          <div className="custom-note" role="note">
+            Custom bounding-box selection is not yet available in this build. Open a
+            case file above, then select any point on its regional map to query the
+            backend for that coordinate’s computed trend.
           </div>
 
           <div className="regions-back">

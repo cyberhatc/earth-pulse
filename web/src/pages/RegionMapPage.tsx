@@ -86,8 +86,10 @@ export function RegionMapPage() {
                 type="button"
                 className="rail-option rail-option-disabled"
                 disabled
+                aria-disabled="true"
+                title="Raw value layer is not yet available"
               >
-                Raw values · soon
+                Raw values (not yet available)
               </button>
             </div>
           </div>
@@ -102,9 +104,13 @@ export function RegionMapPage() {
           </div>
 
           <p className="rail-caption">
-            The background grid is an illustrative neighborhood layer. Click any
-            point to fetch that location&apos;s real NASA POWER trend from the
-            backend. Orange = increasing, blue = decreasing.
+            <strong>Legend (illustrative layer):</strong> grid colors show a relative
+            neighborhood slope tendency for {variable.name} (not a direct measured
+            per-point series). <strong>Fetched point:</strong> click/tap any point to
+            retrieve that location’s computed trend from the backend, reported in{" "}
+            {variable.perDecadeUnit}. Warm/orange = increasing tendency, cool/blue =
+            decreasing tendency, neutral = near zero. “Raw values” are not yet
+            available as a map layer.
           </p>
         </aside>
 

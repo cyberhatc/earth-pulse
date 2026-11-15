@@ -147,7 +147,7 @@ export function RegionMap({
       ref={containerRef}
       data-testid="region-map"
       role="region"
-      aria-label={`${region.name} spatial trend map`}
+      aria-label={`${region.name} spatial trend map. Illustrative grid layer; select a point on the map to fetch that location’s computed trend.`}
     />
   );
 }
