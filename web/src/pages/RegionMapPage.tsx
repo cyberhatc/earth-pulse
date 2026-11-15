@@ -89,10 +89,9 @@ export function RegionMapPage() {
           </div>
 
           <p className="rail-caption">
-            Background markers are the nearest measured 15° NASA POWER analysis
-            cells to each marker position — coloured by their real Theil–Sen
-            slope (orange = increasing, blue = decreasing). Click any point to
-            fetch that location&apos;s trend from the backend.
+            Click anywhere on the map to fetch that location&apos;s real NASA
+            POWER trend from the backend — no decorative markers, the map
+            shows only the tile layer, your bounding box, and pins.
           </p>
         </aside>
 
@@ -100,7 +99,6 @@ export function RegionMapPage() {
           <RegionMap
             region={region}
             selectedPoint={point}
-            gridParam={current.isLive ? current.param : null}
             onSelectPoint={(coords) => setPoint(coords)}
           />
         </section>
