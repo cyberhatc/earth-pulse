@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earth System Trend Detective</title>
+    <meta name="description" content="Archival satellite trend atlas investigating coupled land-ocean climate patterns across the Western Ghats & Arabian Sea, North China Plain & Bohai Sea, and California Coast." />
+    <meta property="og:title" content="Earth System Trend Detective" />
+    <meta property="og:description" content="Archival satellite trend atlas investigating coupled land-ocean climate patterns through plain-language findings, time-series charts, and interactive spatial maps." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("etd.theme.v1");
+          var dark =
+            stored === "dark" ||
+            (stored !== "light" &&
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+        } catch (e) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

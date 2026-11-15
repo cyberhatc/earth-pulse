@@ -1,0 +1,805 @@
+You are building a complete, runnable Next.js 16 frontend for a project called
+"Earth System Trend Detective" — a NASA Space Apps Challenge submission.
+
+I want you to output ALL files, complete and runnable, in a single response.
+Do not summarize. Do not sketch. Do not say "you can add more later." Output
+every file in full, with every line of code, in the order listed in the file
+tree below. Use fenced code blocks with the file path as a header comment
+above each block.
+
+============================================================
+PROJECT OVERVIEW
+============================================================
+
+The tool lets a high-school or college student pick a region of Earth, ask
+questions about how it is changing over time, and see the answer as a
+plain-language "finding" card, a time-series chart, and a spatial trend map.
+It has two investigation modes that share the same underlying context:
+
+  CONVERSATION MODE (left: chat, right: artifact cards)
+  ANALYST MODE      (left: rail, center: Leaflet map, right: point panel)
+
+Selecting a point on the map and clicking "Discuss this point →" carries
+that point into the conversation as the first message. The context (region,
+selected point, all cards, all chat messages) persists across mode switches
+and page refreshes via localStorage.
+
+This is a hackathon demo. There is NO backend, NO API keys, NO real data
+fetch, NO authentication. Everything runs on deterministic mock data seeded
+by region slug, so the app looks identical every run. The architecture must
+make it obvious where real data/LLM calls would be plugged in later — each
+of those places gets a clearly labeled comment.
+
+============================================================
+TECH STACK — USE EXACTLY THIS
+============================================================
+
+- Next.js 16 (App Router)
+- React 19
+- TypeScript (strict mode)
+- Plain CSS in a single globals.css with CSS custom properties
+  DO NOT use Tailwind. DO NOT use CSS-in-JS. DO NOT use shadcn.
+  DO NOT use component libraries. Write everything from scratch.
+- Leaflet 1.9.4 (dynamically imported inside a client component)
+- Three Google Fonts loaded via <link> in layout.tsx:
+    Instrument Sans (UI)
+    Newsreader (serif / findings / editorial)
+    IBM Plex Mono (metadata / numbers / coordinates)
+
+============================================================
+DESIGN SYSTEM — FOLLOW EXACTLY
+============================================================
+
+The visual language is "scientific instrument surface + editorial finding".
+Light, warm-neutral, precise, calm. NOT a dark dashboard. NOT neon. NOT
+rounded SaaS. Sharp, small radii. Hairline borders. Almost no shadows.
+
+CSS custom properties on :root:
+
+  --surface:        #F7F7F4   warm paper-white base
+  --surface-sunk:   #EDEEE9   chart wells, map frames
+  --surface-card:   #FFFFFF
+  --ink:            #14181A   near-black
+  --ink-soft:       #55605F
+  --ink-mute:       #8B9491
+  --line:           #DADDD6   hairline dividers
+  --line-strong:    #C3C7BE
+  --accent:         #0E6E78   deep teal — primary UI accent
+  --accent-soft:    #E3F0F0
+  --trend-up:       #C2410C   warm orange — increasing trend
+  --trend-down:     #1D4ED8   cool blue — decreasing trend
+  --trend-flat:     #9AA3A0
+  --sig:            #0E6E78
+  --not-sig:        #9AA3A0
+  --radius:         4px
+  --radius-sm:      2px
+
+  --font-ui:    "Instrument Sans", system-ui, sans-serif
+  --font-serif: "Newsreader", Georgia, serif
+  --font-mono:  "IBM Plex Mono", ui-monospace, monospace
+
+RULES:
+- 1px borders, never heavier. Use --line for structure, --ink for emphasis.
+- Radii: 4px on cards, 2px on chips, 0 on chart frames. Never more.
+- No box-shadows anywhere except ONE: none. Use borders and background
+  tint shifts for elevation. This is non-negotiable.
+- Never encode significance with red/green. Use line style (solid vs dashed),
+  pill labels, and text. Direction (up/down) uses the trend colors; that's
+  the only color-coded dimension.
+- Body text 15px, line-height 1.55. Metadata 11–12px mono, letter-spacing
+  0.12em, uppercase.
+- Number formatting: always sign, always unit, always time base
+  ("+0.42 °C/decade", not "+0.42").
+
+============================================================
+FILE TREE — OUTPUT EXACTLY THIS
+============================================================
+
+package.json
+tsconfig.json
+next.config.ts
+app/
+  layout.tsx
+  globals.css
+  page.tsx
+  regions/page.tsx
+  region/[slug]/page.tsx
+  region/[slug]/chat/page.tsx
+  region/[slug]/map/page.tsx
+lib/
+  types.ts
+  data.ts
+  trend.ts
+  chat.ts
+  context.tsx
+components/
+  TopBar.tsx
+  ContextChipBar.tsx
+  Sparkline.tsx
+  TrendChart.tsx
+  RegionMap.tsx
+  cards.tsx
+  ChatPanel.tsx
+  ArtifactCanvas.tsx
+
+============================================================
+SCREEN-BY-SCREEN SPEC
+============================================================
+
+ROUTE 1 — /  (Landing hero)
+Layout:
+  TopBar (wordmark left, "Regions" + "Data source" links right)
+  Hero section (max-width 1180, padding 88px 0 72px):
+    eyebrow: "NASA SPACE APPS 2026 · EARTH SYSTEM TREND DETECTIVE"
+    h1 (clamp 40–68px, weight 600, line-height 1.02, -0.025em tracking):
+      "Every place has a story. Pick one. <em>Read its trend.</em>"
+      The <em> is serif italic in --accent color.
+    lede paragraph (18px, max-width 560, color --ink-soft)
+    Two CTAs side by side:
+      Primary: "Start investigating →" (href /regions, .btn-primary)
+      Secondary: "How it works" (href #how, .btn-secondary)
+    A "live preview" card (max-width 640, border 1px --line, radius 4):
+      head row: "LIVE PREVIEW" left, "3 case files ready" right (mono)
+      three sparkline previews in a row, each with the region name and the
+      sparkline colored by its trend direction (up = orange, down = blue)
+    Data sources line at bottom: "MODIS · GPM · MERRA-2 · GLDAS · NASA EOSDIS · OpenStreetMap"
+  "How it works" section (id="how", padding 56px 0):
+    eyebrow: "HOW IT WORKS"
+    h2: "Four steps, one investigation."
+    4 columns (auto-fit minmax 220), each a bordered card:
+      01 Pick a region — "Three curated case files, each with a real 20-year record."
+      02 Choose a mode — "Chat to ask questions. Map to explore spatially."
+      03 Read the finding — "Rate of change, significance, confidence interval."
+      04 Carry it across — "Click any point on the map, then discuss it in chat."
+
+ROUTE 2 — /regions  (Three region cards)
+Layout:
+  TopBar
+  Main (padding 64px 0 80px):
+    eyebrow: "CHOOSE YOUR TERRITORY"
+    h1: "Three case files."  (clamp 28–40px, weight 600, -0.02em)
+    lede: "Each case file is a real region with a 20-year satellite record.
+           Pick one to begin. You can switch at any time."
+    Grid: 3 columns, 20px gap. On <960px: 1 column.
+    Each card (button element, text-align left, cursor pointer):
+      Top strip 140px tall (--surface-sunk background, border-bottom):
+        Sparkline full width, colored by trend direction
+        Top-left overlay (mono 10px): "2000–2024 · LST"  (or appropriate)
+      Body (padding 18px 20px 20px):
+        eyebrow (mono 10px uppercase): "CASE FILE · Semi-arid savanna"
+        h3 (20px weight 600): "The Sahel"
+        climate line (13px --ink-soft): "~3.2M km² · Semi-arid savanna"
+        teaser (serif italic 15px, border-top 1px --line, padding-top 12px):
+          "Is the Sahel warming faster than the global average? →"
+          Arrow in --accent.
+    Below grid: a full-width .divider with "or" between two horizontal lines.
+    A dashed-border note box below: "Custom region selection — drawing a box
+    anywhere on Earth will be available once the backend supports on-demand
+    data fetch. For now, use the three case files."
+    A back link to /.
+
+Clicking a card: setRegion(region) in context, then router.push(`/region/${slug}`).
+
+ROUTE 3 — /region/[slug]  (Region hub — mode chooser)
+Layout:
+  TopBar with backHref="/regions" backLabel="All regions"
+  Main (padding 56px 0 80px):
+    eyebrow: "SEMI-ARID SAVANNA · ~3.2M KM²"
+    h1: "The Sahel" (clamp 32–48px, weight 600, -0.025em)
+    Sub line: "Land Surface Temperature · 2000–2024 · Trend +0.4 °C/decade (significant)"
+    Two-column grid (20px gap, 1fr 1fr; stacks below 960px):
+      Mode card 1 (Link to /region/[slug]/chat):
+        36x36 icon tile (--accent-soft bg, --accent icon, radius 2):
+          inline SVG chat bubble
+        h2 "Ask" (22px weight 600)
+        p: "Have a conversation about the data. Findings, charts, and
+            explanations appear as cards on the right as you ask."
+        CTA line (mono 12px --accent): "ENTER CONVERSATION →"
+      Mode card 2 (Link to /region/[slug]/map):
+        Same structure, map icon (SVG polygon), h2 "Explore"
+        p: "Open the full-region map. Click any point to see its local
+            trend, then carry that point into a conversation."
+        CTA: "ENTER ANALYST MODE →"
+    "Not sure where to start? Try:" box below (bordered card):
+      Two starter questions as links to /chat, serif italic 15px,
+      border-top between them:
+      "Is lst changing in The Sahel?"
+      "What does 'significant' mean here?"
+
+ROUTE 4 — /region/[slug]/chat  (Conversation mode)
+Layout:
+  TopBar backHref="/region/[slug]" backLabel="{region.name}"
+  ContextChipBar mode="chat"
+  Two-column grid below: 38% / 1fr, height calc(100vh - 56px - 44px).
+  On <960px: single column.
+
+  LEFT — ChatPanel:
+    .chat-panel: flex column, border-right 1px --line, min-height 0
+    .chat-messages (flex 1, overflow-y auto, padding 24, gap 14):
+      If messages empty and region set: show a first assistant bubble:
+        "Hi — I'm your trend assistant for {region.name}. Ask me anything:
+         is it changing?, where?, what does significant mean?"
+      Each message as .chat-bubble:
+        user: align-self flex-end, bg --ink, color white
+        assistant: align-self flex-start, bg --surface-card, border 1px --line
+      If busy: a final assistant bubble "Analysing…" at 0.6 opacity.
+    .chat-suggestions (padding 10 14 0, border-top 1px --line):
+      Three chips (max) from SUGGESTIONS:
+        "Is it getting warmer here?"
+        "Show me the trend over time"
+        "Where is it changing?"
+      Each chip is a button, 12px, border 1px --line, radius 2, hover
+      border --accent, color --accent.
+    .chat-composer (border-top 1px --line, padding 14, bg --surface-card):
+      textarea .chat-input (min-height 62, max-height 140, padding 10 12,
+        border 1px --line, radius 4, font inherit, resize none)
+      On focus: border-color --accent (no shadow).
+      Row below: mono 11px hint "Enter to send · Shift+Enter for newline"
+        on the left, "Send ↑" .btn-primary on the right.
+      Enter (without shift) submits. Shift+Enter inserts newline.
+
+  RIGHT — ArtifactCanvas:
+    .canvas (padding 24, bg --surface-sunk, overflow-y auto, flex column, gap 18)
+    If no cards: an empty state card with dashed 1px --line-strong border,
+      48px padding, centered text: "ARTIFACTS APPEAR HERE" (mono 11 uppercase
+      tracking 0.14em) followed by "As you ask questions on the left, cards
+      will stack here — findings, charts, maps, and explanations."
+    Otherwise: render each card via CardRenderer.
+
+ROUTE 5 — /region/[slug]/map  (Analyst mode)
+Layout:
+  TopBar backHref="/region/[slug]" backLabel="{region.name}"
+  ContextChipBar mode="map"
+  Three-column grid below: 260px / 1fr / 340px, height calc(100vh - 56px - 44px).
+  On <960px: single column, each section stacks with border separators.
+
+  LEFT — .map-rail (padding 20, border-right 1px --line, overflow-y auto):
+    Section "VARIABLE": one active option showing the variable's full name.
+    Section "LAYER": "Trend (slope)" active; "Raw values · soon" disabled
+      (opacity 0.5, cursor default).
+    Section "REGION TREND": one read-only chip with formatSlope(stats).
+    A small mono 12px caption at the bottom:
+      "Click any point on the map to open it. Orange = increasing,
+       blue = decreasing."
+
+  CENTER — .map-canvas (position relative):
+    RegionMap component mounted. The Leaflet container takes position
+    absolute inset 0.
+
+  RIGHT — .point-panel (border-left 1px --line, bg --surface-card,
+  overflow-y auto):
+    If no point selected:
+      .point-empty (padding 40 24, centered, --ink-mute):
+        "Click anywhere on the map to investigate that point."
+    If point selected:
+      .point-head (padding 18 20 14, border-bottom):
+        Left: .point-coord (mono 13px weight 500) "14.52°N, 2.14°E"
+              .point-context (12px --ink-soft) "{region.name} · {climate}"
+        Right: "×" clear button (.btn-ghost) — clears the point.
+      .point-body (padding 20):
+        .point-variable (mono 11 uppercase --ink-mute): "{Variable Name}"
+        .point-value (serif 30px weight 400):
+          "+0.42 °C/decade" — colored --trend-up if positive,
+          --trend-down if negative.
+        A .pill: "Significant trend" (.pill-sig) if |pointSlope| > 0.2,
+          else "Not significant" (.pill-not-sig).
+        Section "LOCAL SERIES" (mono 10 uppercase --ink-mute):
+          Sparkline of the region series (sampled every 6th point), width 260,
+          height 50, colored by pointDirection.
+        .point-actions (border-top 1px --line, padding-top 20, margin-top 20):
+          .btn-primary.btn-block "Discuss this point →"
+
+  "Discuss this point" behavior:
+    setPendingPrompt(`I've selected ${lat.toFixed(1)}°N, ${lng.toFixed(1)}°E. What's happening here?`)
+    router.push(`/region/${slug}/chat`)
+    Then in ChatPanel: useEffect sees pendingPrompt, clears it via
+    setPendingPrompt(null), and calls handleSend(text) to seed the first
+    conversation message automatically.
+
+============================================================
+SHARED COMPONENTS
+============================================================
+
+TopBar:
+  Props: { backHref?: string; backLabel?: string }
+  .topbar (border-bottom 1px --line, sticky top 0, z 900, bg --surface)
+  .topbar-inner (h 56px, max-width 1180, mx auto, px 24, flex space-between)
+  Left: wordmark (link to /) — 8px teal dot + "EARTH · TREND · DETECTIVE"
+        If backHref provided: a mono "/" then a back link "← {backLabel}".
+  Right: nav links "Regions" (href /regions) and "Data source"
+         (href https://www.earthdata.nasa.gov/, target _blank).
+
+ContextChipBar:
+  Props: { mode: "chat" | "map" | "hub" }
+  .chipbar (border-bottom 1px --line, bg --surface-sunk, mono 12px)
+  .chipbar-inner (padding 10 24, flex, gap 8, flex-wrap)
+  Chips (always present, in this order):
+    {region.name}       — .chip.chip-accent (teal-tinted bg)
+    {variable.shortName} — plain .chip
+    {period[0]}–{period[1]} — plain .chip
+    IF point selected: "14.5°N, 2.0°E" with an × button to clear
+  Right side: two segmented links "Chat" and "Map" pointing to
+    /region/[slug]/chat and /region/[slug]/map. Active one uses
+    .seg.active (ink bg, white text).
+
+Sparkline:
+  Props: { values: number[], width?: number, height?: number, color?: string }
+  Defaults: 120, 32, var(--accent). Returns an <svg> with a single
+  <polyline> normalized to min/max. Stroke width 1.5, round caps and joins.
+  Return null if values is empty.
+
+TrendChart:
+  Props: { series, period: [start, end], slopePerDecade, unit,
+           significant: boolean, direction: "up" | "down" | "flat" }
+  viewBox 760 × 260. Pads: L 48, R 16, T 16, B 32.
+  Y range from min/max of series. Draw:
+    - 3 horizontal gridlines (dashed "2 4") at yMin, yMin + range/2, yMax
+    - Y-axis labels (mono 10px --ink-mute, right-aligned) at those ticks
+    - X-axis labels (mono 10px, centered) at period[0], +25%, +50%, +75%, end
+    - Raw series path (stroke --ink-mute, width 1, opacity 0.55)
+    - Fitted line from first to last point, computed from slopePerDecade.
+      Stroke --trend-up (if up), --trend-down (if down), or --trend-flat.
+      Stroke width 2. Stroke-dasharray "6 4" if NOT significant, "0" if sig.
+  Legend row below (mono 11, --ink-soft, padding-top 14, border-top --line):
+    "Monthly series" with a short --ink-mute swatch
+    "Fitted trend (significant|not significant)" with the line color swatch
+    Right-aligned: "Units: {unit}"
+
+RegionMap:
+  Props: { region, selectedPoint, onSelectPoint }
+  "use client". useEffect imports leaflet dynamically.
+  On mount: create Leaflet map centered at region.center, zoom region.zoom,
+  add tile layer https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+  with attribution "&copy; OpenStreetMap contributors".
+  Draw a 6×8 grid of L.circleMarker across the region bounds. Each marker:
+    radius 18, weight 0, fillColor from colorForSlope(), fillOpacity 1.
+    On click → onSelectPoint([lat, lng]).
+  Map.on("click") also calls onSelectPoint.
+  fitBounds(region.bounds, { padding: [16, 16] }).
+  A separate useEffect syncs the selected point marker: a circleMarker
+  radius 9, weight 2, color --ink, fillColor #fff.
+  On cleanup: remove map and all markers.
+  The container div has id="leaflet-map", position absolute, inset 0.
+
+  colorForSlope(slope):
+    a = min(1, abs(slope) / 1.5)
+    if abs(slope) < 0.08: return "rgba(154,163,160,0.55)"
+    if slope > 0: return `rgba(194,65,12,${0.25 + a*0.6})`
+    else: return `rgba(29,78,216,${0.25 + a*0.6})`
+
+CardRenderer:
+  Switch on card.kind: "finding" | "trend-chart" | "slope-map" | "variable" | "caveat"
+
+  All cards share:
+    .card (bg white, border 1px --line, radius 4, overflow hidden)
+    .card-head (padding 12 18, border-bottom 1px --line, bg --surface,
+      flex space-between, align center)
+      Left: .card-head-label (mono 10 uppercase tracking 0.14em --ink-mute)
+      Right: optional pill or mono metadata
+
+  FINDING card:
+    Head label "The finding". Right: a pill — "Significant trend" (.pill-sig)
+    or "Not significant" (.pill-not-sig).
+    Body (22px 24px 24px):
+      h3.finding-title (serif 22px line-height 1.35, margin-bottom 8):
+        "{VariableName} over {RegionName} is <em>rising|falling|stable</em>
+         at {formatSlope(stats)}."
+        The <em> is serif italic in --accent.
+      .finding-sub (14px --ink-soft):
+        "2000–2024 · Mann-Kendall p = 0.003"
+      .finding-stats grid (4 columns, top+bottom border):
+        Cells separated by right border (last cell no border):
+          RATE — formatSlope(stats) — colored by direction
+          SIGNIFICANCE — formatP(pValue)
+          95% CI — "ciLow → ciHigh"
+          RECORDS — number of months
+        Each: .stat-label (mono 10 uppercase --ink-mute) above
+              .stat-value (mono 15px weight 500)
+
+  TREND-CHART card:
+    Head label "Time series · LST", right mono "{period[0]}–{period[1]}".
+    Body: <TrendChart ... />
+
+  SLOPE-MAP card:
+    Head label "Where is it changing?", right mono "slope of trend".
+    Body: a 10×6 CSS grid of colored squares (gap 2, aspect-ratio 1) whose
+    colors come from the same colorForSlope math applied to a deterministic
+    pseudo-random slope at each cell's lat/lng. Below: a legend row
+    (border-top 1px --line, padding-top 14, mono 11) with three swatches:
+    Decreasing (blue), No change (gray), Increasing (orange).
+
+  VARIABLE card:
+    Head label "Variable · LST".
+    Body:
+      h3 (serif 20px, margin-bottom 10) "Land Surface Temperature"
+      p (line-height 1.65, margin-bottom 18) with the description.
+      dl grid (auto/1fr, gap 8/20, font-size 13):
+        "UNITS" dt (mono 10 uppercase) / dd (variable.unit)
+        "SOURCE" dt / dd (variable.mission)
+
+  CAVEAT card:
+    Head label "What this does & doesn't mean".
+    Body: <ul class="caveat-list"> with 4 items, each separated by
+    border-top 1px --line (first item no border), each with a leading
+    em-dash in --ink-mute:
+      "The trend measures correlation with time, not causation. Something
+       else may be driving both the variable and the trend."
+      "Significance is not importance. A very small trend can be highly
+       significant if there are many records; a large trend can fail
+       significance if the record is short or noisy."
+      "Local trends can differ sharply from regional averages — check the
+       slope map before assuming a single number tells the whole story."
+      "This demo uses a {significant|non-significant} mock result from a
+       simplified test. Real Mann-Kendall requires autocorrelation
+       correction that we've omitted here."
+
+ChatPanel:
+  Client component. Uses useInvestigation() for context.
+  Local state: draft (string), busy (boolean).
+  scrollRef: scrolls to bottom when messages.length changes.
+  useEffect for pendingPrompt: if region && pendingPrompt, capture the
+  pending prompt text, immediately call setPendingPrompt(null), then call
+  handleSend(text). Deps: [region, pendingPrompt].
+
+  handleSend(text):
+    Trim. If empty or !region, return.
+    addMessage({ role: "user", text: trimmed })
+    setDraft(""). setBusy(true).
+    await 300ms delay (visual feedback).
+    Build series = generateSeries(region), stats = computeStats(region, series).
+    reply = generateReply(trimmed, region, stats).
+    card = addCard({ kind: reply.cardKind, point: point ?? undefined })
+    addMessage({ role: "assistant", text: reply.text,
+                  cardKind: reply.cardKind, cardId: card.id })
+    setBusy(false).
+
+  Render structure per the screen spec above.
+
+ArtifactCanvas:
+  Client component. Reads cards from context. Renders empty state or
+  card list via CardRenderer.
+
+============================================================
+DATA MODEL — lib/types.ts
+============================================================
+
+export type VariableKey = "lst" | "sea_ice" | "ndvi" | "water_extent" | "precipitation";
+export type TrendShape = "up" | "down";
+
+export type Variable = {
+  key: VariableKey;
+  name: string;
+  shortName: string;
+  unit: string;
+  perDecadeUnit: string;
+  description: string;
+  mission: string;
+};
+
+export type Region = {
+  slug: string;
+  name: string;
+  subtitle: string;
+  climate: string;
+  area: string;
+  variable: VariableKey;
+  center: [number, number];   // lat, lng
+  bounds: [[number, number], [number, number]];  // [[south, west], [north, east]]
+  zoom: number;
+  teaser: string;
+  trendShape: TrendShape;
+  baseline: number;
+  period: [number, number];
+};
+
+export type TrendStats = {
+  slope: number;              // per decade
+  slopeUnit: string;
+  pValue: number;
+  significant: boolean;
+  ciLow: number;
+  ciHigh: number;
+  direction: "up" | "down" | "flat";
+};
+
+export type CardKind = "finding" | "trend-chart" | "slope-map" | "variable" | "caveat";
+
+export type CanvasCard = {
+  id: string;
+  kind: CardKind;
+  createdAt: number;
+  point?: [number, number];
+};
+
+export type ChatMessage = {
+  id: string;
+  role: "user" | "assistant";
+  text: string;
+  cardKind?: CardKind;
+  cardId?: string;
+};
+
+============================================================
+MOCK DATA — lib/data.ts
+============================================================
+
+Define exactly these FIVE variables in a VARIABLES record:
+
+  lst: Land Surface Temperature
+    shortName "LST", unit "°C", perDecadeUnit "°C/decade",
+    description "How warm the ground itself is, measured from space by
+      thermal-infrared sensors. Different from air temperature — deserts
+      and cities can be much hotter than the air above them.",
+    mission "MODIS / Terra & Aqua"
+
+  sea_ice: Arctic Sea Ice Extent
+    shortName "Sea Ice", unit "million km²",
+    perDecadeUnit "million km²/decade",
+    description "The area of ocean covered by at least 15% ice. Shrinks in
+      summer and grows back in winter; the yearly minimum is what
+      scientists track.",
+    mission "NSIDC / DMSP SSMIS"
+
+  ndvi: Vegetation Index
+    shortName "NDVI", unit "index", perDecadeUnit "index/decade",
+    description "A measure of how green and healthy vegetation is, from 0
+      (bare ground) to 1 (dense forest). Increasing NDVI often means more
+      plant growth.",
+    mission "MODIS / Terra"
+
+  water_extent: Surface Water Extent
+    shortName "Water Extent", unit "km²", perDecadeUnit "km²/decade",
+    description "How much of a region is covered by water bodies.
+      Declining water extent in inland basins often signals drought or
+      over-extraction.",
+    mission "Landsat / Sentinel-2"
+
+  precipitation: Precipitation
+    shortName "Rainfall", unit "mm/month",
+    perDecadeUnit "mm/month/decade",
+    description "Average monthly rainfall, from microwave and infrared
+      satellite observations. Highly seasonal, so trends must be assessed
+      after removing the yearly cycle.",
+    mission "GPM / IMERG"
+
+Define exactly these THREE regions in a REGIONS array:
+
+  Sahel:
+    slug "sahel", name "The Sahel", subtitle "Semi-arid savanna",
+    climate "Semi-arid savanna", area "~3.2M km²",
+    variable "lst", center [14.5, 2.0],
+    bounds [[10, -8], [20, 20]], zoom 4,
+    teaser "Is the Sahel warming faster than the global average?",
+    trendShape "up", baseline 32, period [2000, 2024]
+
+  Arctic:
+    slug "arctic", name "The Arctic", subtitle "Sea ice cryosphere",
+    climate "Polar marine", area "~14M km² (ocean)",
+    variable "sea_ice", center [78, 0],
+    bounds [[68, -180], [90, 180]], zoom 3,
+    teaser "How fast is the summer sea ice disappearing?",
+    trendShape "down", baseline 6.2, period [1979, 2024]
+
+  Aral Sea:
+    slug "aral", name "The Aral Sea", subtitle "Inland sea basin",
+    climate "Continental arid", area "~68,000 km² (basin)",
+    variable "water_extent", center [45.0, 59.0],
+    bounds [[43, 57], [47, 61]], zoom 6,
+    teaser "What happened to the Aral Sea after the rivers were diverted?",
+    trendShape "down", baseline 45000, period [2000, 2024]
+
+Export helpers:
+  getRegion(slug): Region | undefined
+  getVariable(key): Variable
+  seeded(seed): returns a deterministic LCG function producing 0..1 floats
+  hashSlug(slug): FNV-1a hash producing a uint32
+
+============================================================
+TREND MATH — lib/trend.ts
+============================================================
+
+generateSeries(region): number[]
+  Months = (endYear - startYear + 1) * 12.
+  perMonthTrend based on trendShape and variable:
+    up   + lst: +0.0028; up + other: +0.0006
+    down + sea_ice: -0.0008; down + water_extent: -0.0035; else -0.002
+  seasonalAmp by variable:
+    lst 6, sea_ice 4, precipitation 3, water_extent 1.5, other 0.8
+  For each month i:
+    linear = baseline + perMonthTrend * i * 10
+    seasonal = seasonalAmp * sin((i/12) * 2π - π/2)
+    noise = (rand() - 0.5) * seasonalAmp * 0.7   // rand from seeded(hashSlug)
+    interannual = 2 * sin((i/84) * 2π) * 0.35
+    push(linear + seasonal + noise + interannual)
+
+computeStats(region, series): TrendStats
+  Simple linear regression on month index vs value.
+  slopePerSample = Σ((x - x̄)(y - ȳ)) / Σ(x - x̄)²
+  slope = slopePerSample * 12 * 10   // per decade
+  residuals, residualStd (n - 2 denominator)
+  seSlope = residualStd / sqrt(Σ(x - x̄)²)
+  tStat = slopePerSample / max(seSlope, 1e-9)
+  pValue = exp(-abs(tStat) * 1.6)    // crude demo proxy
+  ciHalf = 1.96 * seSlope * 120
+  direction: abs(slope) < 0.01 ? "flat" : slope > 0 ? "up" : "down"
+  significant: pValue < 0.05
+  Mark clearly in a comment: "DEMO approximation — replace with real
+  Mann-Kendall + Sen's slope + autocorrelation correction."
+
+formatSlope(stats): string
+  Sign, then abs(slope) with 3 decimals if < 1 else 2 decimals, then unit.
+  e.g. "+0.428 °C/decade"
+
+formatP(p): string
+  "p < 0.001" if p < 0.001, else "p = " + p.toFixed(3)
+
+slopeAtPoint(lat, lng, region): number
+  Deterministic per-point slope used to color map markers:
+    h = sin(lat * 12.9898 + lng * 78.233) * 43758.5453
+    noise = (h - floor(h)) * 2 - 1
+    base = region.trendShape === "up" ? 0.35 : -1.2
+    return base + noise * 0.45
+
+============================================================
+CHAT BRAIN — lib/chat.ts
+============================================================
+
+generateReply(userText, region, stats): { text: string; cardKind: CardKind }
+  A simple keyword router. Mark clearly:
+  "REPLACE THIS FUNCTION WITH A REAL LLM CALL LATER — the UI contract is
+   { text: string, cardKind: CardKind } and nothing else."
+
+  Rules in this priority order (first match wins), all case-insensitive:
+    /where|map|distribution|spatial|where is/
+      → slope-map, text: "Here's the spatial picture of {shortName}
+        trend across {region.name}. Orange = increasing, blue = decreasing.
+        Click any point to investigate it individually."
+    /what is|explain|define|meaning|what does.*mean/
+      → variable, text: "{variable.name} — {variable.description}"
+    /significan|caveat|trust|confiden|p-value|p value|reliable|how sure/
+      → caveat, text: "The trend here has {formatP(pValue)}.
+        {stats.significant ? 'That clears the conventional 0.05 threshold —
+        so we can be fairly confident it's real.' : "That's above the 0.05
+        threshold, so we can't confidently call this significant yet."}
+        Let me lay out what that does and doesn't mean."
+    /show|chart|graph|series|over time|plot|data/
+      → trend-chart, text: "Here is the full monthly series for
+        {shortName} over {region.name}, with the fitted linear trend and
+        95% confidence band."
+    /trend|changing|change|warmer|cooler|increas|decreas|warming|cooling/
+      → finding, text: "Across {region.name}, {shortName} is changing at
+        {formatSlope(stats)} ({formatP}). {stats.significant ? 'Statistically
+        significant.' : 'Not statistically significant at the conventional
+        threshold.'}"
+    fallback → finding, text: "Good question. Here's the headline:
+      {shortName} over {region.name} has been changing at {formatSlope} ({p}).
+      Want me to show the chart, the map, or explain what 'significant'
+      means here?"
+
+Export SUGGESTIONS array:
+  ["Is it getting warmer here?", "Show me the trend over time",
+   "Where is it changing?", "What does significant mean?",
+   "What is land surface temperature?"]
+
+============================================================
+CONTEXT — lib/context.tsx
+============================================================
+
+Client component. Exports InvestigationProvider and useInvestigation().
+
+State shape:
+  hydrated: boolean
+  region: Region | null
+  point: [number, number] | null
+  pendingPrompt: string | null
+  cards: CanvasCard[]
+  messages: ChatMessage[]
+
+Actions:
+  setRegion(r) — if r is null, also clear point, cards, messages.
+  setPoint(p)
+  setPendingPrompt(s)
+  addCard(input) — assigns id "card-{timestamp}-{rand}" and createdAt,
+                   appends to cards, RETURNS the created card.
+  addMessage(input) — assigns id "msg-{timestamp}-{rand}", appends,
+                      RETURNS the created message.
+  resetRegion()
+
+Persistence:
+  STORAGE_KEY = "etd.investigation.v1"
+  On mount: read localStorage, hydrate region/point/cards/messages,
+            set hydrated true.
+  On any change to region/point/cards/messages AND hydrated: write
+    { region, point, cards, messages } back to localStorage.
+
+IMPORTANT: always provide the useInvestigation() hook with a runtime guard
+that throws if used outside the provider.
+
+Provide the provider in app/layout.tsx so it wraps {children}.
+
+============================================================
+ROUTING RULES
+============================================================
+
+Each route that depends on [slug] must, on mount:
+  - if !hydrated, do nothing
+  - getRegion(slug) — if missing, router.replace("/regions")
+  - if region?.slug !== slug, setRegion(the found region)
+
+This means the app works whether the user arrives via a card click or by
+typing the URL directly, and it survives page refreshes.
+
+============================================================
+RESPONSIVE RULES
+============================================================
+
+Breakpoints: 960px and 600px.
+
+At <960px:
+  .region-grid → 1 column
+  .hub-modes  → 1 column
+  .chat-layout → 1 column, chat panel on top with border-bottom
+  .map-layout → 1 column, rail top, map middle, point-panel bottom
+    (max-height 40vh)
+  .finding-stats → 2 columns, with borders adjusted so cells tile
+  hero padding reduces to 56px 0 48px
+  regions-page padding reduces to 40px 0 60px
+  hub padding reduces to 36px 0 60px
+
+At <600px:
+  .shell padding → 0 16px
+  .topbar-inner and .chipbar-inner padding → 0 16px
+  .chat-messages, .canvas padding → 16px
+  .card-body padding → 16px 18px 20px
+  .chat-bubble max-width → 100%
+  .finding-stats → 1 column (each stat becomes a full-width row)
+
+============================================================
+THINGS TO AVOID (IMPORTANT)
+============================================================
+
+- Do NOT use Tailwind, shadcn, Radix, or any component library.
+- Do NOT use any CSS framework. All CSS is hand-written in globals.css.
+- Do NOT add dark mode.
+- Do NOT add a login, auth, or user account screen.
+- Do NOT put the AI on the backend. The mock generateReply is synchronous
+  and local. This is intentional so the demo has zero external dependencies.
+- Do NOT use red or green to indicate significance. Use pill labels,
+  solid vs dashed lines, and text.
+- Do NOT add box-shadows to cards. Only 1px borders and background tint.
+- Do NOT round corners beyond 4px, or use any gradient.
+- Do NOT use emoji in the UI (SVG icons only, inline).
+- Do NOT add analytics, tracking, or any external script beyond Google
+  Fonts and OpenStreetMap tiles.
+- Do NOT skip the "Discuss this point →" flow. It is the single most
+  important interaction in the app.
+- Do NOT write "TODO" or "coming soon" placeholders. If a screen is
+  described above, implement it fully.
+- Do NOT omit the localStorage persistence. It's what makes the app feel
+  like an investigation rather than a page-clicker.
+- Do NOT forget strict TypeScript. No `any` unless unavoidable, and when
+  unavoidable, add a one-line comment explaining why (e.g. Leaflet types).
+
+============================================================
+OUTPUT FORMAT
+============================================================
+
+Output the files in this exact order, one after another, each in its own
+fenced code block. Above each code block put a one-line header:
+
+  // FILE: path/to/file.ext
+
+Before the first file, output a 5-line summary of what you're about to
+build. After the last file, output a 10-line "how to run" section:
+
+  1. mkdir earth-trend-detective && cd earth-trend-detective
+  2. Create the files above in the listed structure.
+  3. npm install
+  4. npm run dev
+  5. Open http://localhost:3000
+  ... plus any gotcha notes.
+
+No prose beyond those two sections. No explanations inside the code blocks
+beyond inline comments where the spec above explicitly asked for them.
+
+Begin output now.
