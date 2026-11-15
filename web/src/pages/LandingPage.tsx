@@ -85,6 +85,7 @@ function SignalViz() {
   return (
     <section className="section" id="signals" aria-labelledby="signals-title">
       <div className="section-inner">
+        <Reveal><div className="section-num">05 / Signals</div></Reveal>
         <Reveal><div className="eyebrow">Reading the Signals</div></Reveal>
         <Reveal delay={60}><h2 id="signals-title">How an environmental time series is interpreted</h2></Reveal>
         <Reveal delay={100}><p className="section-lead">This illustrative example shows how observations can be read together with a trend estimate, an unusual event, and a forecast range. It is a teaching visual—not Earth Pulse output and not NASA observations.</p></Reveal>
@@ -301,37 +302,44 @@ export function LandingPage() {
       </header>
 
       <main>
-        <section className="section hero section-inner" id="top" aria-labelledby="hero-title" style={{maxWidth: 1200, margin: '0 auto'}}>
+        <section className="section hero" id="top" aria-labelledby="hero-title">
+          <div className="section-inner" style={{display:'grid', gridTemplateColumns:'inherit', gap:'inherit', alignItems:'inherit', maxWidth:1240}}>
           <div className="hero-bg-glow" aria-hidden="true" />
           <div className="hero-bg-orbit" aria-hidden="true" />
           <div className="hero-copy">
-            <div className="eyebrow hero-enter" style={{['--d' as any]:'40ms'}}>Earth observation · trends · evidence</div>
-            <h1 id="hero-title" className="hero-enter" style={{['--d' as any]:'120ms'}}>Discover the Signals.<br /><span className="accent">Understand Earth&apos;s Changing Systems.</span></h1>
-            <p className="hero-sub hero-enter" style={{['--d' as any]:'220ms'}}>Explore environmental trends, investigate regional differences and uncover what is changing across our planet through Earth observation data. Earth Pulse brings time series, robust statistics, forecasts with uncertainty, anomalies, and imagery context into one investigation workflow.</p>
-            <div className="hero-actions hero-enter" style={{['--d' as any]:'320ms'}}>
+            <div className="section-num hero-enter" style={{['--d' as any]:'20ms'}}>00 / Mission</div>
+            <div className="eyebrow hero-enter" style={{['--d' as any]:'60ms'}}>Earth observation · trends · evidence</div>
+            <h1 id="hero-title" className="hero-enter" style={{['--d' as any]:'140ms'}}>Discover the Signals.<br /><span className="accent">Understand Earth&apos;s Changing Systems.</span></h1>
+            <p className="hero-sub hero-enter" style={{['--d' as any]:'240ms'}}>Explore environmental trends, investigate regional differences and uncover what is changing across our planet through Earth observation data. Earth Pulse brings time series, robust statistics, forecasts with uncertainty, anomalies, and imagery context into one investigation workflow.</p>
+            <div className="hero-actions hero-enter" style={{['--d' as any]:'340ms'}}>
               <Link className="btn-primary" to="/regions">Explore Earth Pulse</Link>
               <a className="btn-secondary" href="#how-it-works" onClick={(e) => { e.preventDefault(); scrollToId('#how-it-works') }}>How It Works</a>
             </div>
-            <div className="hero-meta hero-enter" style={{['--d' as any]:'420ms'}} aria-label="Product highlights">
+            <div className="hero-meta hero-enter" style={{['--d' as any]:'440ms'}} aria-label="Product highlights">
               <div className="meta-card"><b>Place-based investigation</b><span>Inspect past observations, trends, and forecasts for selected locations.</span></div>
               <div className="meta-card"><b>Statistical rigor</b><span>Theil–Sen trends, Mann–Kendall significance, and uncertainty-aware outputs.</span></div>
               <div className="meta-card"><b>Transparent coverage</b><span>Clear labeling for observed data, forecasts, scenarios, and synthetic demo stores.</span></div>
             </div>
+            <div className="hero-enter" style={{['--d' as any]:'520ms', marginTop: 16, fontFamily:'var(--font-mono)', fontSize:'.72rem', letterSpacing:'.08em', color:'var(--lp-accent-3)', opacity:.9}}>
+              LIVE CONTEXT · 03 REGIONS · MULTI-VARIABLE · SIGNAL → EVIDENCE
+            </div>
           </div>
-          <div className="hero-visual hero-enter" style={{['--d' as any]:'260ms'}} aria-label="Earth imagery hero">
+          <div className="hero-visual hero-enter" style={{['--d' as any]:'280ms'}} aria-label="Earth imagery hero">
             <div className="grid-overlay" aria-hidden="true" />
-            <div className="hero-coords">OBS MODE · GLOBAL · EARTH SYSTEMS</div>
+            <div className="hero-coords">OBS MODE · GLOBAL · 23.5°N 78.9°E REF</div>
             <div className="media-frame"><SafeImg loading="eager" sources={heroImg} alt="NASA Blue Marble view of Earth showing global land, ocean, cloud, and ice patterns" /></div>
             <div className="hero-visual-caption">
               <b>Investigate change with context.</b> Earth Pulse connects environmental signals across time and space—supporting comparison, interpretation, and careful communication of uncertainty.
               <span className="caption-meta">Imagery: NASA Blue Marble (PIA18033). Credit: NASA. <a href="https://images.nasa.gov/details/PIA18033" target="_blank" rel="noreferrer" style={{color:'#9ff3e6'}}>Source</a></span>
             </div>
           </div>
+          </div>
         </section>
 
         <section className="section" id="about" aria-labelledby="about-title">
           <div className="section-inner about-grid">
             <div className="prose">
+              <Reveal><div className="section-num">01 / About</div></Reveal>
               <Reveal><div className="eyebrow">About Earth Pulse</div></Reveal>
               <Reveal delay={40}><h2 id="about-title">A focused environment for investigating Earth-system signals</h2></Reveal>
               <Reveal delay={80}><p className="section-lead">Earth Pulse is an open-source, map-first explorer for examining how environmental conditions vary over time and differ across regions—using Earth observation data, statistical analysis, and transparent presentation.</p></Reveal>
@@ -354,6 +362,7 @@ export function LandingPage() {
 
         <section className="section" id="observe" aria-labelledby="observe-title">
           <div className="section-inner">
+            <Reveal><div className="section-num">02 / Observation</div></Reveal>
             <Reveal><div className="eyebrow">Earth observation context</div></Reveal>
             <Reveal delay={40}><h2 id="observe-title">How satellites help us observe changing Earth systems</h2></Reveal>
             <Reveal delay={80}><p className="section-lead">Satellite platforms and Earth-observation products provide repeated, spatially broad views of land, ocean, atmosphere, and vegetation. Earth Pulse uses these perspectives—together with statistical analysis—to support investigation of environmental signals over time.</p></Reveal>
@@ -379,6 +388,7 @@ export function LandingPage() {
 
         <section className="section" id="how-it-works" aria-labelledby="how-title">
           <div className="section-inner">
+            <Reveal><div className="section-num">03 / Workflow</div></Reveal>
             <Reveal><div className="eyebrow">How it works</div></Reveal>
             <Reveal delay={40}><h2 id="how-title">A clear workflow for environmental investigation</h2></Reveal>
             <Reveal delay={80}><p className="section-lead">Earth Pulse guides users from question to evidence: select a place, examine available observations, quantify trends, assess significance, and interpret forecasts and contrasts with transparent limitations.</p></Reveal>
@@ -399,6 +409,7 @@ export function LandingPage() {
 
         <section className="section" id="regions" aria-labelledby="regions-title">
           <div className="section-inner">
+            <Reveal><div className="section-num">04 / Regions</div></Reveal>
             <Reveal><div className="eyebrow">Study regions</div></Reveal>
             <Reveal delay={40}><h2 id="regions-title">Explore three contrasting geographical contexts</h2></Reveal>
             <Reveal delay={80}><p className="section-lead">These regions illustrate how coastal, monsoon-influenced, continental, and Mediterranean-climate environments can present different environmental questions. The descriptions below provide geographic and investigative context only—no trend findings are claimed here.</p></Reveal>
@@ -465,6 +476,7 @@ export function LandingPage() {
 
         <section className="section" id="variables" aria-labelledby="vars-title">
           <div className="section-inner">
+            <Reveal><div className="section-num">06 / Variables</div></Reveal>
             <Reveal><div className="eyebrow">Environmental variables</div></Reveal>
             <Reveal delay={40}><h2 id="vars-title">Parameters supported by the application workflows</h2></Reveal>
             <Reveal delay={80}><p className="section-lead">Earth Pulse works with a set of climate and environmental parameters used across its grid and/or point analysis flows. Availability depends on location, data mode, source coverage, and physical relevance (for example, ocean-only vs land-only variables).</p></Reveal>
@@ -486,6 +498,7 @@ export function LandingPage() {
 
         <section className="section" id="methods" aria-labelledby="methods-title">
           <div className="section-inner">
+            <Reveal><div className="section-num">07 / Methods</div></Reveal>
             <Reveal><div className="eyebrow">Scientific methodology</div></Reveal>
             <Reveal delay={40}><h2 id="methods-title">Methods implemented for trend, anomaly, and forecast interpretation</h2></Reveal>
             <Reveal delay={80}><p className="section-lead">Earth Pulse combines robust statistics, interpretable baselines, and machine-learning components used in the repository’s analysis/model pipeline. Visuals below are explanatory diagrams (not application outputs). Interpret results with reported uncertainty and data-coverage context.</p></Reveal>
@@ -502,6 +515,7 @@ export function LandingPage() {
 
         <section className="section" id="sources" aria-labelledby="sources-title">
           <div className="section-inner">
+            <Reveal><div className="section-num">08 / Sources</div></Reveal>
             <Reveal><div className="eyebrow">Data sources</div></Reveal>
             <Reveal delay={40}><h2 id="sources-title">Integrated, optional, external, and planned resources</h2></Reveal>
             <Reveal delay={80}><p className="section-lead">The entries below reflect sources and resources evidenced in the repository’s code, configuration, and documentation context. Status varies by mode (offline demo, real pipeline, point flow, optional Tier B). External and planned resources are not implied to be integrated unless stated.</p></Reveal>
@@ -520,6 +534,7 @@ export function LandingPage() {
 
         <section className="section" id="imagery" aria-labelledby="gallery-title">
           <div className="section-inner">
+            <Reveal><div className="section-num">09 / Imagery</div></Reveal>
             <Reveal><div className="eyebrow">Satellite imagery gallery</div></Reveal>
             <Reveal delay={40}><h2 id="gallery-title">Geographical and Earth-observation imagery for context</h2></Reveal>
             <Reveal delay={80}><p className="section-lead">Editorial gallery using verified NASA imagery for visual orientation. These images provide geographical/observational context; they are not presented as direct, location-specific measurements produced by this app unless explicitly labeled as such inside the application.</p></Reveal>
@@ -538,6 +553,7 @@ export function LandingPage() {
 
         <section className="section" id="transparency" aria-labelledby="transparency-title">
           <div className="section-inner">
+            <Reveal><div className="section-num">10 / Transparency</div></Reveal>
             <Reveal><div className="eyebrow">Data transparency</div></Reveal>
             <Reveal delay={40}><h2 id="transparency-title">Clear distinctions, limitations, and uncertainty</h2></Reveal>
             <Reveal delay={80}><p className="section-lead">Earth Pulse is built to communicate what the data can and cannot support. Users should always interpret outputs together with coverage metadata, method assumptions, and source limitations.</p></Reveal>
@@ -552,6 +568,7 @@ export function LandingPage() {
 
         <section className="section final-cta" id="launch" aria-labelledby="cta-title">
           <div className="section-inner">
+            <Reveal><div className="section-num" style={{justifyContent:'center'}}>11 / Launch</div></Reveal>
             <Reveal><div className="eyebrow">Launch the explorer</div></Reveal>
             <Reveal delay={40}><h2 id="cta-title">Start Exploring Earth&apos;s Changing Systems.</h2></Reveal>
             <Reveal delay={80}><p>Investigate environmental variables, discover regional trends and understand the evidence behind Earth&apos;s changing systems.</p></Reveal>
