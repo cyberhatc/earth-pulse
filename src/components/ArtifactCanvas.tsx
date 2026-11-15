@@ -1,19 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
 import { useInvestigation } from "../lib/context";
-import { computeStats, generateSeries } from "../lib/trend";
 import { CardRenderer } from "./cards";
 
 export function ArtifactCanvas() {
-  const { region, cards } = useInvestigation();
-
-  const analysis = useMemo(() => {
-    if (!region) return null;
-    const series = generateSeries(region);
-    const stats = computeStats(region, series);
-    return { series, stats };
-  }, [region]);
+  const { region, cards, live } = useInvestigation();
+  const analysis = live.analysis;
 
   if (!region || !analysis) {
     return null;
@@ -26,18 +18,13 @@ export function ArtifactCanvas() {
           <p className="canvas-empty-eyebrow">ARTIFACTS APPEAR HERE</p>
           <p className="canvas-empty-copy">
             As you ask questions on the left, cards will stack here — findings,
-            charts, maps, and explanations.
+            forecasts, anomaly reports, maps, and evidence-backed explanations
+            from the live backend.
           </p>
         </div>
       ) : (
         cards.map((card) => (
-          <CardRenderer
-            key={card.id}
-            card={card}
-            region={region}
-            series={analysis.series}
-            stats={analysis.stats}
-          />
+          <CardRenderer key={card.id} card={card} region={region} analysis={analysis} />
         ))
       )}
     </section>

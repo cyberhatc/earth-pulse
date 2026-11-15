@@ -5,25 +5,18 @@ import { TopBar } from "../components/TopBar";
 import { TrendChart } from "../components/TrendChart";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
+import { buildInvestigationMarkdown } from "../lib/intelligence";
 import {
-  buildEvidenceRecord,
-  buildInvestigationMarkdown,
-  computeFingerprint,
-  detectAnomalies,
-} from "../lib/intelligence";
-import {
-  computeStats,
   formatCoords,
   formatP,
   formatSignedNumber,
   formatSlope,
-  generateSeries,
 } from "../lib/trend";
 import { useRegionRoute } from "../lib/useRegionRoute";
 
 export function RegionNotebookPage() {
   const { region } = useRegionRoute();
-  const { point, setPoint, messages, cards } = useInvestigation();
+  const { point, setPoint, messages, cards, live } = useInvestigation();
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
 
@@ -54,15 +47,19 @@ export function RegionNotebookPage() {
   }, [searchParams, setPoint]);
 
   const bundle = useMemo(() => {
-    if (!region) return null;
+    if (!region || !live.analysis) return null;
     const variable = getVariable(region.variable);
-    const series = generateSeries(region);
-    const stats = computeStats(region, series);
-    const fingerprint = computeFingerprint(region);
-    const anomalies = detectAnomalies(region, series);
-    const evidence = buildEvidenceRecord(region, stats, "finding", point);
-    return { variable, series, stats, fingerprint, anomalies, evidence };
-  }, [region, point]);
+    const analysis = live.analysis;
+    return {
+      variable,
+      series: analysis.series,
+      stats: analysis.stats,
+      fingerprint: analysis.fingerprint,
+      anomalies: analysis.anomalyReport,
+      evidence: analysis.evidence,
+      analysis,
+    };
+  }, [region, live.analysis]);
 
   if (!region || !bundle) {
     return (
@@ -72,7 +69,7 @@ export function RegionNotebookPage() {
     );
   }
 
-  const { variable, series, stats, fingerprint, anomalies, evidence } = bundle;
+  const { variable, series, stats, fingerprint, anomalies, evidence, analysis } = bundle;
 
   const buildShareUrl = () => {
     const url = new URL(window.location.href);
@@ -109,6 +106,10 @@ export function RegionNotebookPage() {
       anomalies,
       evidence,
       shareUrl: buildShareUrl(),
+      period: analysis.period,
+      dataStatus: analysis.isLive
+        ? `Live backend · ${analysis.sourceLabel} · ${analysis.sourceNote}`
+        : `${analysis.status} · ${analysis.sourceNote}`,
     });
     const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
     const href = URL.createObjectURL(blob);
@@ -125,6 +126,15 @@ export function RegionNotebookPage() {
       researchQuestion,
       region,
       selectedPoint: point,
+      dataStatus: {
+        live: analysis.isLive,
+        status: analysis.status,
+        source: analysis.sourceLabel,
+        note: analysis.sourceNote,
+        backend_model: analysis.forecast?.model ?? null,
+        llm_generator: analysis.explanation?.generator ?? null,
+        llm_model: analysis.explanation?.model ?? null,
+      },
       stats,
       fingerprint,
       anomalies,
@@ -156,7 +166,7 @@ export function RegionNotebookPage() {
               </p>
               <h1 className="notebook-title">Case File: {region.name}</h1>
               <p className="notebook-sub">
-                {variable.name} · {region.period[0]}–{region.period[1]} ·{" "}
+                {variable.name} · {analysis.period[0]}–{analysis.period[1]} ·{" "}
                 {cards.length} artifact card{cards.length === 1 ? "" : "s"} in
                 session
               </p>
@@ -237,8 +247,19 @@ export function RegionNotebookPage() {
                   <div>
                     <dt>ANALYSIS METHODS</dt>
                     <dd>
-                      OLS decadal slope + 12-month detrended seasonal anomaly
-                      z-score + 4-variable land–ocean fingerprint
+                      Backend Theil–Sen slope + Mann–Kendall significance +
+                      12-month detrended anomaly z-score + multi-variable
+                      fingerprint. The local LLM only narrates the numbers.
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>DATA STATUS</dt>
+                    <dd>
+                      {analysis.isLive
+                        ? `Live backend · ${analysis.sourceLabel}`
+                        : analysis.status === "partial"
+                          ? "Backend reachable; case-file variable missing — demo fallback shown."
+                          : "Backend offline / loading — local demo series shown."}
                     </dd>
                   </div>
                 </dl>
@@ -255,7 +276,7 @@ export function RegionNotebookPage() {
               <div className="card-body">
                 <TrendChart
                   series={series}
-                  period={region.period}
+                  period={analysis.period}
                   slopePerDecade={stats.slope}
                   unit={variable.unit}
                   significant={stats.significant}

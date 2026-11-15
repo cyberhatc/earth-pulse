@@ -5,10 +5,23 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
 import { getRegion } from "./data";
+import {
+  fetchHealth,
+  fetchPlace,
+  type BackendHealth,
+  type BackendPlace,
+} from "./api";
+import {
+  demoAnalysis,
+  deriveLiveAnalysis,
+  type LiveAnalysis,
+  type LiveStatus,
+} from "./live";
 import type { CanvasCard, ChatMessage, Region } from "./types";
 
 const STORAGE_KEY = "etd.investigation.v1";
@@ -27,6 +40,15 @@ type InvestigationContextValue = {
   pendingPrompt: string | null;
   cards: CanvasCard[];
   messages: ChatMessage[];
+  live: {
+    payload: BackendPlace | null;
+    status: LiveStatus;
+    error: string | null;
+    analysis: LiveAnalysis | null;
+  };
+  health: BackendHealth | null;
+  healthError: string | null;
+  refreshLive: () => void;
   setRegion: (region: Region | null) => void;
   setPoint: (point: [number, number] | null) => void;
   setPendingPrompt: (prompt: string | null) => void;
@@ -51,6 +73,12 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
   const [pendingPrompt, setPendingPromptState] = useState<string | null>(null);
   const [cards, setCards] = useState<CanvasCard[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [livePayload, setLivePayload] = useState<BackendPlace | null>(null);
+  const [liveStatus, setLiveStatus] = useState<LiveStatus>("loading");
+  const [liveError, setLiveError] = useState<string | null>(null);
+  const [health, setHealth] = useState<BackendHealth | null>(null);
+  const [healthError, setHealthError] = useState<string | null>(null);
+  const [reloadTick, setReloadTick] = useState(0);
 
   useEffect(() => {
     try {
@@ -97,6 +125,64 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
       // Ignore storage quota / privacy mode failures.
     }
   }, [hydrated, region, point, cards, messages]);
+
+  // Backend liveness + local LLM (Ollama) status.
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchHealth(controller.signal)
+      .then((next) => {
+        setHealth(next);
+        setHealthError(null);
+      })
+      .catch((err: Error) => {
+        setHealth(null);
+        setHealthError(err.message);
+      });
+    return () => controller.abort();
+  }, [reloadTick]);
+
+  // Live /place payload for the selected region (or pinned point).
+  useEffect(() => {
+    if (!region) {
+      setLivePayload(null);
+      setLiveStatus("loading");
+      setLiveError(null);
+      return;
+    }
+    const controller = new AbortController();
+    const [lat, lon] = point ?? region.center;
+    setLivePayload(null);
+    setLiveStatus("loading");
+    setLiveError(null);
+    fetchPlace(lat, lon, 60, controller.signal)
+      .then((next) => {
+        setLivePayload(next);
+        setLiveStatus("live");
+      })
+      .catch((err: Error) => {
+        if (controller.signal.aborted) return;
+        setLivePayload(null);
+        setLiveStatus("error");
+        setLiveError(err.message);
+      });
+    return () => controller.abort();
+  }, [region, point, reloadTick]);
+
+  const liveAnalysis = useMemo<LiveAnalysis | null>(() => {
+    if (!region) return null;
+    if (livePayload) return deriveLiveAnalysis(region, livePayload, point);
+    return demoAnalysis(
+      region,
+      point,
+      liveStatus === "error" ? "error" : "loading",
+      liveError ??
+        "Loading the live backend payload; showing the demonstration series meanwhile.",
+    );
+  }, [region, livePayload, point, liveStatus, liveError]);
+
+  const refreshLive = useCallback(() => {
+    setReloadTick((tick) => tick + 1);
+  }, []);
 
   const setRegion = useCallback((nextRegion: Region | null) => {
     if (nextRegion === null) {
@@ -167,6 +253,15 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
         pendingPrompt,
         cards,
         messages,
+        live: {
+          payload: livePayload,
+          status: liveStatus,
+          error: liveError,
+          analysis: liveAnalysis,
+        },
+        health,
+        healthError,
+        refreshLive,
         setRegion,
         setPoint,
         setPendingPrompt,

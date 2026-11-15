@@ -8,12 +8,16 @@ import { formatP, formatSlope, generateSeries } from "./trend";
 import type { CardKind, Region, TrendStats } from "./types";
 
 export const SUGGESTIONS: string[] = [
-  "Show the trend fingerprint",
+  "Show the 5-year forecast",
+  "Is the trend statistically significant?",
   "What changed unusually in this region?",
+  "Where is it changing?",
+  "Show the trend fingerprint",
   "Find Earth twins across continents",
   "Tell the local story in Hindi / Kannada",
-  "Show me the trend over time",
-  "Where is it changing?",
+  "Check data coverage and limitations",
+  "Show the opposite trends nearby",
+  "Show the trend over time",
 ];
 
 // REPLACE THIS FUNCTION WITH A REAL LLM CALL LATER — the UI contract is { text: string, cardKind: CardKind } and nothing else.

@@ -3,21 +3,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { TopBar } from "../components/TopBar";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
-import { computeStats, formatSlope, generateSeries } from "../lib/trend";
+import { formatSlope } from "../lib/trend";
 import { useRegionRoute } from "../lib/useRegionRoute";
 
 export function RegionHubPage() {
   const { region } = useRegionRoute();
-  const { setPendingPrompt } = useInvestigation();
+  const { setPendingPrompt, live } = useInvestigation();
   const navigate = useNavigate();
 
   const summary = useMemo(() => {
-    if (!region) return null;
+    if (!region || !live.analysis) return null;
     const variable = getVariable(region.variable);
-    const series = generateSeries(region);
-    const stats = computeStats(region, series);
-    return { variable, stats };
-  }, [region]);
+    return { variable, stats: live.analysis.stats, analysis: live.analysis };
+  }, [region, live.analysis]);
 
   if (!region || !summary) {
     return (
@@ -27,10 +25,12 @@ export function RegionHubPage() {
     );
   }
 
-  const { variable, stats } = summary;
+  const { variable, stats, analysis } = summary;
   const starterQuestions = [
     `Is ${variable.shortName.toLowerCase()} changing across ${region.name}?`,
-    "What does 'significant' mean here?",
+    "What does the 5-year forecast say, and how uncertain is it?",
+    "Where are the opposite trends in this neighborhood?",
+    "Show the data coverage and limitations.",
   ];
 
   const handleLaunchPrompt = (question: string) => {
@@ -48,10 +48,15 @@ export function RegionHubPage() {
           </p>
           <h1 className="hub-title">{region.name}</h1>
           <p className="hub-sub">
-            {variable.name} · {region.period[0]}–{region.period[1]} · Decadal trend{" "}
+            {variable.name} · {analysis.period[0]}–{analysis.period[1]} · Decadal trend{" "}
             {formatSlope(stats)} (
             {stats.significant ? "significant at α = 0.05" : "not significant"})
+            <span className={`hub-live hub-live-${analysis.status}`}>
+              <span className={`live-dot live-${analysis.status}`} aria-hidden="true" />
+              {analysis.isLive ? "LIVE BACKEND" : analysis.status === "partial" ? "DEMO VARIABLE FALLBACK" : "CONNECTING / DEMO"}
+            </span>
           </p>
+          <p className="hub-source-note">{analysis.sourceNote}</p>
 
           <div className="hub-modes">
             <Link to={`/region/${region.slug}/chat`} className="mode-card specimen-frame">

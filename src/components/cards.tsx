@@ -5,7 +5,6 @@ import { getVariable } from "../lib/data";
 import {
   buildEvidenceRecord,
   computeFingerprint,
-  detectAnomalies,
   findEarthTwins,
   generateLocalStory,
 } from "../lib/intelligence";
@@ -17,6 +16,12 @@ import {
   formatSlope,
   slopeAtPoint,
 } from "../lib/trend";
+import {
+  coverageGaps,
+  forecastParamFor,
+  PARAM_META,
+  type LiveAnalysis,
+} from "../lib/live";
 import type {
   CanvasCard,
   EvidenceRecord,
@@ -30,8 +35,7 @@ import { TrendChart } from "./TrendChart";
 type CardRendererProps = {
   card: CanvasCard;
   region: Region;
-  series: number[];
-  stats: TrendStats;
+  analysis: LiveAnalysis;
 };
 
 function EvidenceGrid({ evidence }: { evidence: EvidenceRecord }) {
@@ -75,27 +79,40 @@ function EvidenceGrid({ evidence }: { evidence: EvidenceRecord }) {
 
 function EvidenceFooter({
   region,
-  stats,
+  analysis,
   card,
 }: {
   region: Region;
-  stats: TrendStats;
+  analysis: LiveAnalysis;
   card: CanvasCard;
 }) {
-  const evidence = useMemo(
-    () => buildEvidenceRecord(region, stats, card.kind, card.point),
-    [region, stats, card.kind, card.point],
-  );
+  const evidence = useMemo(() => {
+    if (card.kind === "evidence") return analysis.evidence;
+    const base = buildEvidenceRecord(
+      region,
+      analysis.stats,
+      card.kind,
+      card.point,
+    );
+    return { ...base, ...analysis.evidence, limitations: analysis.evidence.limitations };
+  }, [region, analysis, card.kind, card.point]);
 
   return (
     <details className="evidence-drawer">
       <summary className="evidence-summary">
-        <span>TRUST ME · EVIDENCE &amp; CONFIDENCE</span>
+        <span className="evidence-live-row">
+          <span className={`live-dot live-${analysis.status}`} aria-hidden="true" />
+          {analysis.isLive ? "LIVE BACKEND" : analysis.status.toUpperCase()}
+          <span className="evidence-live-source">
+            {analysis.sourceLabel}
+          </span>
+        </span>
         <span className="evidence-tier">
           {evidence.confidenceLevel} confidence · {evidence.dataset.split(" ")[0]}
         </span>
       </summary>
       <div className="evidence-drawer-body">
+        <p className="evidence-source-note">{analysis.sourceNote}</p>
         <EvidenceGrid evidence={evidence} />
       </div>
     </details>
@@ -105,15 +122,18 @@ function EvidenceFooter({
 function StoryCardBody({
   region,
   stats,
+  fingerprint,
+  period,
 }: {
   region: Region;
   stats: TrendStats;
+  fingerprint: ReturnType<typeof computeFingerprint>;
+  period: [number, number];
 }) {
   const [lang, setLang] = useState<StoryLanguage>("en");
   const [audience, setAudience] = useState<StoryAudience>("student");
   const [useWesternGhats, setUseWesternGhats] = useState(false);
 
-  const fingerprint = useMemo(() => computeFingerprint(region), [region]);
   const story = useMemo(
     () =>
       generateLocalStory(
@@ -123,8 +143,9 @@ function StoryCardBody({
         lang,
         audience,
         useWesternGhats,
+        period,
       ),
-    [region, stats, fingerprint, lang, audience, useWesternGhats],
+    [region, stats, fingerprint, lang, audience, useWesternGhats, period],
   );
 
   return (
@@ -189,15 +210,15 @@ function StoryCardBody({
 export function CardRenderer({
   card,
   region,
-  series,
-  stats,
+  analysis,
 }: CardRendererProps) {
   const variable = getVariable(region.variable);
+  const { series, stats, period, anomalyReport, fingerprint, forecast } = analysis;
   const { setPoint } = useInvestigation();
   const navigate = useNavigate();
 
   if (card.kind === "fingerprint") {
-    const fp = computeFingerprint(region);
+    const fp = fingerprint;
     return (
       <article className="card">
         <div className="card-head">
@@ -257,13 +278,13 @@ export function CardRenderer({
             </p>
           </div>
         </div>
-        <EvidenceFooter region={region} stats={stats} card={card} />
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
       </article>
     );
   }
 
   if (card.kind === "anomaly") {
-    const report = detectAnomalies(region, series);
+    const report = anomalyReport;
     const bMin = Math.min(...report.baselineByMonth);
     const bMax = Math.max(...report.baselineByMonth);
     const bRange = bMax - bMin || 1;
@@ -369,18 +390,21 @@ export function CardRenderer({
             </button>
           </div>
         </div>
-        <EvidenceFooter region={region} stats={stats} card={card} />
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
       </article>
     );
   }
 
   if (card.kind === "earth-twins") {
-    const twins = findEarthTwins(region);
+    const twins = findEarthTwins(region, fingerprint);
+    const backendTwin = analysis.payload?.climate_twin;
     return (
       <article className="card">
         <div className="card-head">
           <span className="card-head-label">Earth Twin Finder</span>
-          <span className="card-head-meta">Cross-continent match</span>
+          <span className="card-head-meta">
+            {analysis.isLive ? "Live fingerprint" : "Demo fingerprint"} · reference catalog
+          </span>
         </div>
         <div className="card-body">
           <div className="twin-list">
@@ -444,8 +468,17 @@ export function CardRenderer({
               </div>
             ))}
           </div>
+          <p className="evidence-source-note">
+            {backendTwin?.cluster_id != null
+              ? `Backend K-Means climate twin: cluster ${backendTwin.cluster_id} of ${backendTwin.k} (${(backendTwin.features || []).join(", ")}). `
+              : ""}
+            Only this place&apos;s fingerprint is{" "}
+            {analysis.isLive ? "live" : "a demonstration"}; cross-continent
+            candidates come from the frontend&apos;s illustrative reference
+            catalog and are hypotheses, not backend measurements.
+          </p>
         </div>
-        <EvidenceFooter region={region} stats={stats} card={card} />
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
       </article>
     );
   }
@@ -457,14 +490,19 @@ export function CardRenderer({
           <span className="card-head-label">Local Earth Stories</span>
           <span className="card-head-meta">EN · हिन्दी · ಕನ್ನಡ</span>
         </div>
-        <StoryCardBody region={region} stats={stats} />
-        <EvidenceFooter region={region} stats={stats} card={card} />
+        <StoryCardBody
+          region={region}
+          stats={stats}
+          fingerprint={fingerprint}
+          period={period}
+        />
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
       </article>
     );
   }
 
   if (card.kind === "evidence") {
-    const evidence = buildEvidenceRecord(region, stats, card.kind, card.point);
+    const evidence = analysis.evidence;
     return (
       <article className="card">
         <div className="card-head">
@@ -512,7 +550,7 @@ export function CardRenderer({
             {formatSlope(stats)}.
           </h3>
           <p className="finding-sub">
-            {region.plate} · {region.bboxLabel} · {region.period[0]}–{region.period[1]} · Mann-Kendall{" "}
+            {region.plate} · {region.bboxLabel} · {period[0]}–{period[1]} · Mann-Kendall{" "}
             {formatP(stats.pValue)}
           </p>
           <div className="finding-stats">
@@ -539,7 +577,7 @@ export function CardRenderer({
             </div>
           </div>
         </div>
-        <EvidenceFooter region={region} stats={stats} card={card} />
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
       </article>
     );
   }
@@ -552,20 +590,20 @@ export function CardRenderer({
             Time series · {variable.shortName}
           </span>
           <span className="card-head-meta">
-            {region.period[0]}–{region.period[1]}
+            {period[0]}–{period[1]}
           </span>
         </div>
         <div className="card-body">
           <TrendChart
             series={series}
-            period={region.period}
+            period={period}
             slopePerDecade={stats.slope}
             unit={variable.unit}
             significant={stats.significant}
             direction={stats.direction}
           />
         </div>
-        <EvidenceFooter region={region} stats={stats} card={card} />
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
       </article>
     );
   }
@@ -637,7 +675,7 @@ export function CardRenderer({
             </span>
           </div>
         </div>
-        <EvidenceFooter region={region} stats={stats} card={card} />
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
       </article>
     );
   }
@@ -660,7 +698,312 @@ export function CardRenderer({
             <dd>{variable.mission}</dd>
           </dl>
         </div>
-        <EvidenceFooter region={region} stats={stats} card={card} />
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
+      </article>
+    );
+  }
+
+  if (card.kind === "forecast") {
+    const param = forecastParamFor(region, analysis);
+    const block = forecast && param ? forecast.timeseries[param] : null;
+    const meta = param ? PARAM_META[param] : null;
+    const backtestMetric =
+      forecast?.backtest?.per_parameter?.[param ?? ""] ?? forecast?.backtest ?? null;
+    if (!forecast || !block || !param || !meta) {
+      return (
+        <article className="card">
+          <div className="card-head">
+            <span className="card-head-label">Forecast</span>
+          </div>
+          <div className="card-body">
+            <p className="anomaly-summary">
+              No forecast was returned by the backend for this location.
+            </p>
+          </div>
+          <EvidenceFooter region={region} analysis={analysis} card={card} />
+        </article>
+      );
+    }
+    const W = 760;
+    const H = 230;
+    const padL = 48;
+    const padR = 16;
+    const padT = 16;
+    const padB = 30;
+    const all = [...block.lower, ...block.upper, ...block.mean].filter(
+      (v) => Number.isFinite(v),
+    );
+    const min = all.length ? Math.min(...all) : 0;
+    const max = all.length ? Math.max(...all) : 1;
+    const range = max - min || 1;
+    const toX = (i: number) =>
+      padL + (i / Math.max(1, block.mean.length - 1)) * (W - padL - padR);
+    const toY = (v: number) =>
+      padT + (1 - (v - min) / range) * (H - padT - padB);
+    const meanPath = block.mean
+      .map((v, i) => `${i === 0 ? "M" : "L"}${toX(i).toFixed(1)},${toY(v).toFixed(1)}`)
+      .join(" ");
+    const bandPath = [
+      ...block.upper.map(
+        (v, i) => `${i === 0 ? "M" : "L"}${toX(i).toFixed(1)},${toY(v).toFixed(1)}`,
+      ),
+      ...[...block.lower]
+        .reverse()
+        .map(
+          (v, i) =>
+            `L${toX(block.lower.length - 1 - i).toFixed(1)},${toY(v).toFixed(1)}`,
+        ),
+      "Z",
+    ].join(" ");
+    return (
+      <article className="card">
+        <div className="card-head">
+          <span className="card-head-label">
+            Forecast · next {forecast.horizon_months} months
+          </span>
+          <span className="card-head-meta">
+            {forecast.model}
+            {forecast.artifact ? ` · ${forecast.artifact}` : ""}
+          </span>
+        </div>
+        <div className="card-body">
+          <div className="forecast-summary">
+            <span className="forecast-param">{meta.label}</span>
+            <span className={`live-dot live-${analysis.status}`} aria-hidden="true" />
+            <span>{analysis.isLive ? "backend model" : "backend needed"}</span>
+          </div>
+          <div className="trend-chart">
+            <div className="trend-chart-frame">
+              <svg
+                viewBox={`0 0 ${W} ${H}`}
+                className="trend-chart-svg"
+                role="img"
+                aria-label={`Projected ${meta.label} with p10–p90 band`}
+              >
+                <path d={bandPath} fill="var(--accent-soft)" opacity={0.55} />
+                <path
+                  d={meanPath}
+                  fill="none"
+                  stroke="var(--accent)"
+                  strokeWidth={2}
+                />
+                <line
+                  x1={padL}
+                  y1={toY(min)}
+                  x2={W - padR}
+                  y2={toY(min)}
+                  stroke="var(--line)"
+                  strokeDasharray="2 4"
+                />
+                <line
+                  x1={padL}
+                  y1={toY(max)}
+                  x2={W - padR}
+                  y2={toY(max)}
+                  stroke="var(--line)"
+                  strokeDasharray="2 4"
+                />
+                <text x={padL - 8} y={toY(max) + 3} textAnchor="end" className="chart-axis-label">
+                  {max.toFixed(1)}
+                </text>
+                <text x={padL - 8} y={toY(min) + 3} textAnchor="end" className="chart-axis-label">
+                  {min.toFixed(1)}
+                </text>
+                <text x={padL} y={H - 8} className="chart-axis-label">
+                  {forecast.dates[0]}
+                </text>
+                <text
+                  x={W - padR}
+                  y={H - 8}
+                  textAnchor="end"
+                  className="chart-axis-label"
+                >
+                  {forecast.dates[forecast.dates.length - 1]}
+                </text>
+              </svg>
+            </div>
+            <div className="chart-legend">
+              <div className="chart-legend-items">
+                <span className="legend-item">
+                  <span className="legend-swatch" style={{ backgroundColor: "var(--accent)" }} />
+                  <span>Projected mean</span>
+                </span>
+                <span className="legend-item">
+                  <span className="legend-swatch" style={{ backgroundColor: "var(--accent-soft)" }} />
+                  <span>p10–p90 band</span>
+                </span>
+              </div>
+              <span className="chart-legend-unit">Units: {meta.unit}</span>
+            </div>
+          </div>
+          <dl className="forecast-meta">
+            <div>
+              <dt>ISSUED</dt>
+              <dd>{forecast.issued}</dd>
+            </div>
+            <div>
+              <dt>BACKTEST MAE · {meta.shortLabel.toUpperCase()}</dt>
+              <dd>
+                {backtestMetric?.mae != null
+                  ? `${backtestMetric.mae} ${meta.unit}`
+                  : "n/a"}
+              </dd>
+            </div>
+            <div>
+              <dt>PICP (p10–p90)</dt>
+              <dd>
+                {backtestMetric?.picp_p10_p90 != null
+                  ? `${Math.round(backtestMetric.picp_p10_p90 * 100)}%`
+                  : "n/a"}
+              </dd>
+            </div>
+          </dl>
+          <p className="anomaly-caution">
+            Probabilistic outlook, not a certain future. The band is the backend&apos;s
+            p10–p90 interval; backtest metrics are the 12-month rolling-origin
+            score for {meta.shortLabel.toLowerCase()} only.
+          </p>
+        </div>
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
+      </article>
+    );
+  }
+
+  if (card.kind === "opposite") {
+    const pairs = analysis.opposite.slice(0, 6);
+    return (
+      <article className="card">
+        <div className="card-head">
+          <span className="card-head-label">Opposite Trend Detector</span>
+          <span className="card-head-meta">
+            {analysis.isLive ? "live engine output" : "backend needed"}
+          </span>
+        </div>
+        <div className="card-body">
+          {pairs.length === 0 ? (
+            <p className="anomaly-summary">
+              The backend found no neighbouring cells with opposite-sign trends
+              for this location.
+            </p>
+          ) : (
+            <div className="opposite-list">
+              {pairs.map((pair, index) => (
+                <div key={`${pair.parameter}-${index}`} className="opposite-row">
+                  <div className="opposite-head">
+                    <span className="opposite-param">{pair.parameter}</span>
+                    <span
+                      className={`stamp ${pair.strength === "strong" ? "stamp-sig" : "stamp-not-sig"}`}
+                    >
+                      {pair.strength} pair
+                    </span>
+                  </div>
+                  <div className="opposite-cells">
+                    <span>
+                      A {pair.cell_a.lat.toFixed(1)}°, {pair.cell_a.lon.toFixed(1)}° ·{" "}
+                      {formatSignedNumber(pair.cell_a.slope_per_decade)}
+                    </span>
+                    <span className="opposite-vs">vs</span>
+                    <span>
+                      B {pair.cell_b.lat.toFixed(1)}°, {pair.cell_b.lon.toFixed(1)}° ·{" "}
+                      {formatSignedNumber(pair.cell_b.slope_per_decade)}
+                    </span>
+                  </div>
+                  {pair.note ? (
+                    <p className="twin-comp-note">{pair.note}</p>
+                  ) : null}
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => {
+                      setPoint([pair.cell_a.lat, pair.cell_a.lon]);
+                      navigate(`/region/${region.slug}/map`);
+                    }}
+                  >
+                    Inspect cell A on map →
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
+      </article>
+    );
+  }
+
+  if (card.kind === "coverage") {
+    const coverage = analysis.coverage;
+    const gaps = coverageGaps(coverage);
+    return (
+      <article className="card">
+        <div className="card-head">
+          <span className="card-head-label">Data Coverage &amp; Provenance</span>
+          <span className="card-head-meta">
+            {coverage?.synthetic_demo ? "synthetic demo" : "real NASA record"}
+          </span>
+        </div>
+        <div className="card-body">
+          {!coverage ? (
+            <p className="anomaly-summary">
+              Backend payload unavailable. Start FastAPI on port 8000 and use the
+              retry control in the top bar.
+            </p>
+          ) : (
+            <>
+              <dl className="forecast-meta">
+                <div>
+                  <dt>TIME RANGE</dt>
+                  <dd>{coverage.time_range.join(" → ")}</dd>
+                </div>
+                <div>
+                  <dt>GRID CELL</dt>
+                  <dd>
+                    {analysis.payload?.location.grid_lat}°,{" "}
+                    {analysis.payload?.location.grid_lon}°
+                  </dd>
+                </div>
+                <div>
+                  <dt>OCEAN CELL</dt>
+                  <dd>
+                    {coverage.ocean_cell == null
+                      ? "unknown"
+                      : coverage.ocean_cell
+                        ? "yes"
+                        : "no"}
+                  </dd>
+                </div>
+              </dl>
+              <div className="coverage-columns">
+                <div>
+                  <div className="coverage-label">AVAILABLE</div>
+                  <p>{(coverage.parameters_used || []).join(", ") || "none"}</p>
+                </div>
+                <div>
+                  <div className="coverage-label">UNAVAILABLE</div>
+                  <p>{(coverage.parameters_unavailable || []).join(", ") || "none"}</p>
+                </div>
+              </div>
+              {gaps.length > 0 ? (
+                <ul className="caveat-list">
+                  {gaps.map((gap) => (
+                    <li key={gap}>
+                      <span className="caveat-dash" aria-hidden="true">
+                        —
+                      </span>
+                      <span>{gap}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              <p className="evidence-source-note">
+                LLM narration: {analysis.explanation?.generator || "templated"}
+                {analysis.explanation?.model ? ` (${analysis.explanation.model})` : ""}.
+                Numbers are computed by the backend; the LLM only rewords them.
+              </p>
+            </>
+          )}
+        </div>
+        <EvidenceFooter region={region} analysis={analysis} card={card} />
       </article>
     );
   }
@@ -707,15 +1050,16 @@ export function CardRenderer({
               —
             </span>
             <span>
-              This demo uses a{" "}
-              {stats.significant ? "significant" : "non-significant"} mock
-              result from a simplified test. Real Mann-Kendall requires
-              autocorrelation correction that we&apos;ve omitted here.
+              The backend reports this result as{" "}
+              {stats.significant ? "significant" : "not significant"} using
+              Mann–Kendall. A p-value above 0.05 does not prove there is no
+              change — it means this record cannot confirm one. Autocorrelation
+              correction is still a known limitation.
             </span>
           </li>
         </ul>
       </div>
-      <EvidenceFooter region={region} stats={stats} card={card} />
+      <EvidenceFooter region={region} analysis={analysis} card={card} />
     </article>
   );
 }

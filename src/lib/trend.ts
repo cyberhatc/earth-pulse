@@ -47,13 +47,19 @@ export function generateSeries(region: Region): number[] {
 
 // DEMO approximation — replace with real Mann-Kendall + Sen's slope + autocorrelation correction.
 export function computeStats(region: Region, series: number[]): TrendStats {
+  return computeStatsForSeries(series, getVariable(region.variable).perDecadeUnit);
+}
+
+export function computeStatsForSeries(
+  series: number[],
+  slopeUnit: string,
+): TrendStats {
   const n = series.length;
-  const variable = getVariable(region.variable);
 
   if (n < 2) {
     return {
       slope: 0,
-      slopeUnit: variable.perDecadeUnit,
+      slopeUnit,
       pValue: 1,
       significant: false,
       ciLow: 0,
@@ -100,7 +106,7 @@ export function computeStats(region: Region, series: number[]): TrendStats {
 
   return {
     slope,
-    slopeUnit: variable.perDecadeUnit,
+    slopeUnit,
     pValue,
     significant: pValue < 0.05,
     ciLow: slope - ciHalf,

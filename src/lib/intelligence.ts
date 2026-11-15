@@ -218,6 +218,7 @@ export function buildEvidenceRecord(
 export function detectAnomalies(
   region: Region,
   series: number[],
+  dates?: string[],
 ): AnomalyReport {
   const variable = getVariable(region.variable);
   const n = series.length;
@@ -258,8 +259,13 @@ export function detectAnomalies(
   const events: AnomalyEvent[] = residuals
     .map((r, i) => {
       const zScore = (r - resMean) / resStd;
-      const year = region.period[0] + Math.floor(i / 12);
-      const month = i % 12;
+      const dateLabel = dates?.[i];
+      const year = dateLabel
+        ? Number(dateLabel.slice(0, 4))
+        : region.period[0] + Math.floor(i / 12);
+      const month = dateLabel
+        ? Math.max(0, Number(dateLabel.slice(5, 7)) - 1)
+        : i % 12;
       return {
         index: i,
         year,
@@ -396,8 +402,11 @@ const GLOBAL_REFERENCE_CATALOG: GlobalCatalogEntry[] = [
   },
 ];
 
-export function findEarthTwins(region: Region): EarthTwinMatch[] {
-  const fp = computeFingerprint(region);
+export function findEarthTwins(
+  region: Region,
+  fingerprint?: RegionFingerprint,
+): EarthTwinMatch[] {
+  const fp = fingerprint ?? computeFingerprint(region);
   const currentVec: Record<"temperature" | "vegetation" | "rainfall" | "water", number> = {
     temperature: 0,
     vegetation: 0,
@@ -411,6 +420,14 @@ export function findEarthTwins(region: Region): EarthTwinMatch[] {
     water: "flat",
   };
   for (const dim of fp.dimensions) {
+    if (
+      dim.domain !== "temperature" &&
+      dim.domain !== "vegetation" &&
+      dim.domain !== "rainfall" &&
+      dim.domain !== "water"
+    ) {
+      continue;
+    }
     currentVec[dim.domain] = dim.zScore;
     currentDirs[dim.domain] = dim.direction;
   }
@@ -490,6 +507,7 @@ export function generateLocalStory(
   language: StoryLanguage,
   audience: StoryAudience,
   useWesternGhatsCase = false,
+  period?: [number, number],
 ): { title: string; body: string; takeaway: string; placeLabel: string } {
   const variable = getVariable(region.variable);
   const placeName = useWesternGhatsCase
@@ -498,7 +516,7 @@ export function generateLocalStory(
   const slopeText = useWesternGhatsCase
     ? "+5.04 mm/month/decade"
     : formatSlope(stats);
-  const periodText = `${region.period[0]}–${region.period[1]}`;
+  const periodText = `${(period ?? region.period)[0]}–${(period ?? region.period)[1]}`;
   const pText = useWesternGhatsCase ? "p < 0.001" : formatP(stats.pValue);
   const bboxText = useWesternGhatsCase
     ? "8°N–20°N, 70°E–78°E"
@@ -597,6 +615,8 @@ export function buildInvestigationMarkdown(params: {
   anomalies: AnomalyReport;
   evidence: EvidenceRecord;
   shareUrl: string;
+  period?: [number, number];
+  dataStatus?: string;
 }): string {
   const {
     region,
@@ -607,8 +627,11 @@ export function buildInvestigationMarkdown(params: {
     anomalies,
     evidence,
     shareUrl,
+    period,
+    dataStatus,
   } = params;
   const variable = getVariable(region.variable);
+  const analysisPeriod = period ?? region.period;
 
   const fpLines = fingerprint.dimensions
     .map(
@@ -633,8 +656,9 @@ export function buildInvestigationMarkdown(params: {
     `## 2. Selected Region & Bounding Box`,
     `- **Plate**: ${region.plate} — ${region.name} (${region.climate}, ${region.area})`,
     `- **Bounding Box**: ${region.bboxLabel}`,
-    `- **Observation Period**: ${region.period[0]}–${region.period[1]}`,
+    `- **Observation Period**: ${analysisPeriod[0]}–${analysisPeriod[1]}`,
     `- **Focused Point**: ${point ? formatCoords(point[0], point[1], 2) : "Regional composite (no single point pinned)"}`,
+    `- **Data Status**: ${dataStatus || "Frontend demonstration series"}`,
     ``,
     `## 3. Variables & Datasets`,
     `- **Primary Variable**: ${variable.name} (${variable.shortName}, ${variable.unit})`,
@@ -644,9 +668,10 @@ export function buildInvestigationMarkdown(params: {
     `- **Missing Data**: ${evidence.missingData}`,
     ``,
     `## 4. Analysis Methods`,
-    `- Ordinary least-squares decadal slope on monthly composites`,
+    `- Backend Theil–Sen slope + Mann–Kendall significance`,
     `- Seasonal cycle decomposition (12-month detrended baseline) for anomaly z-scores`,
-    `- Coupled 4-variable land–ocean trend fingerprint synthesis`,
+    `- Multi-variable land–ocean trend fingerprint synthesis`,
+    `- Local LLM (Ollama) narrates facts only; numbers are never changed by the model`,
     ``,
     `## 5. Results & Environmental Fingerprint`,
     `- **Headline Trend**: ${formatSlope(stats)} (${formatP(stats.pValue)}, 95% CI ${formatSignedNumber(stats.ciLow)} to ${formatSignedNumber(stats.ciHigh)})`,

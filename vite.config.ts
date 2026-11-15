@@ -11,12 +11,24 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    preview: {
+      // Allow requests with public hostnames (e.g. Cloudflare quick-tunnel URLs).
+      allowedHosts: true,
+    },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
+      proxy: {
+        // Dev bridge to the Earth Pulse FastAPI backend.
+        '/api': {
+          target: process.env.VITE_API_PROXY || 'http://localhost:8000',
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/api/, ''),
+        },
+      },
     },
   };
 });

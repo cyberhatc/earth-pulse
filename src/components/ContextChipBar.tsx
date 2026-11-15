@@ -10,13 +10,15 @@ type ContextChipBarProps = {
 };
 
 export function ContextChipBar({ mode }: ContextChipBarProps) {
-  const { region, point, setPoint } = useInvestigation();
+  const { region, point, setPoint, live, health } = useInvestigation();
 
   if (!region) {
     return null;
   }
 
   const variable = getVariable(region.variable);
+  const period = live.analysis?.period ?? region.period;
+  const status = live.status;
 
   return (
     <div className="chipbar" role="region" aria-label="Investigation context">
@@ -31,8 +33,27 @@ export function ContextChipBar({ mode }: ContextChipBarProps) {
           <span>{region.bboxLabel}</span>
           <span className="meta-sep" aria-hidden="true">·</span>
           <span>
-            {region.period[0]}–{region.period[1]}
+            {period[0]}–{period[1]}
           </span>
+          <span className="meta-sep" aria-hidden="true">·</span>
+          <span
+            className={`chip-status chip-status-${status}`}
+            title={live.analysis?.sourceNote}
+          >
+            <span className={`live-dot live-${status}`} aria-hidden="true" />
+            {status === "live"
+              ? live.analysis?.isLive
+                ? "LIVE BACKEND"
+                : "LIVE · DEMO VAR"
+              : status === "partial"
+                ? "DEMO FALLBACK"
+                : status === "error"
+                  ? "BACKEND OFFLINE"
+                  : "CONNECTING…"}
+          </span>
+          {health?.llm?.available ? (
+            <span className="chip-llm">{health.llm.model}</span>
+          ) : null}
           {point ? (
             <>
               <span className="meta-sep" aria-hidden="true">·</span>

@@ -5,6 +5,7 @@ import { Sparkline } from "../components/Sparkline";
 import { TopBar } from "../components/TopBar";
 import { REGIONS, getVariable } from "../lib/data";
 import { computeStats, formatSlope, generateSeries } from "../lib/trend";
+import { useLivePreviews } from "../lib/useLivePreviews";
 
 const STEPS = [
   {
@@ -63,18 +64,28 @@ const CAPABILITIES = [
 ];
 
 export function LandingPage() {
+  const liveBySlug = useLivePreviews(REGIONS);
   const previews = useMemo(
     () =>
       REGIONS.map((region) => {
-        const fullSeries = generateSeries(region);
+        const analysis = liveBySlug[region.slug];
+        const fullSeries = analysis?.series ?? generateSeries(region);
         const series = fullSeries.filter((_, idx) => idx % 4 === 0);
-        const stats = computeStats(region, fullSeries);
+        const stats = analysis?.stats ?? computeStats(region, fullSeries);
         const variable = getVariable(region.variable);
         const color =
           region.trendShape === "up" ? "var(--trend-up)" : "var(--trend-down)";
-        return { region, variable, stats, series, color };
+        return {
+          region,
+          variable,
+          stats,
+          series,
+          color,
+          live: Boolean(analysis?.isLive),
+          status: analysis?.status ?? "loading",
+        };
       }),
-    [],
+    [liveBySlug],
   );
 
   return (
@@ -100,7 +111,7 @@ export function LandingPage() {
               Every coast keeps a ledger. Pick one. <em>Read its trend.</em>
             </h1>
             <p className="hero-lede">
-              Investigate quarter-century coupled land–ocean satellite records across
+              Investigate multi-decadal coupled land–ocean satellite records across
               India, East Asia, and the Pacific margin — with full statistical
               provenance, anomaly detection, and reproducible case notebooks.
             </p>
@@ -116,11 +127,11 @@ export function LandingPage() {
 
             <div className="preview-card specimen-frame">
               <div className="preview-head">
-                <span>ARCHIVE CALIBRATION LEDGER · 2000–2024</span>
+                <span>ARCHIVE CALIBRATION LEDGER · LIVE BACKEND</span>
                 <span>Three coupled land–ocean folios</span>
               </div>
               <div className="preview-grid">
-                {previews.map(({ region, variable, stats, series, color }) => (
+                {previews.map(({ region, variable, stats, series, color, live, status }) => (
                   <Link
                     key={region.slug}
                     to={`/region/${region.slug}`}
@@ -144,13 +155,17 @@ export function LandingPage() {
                     <div className="preview-item-rate" style={{ color }}>
                       {formatSlope(stats)}
                     </div>
+                    <div className={`preview-item-source preview-source-${status}`}>
+                      <span className={`live-dot live-${status}`} aria-hidden="true" />
+                      {live ? "Live backend" : "Demo series"}
+                    </div>
                   </Link>
                 ))}
               </div>
             </div>
 
             <p className="sources-line">
-              MODIS Terra &amp; Aqua · GPM IMERG v07 · JRC Surface Water · OpenStreetMap
+              NASA POWER · MODIS Terra &amp; Aqua · GPM IMERG v07 · JRC Surface Water · OpenStreetMap
             </p>
           </div>
         </section>

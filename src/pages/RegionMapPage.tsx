@@ -6,28 +6,21 @@ import { Sparkline } from "../components/Sparkline";
 import { TopBar } from "../components/TopBar";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
-import {
-  computeStats,
-  formatCoords,
-  formatSlope,
-  generateSeries,
-  slopeAtPoint,
-} from "../lib/trend";
+import { formatCoords, formatSlope, slopeAtPoint } from "../lib/trend";
 import { useRegionRoute } from "../lib/useRegionRoute";
 
 export function RegionMapPage() {
   const { region } = useRegionRoute();
-  const { point, setPoint, setPendingPrompt } = useInvestigation();
+  const { point, setPoint, setPendingPrompt, live } = useInvestigation();
   const navigate = useNavigate();
 
   const analysis = useMemo(() => {
-    if (!region) return null;
+    if (!region || !live.analysis) return null;
     const variable = getVariable(region.variable);
-    const series = generateSeries(region);
-    const stats = computeStats(region, series);
-    const sampledSeries = series.filter((_, idx) => idx % 6 === 0);
-    return { variable, stats, sampledSeries };
-  }, [region]);
+    const current = live.analysis;
+    const sampledSeries = current.series.filter((_, idx) => idx % 6 === 0);
+    return { variable, stats: current.stats, sampledSeries, current };
+  }, [region, live.analysis]);
 
   if (!region || !analysis) {
     return (
@@ -37,10 +30,24 @@ export function RegionMapPage() {
     );
   }
 
-  const { variable, stats, sampledSeries } = analysis;
-  const pointSlope = point ? slopeAtPoint(point[0], point[1], region) : null;
+  const { variable, stats, sampledSeries, current } = analysis;
+  const pointAnalysis =
+    point &&
+    Math.abs(current.target[0] - point[0]) < 1e-9 &&
+    Math.abs(current.target[1] - point[1]) < 1e-9
+      ? current
+      : null;
+  const pointSlope = point
+    ? pointAnalysis?.isLive
+      ? pointAnalysis.stats.slope
+      : slopeAtPoint(point[0], point[1], region)
+    : null;
   const pointSignificant =
-    pointSlope !== null ? Math.abs(pointSlope) > 0.2 : false;
+    pointSlope !== null
+      ? pointAnalysis?.isLive
+        ? pointAnalysis.stats.significant
+        : Math.abs(pointSlope) > 0.2
+      : false;
   const pointColor =
     pointSlope === null
       ? "var(--accent)"
@@ -88,11 +95,16 @@ export function RegionMapPage() {
           <div className="rail-section">
             <div className="rail-label">REGION TREND</div>
             <div className="rail-chip">{formatSlope(stats)}</div>
+            <div className={`rail-status rail-status-${current.status}`}>
+              <span className={`live-dot live-${current.status}`} aria-hidden="true" />
+              {current.isLive ? "LIVE BACKEND" : current.status === "partial" ? "DEMO VARIABLE" : "CONNECTING"}
+            </div>
           </div>
 
           <p className="rail-caption">
-            Click any point on the map to open it. Orange = increasing, blue =
-            decreasing.
+            The background grid is an illustrative neighborhood layer. Click any
+            point to fetch that location&apos;s real NASA POWER trend from the
+            backend. Orange = increasing, blue = decreasing.
           </p>
         </aside>
 
@@ -133,6 +145,10 @@ export function RegionMapPage() {
               <div className="point-body">
                 <div className="point-variable">
                   {variable.name.toUpperCase()}
+                  <span className={`point-live point-live-${current.status}`}>
+                    <span className={`live-dot live-${current.status}`} aria-hidden="true" />
+                    {current.isLive ? "LIVE" : current.status === "partial" ? "DEMO" : "…"}
+                  </span>
                 </div>
                 <div
                   className="point-value"

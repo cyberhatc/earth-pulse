@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useInvestigation } from "../lib/context";
 import {
   applyTheme,
   nextTheme,
@@ -14,6 +15,7 @@ type TopBarProps = {
 
 export function TopBar({ backHref, backLabel }: TopBarProps) {
   const [theme, setTheme] = useState<ThemeMode>(() => readCurrentTheme());
+  const { health, healthError, live, refreshLive } = useInvestigation();
 
   useEffect(() => {
     applyTheme(theme);
@@ -59,6 +61,29 @@ export function TopBar({ backHref, backLabel }: TopBarProps) {
           >
             NASA Earthdata
           </a>
+          <button
+            type="button"
+            className={`api-status api-${health ? "on" : "off"}`}
+            onClick={refreshLive}
+            title={
+              health
+                ? `Backend ${health.status} · LLM ${
+                    health.llm?.available
+                      ? `${health.llm.model} via ${health.llm.backend}`
+                      : health.llm?.backend || "templated"
+                  }${live.error ? ` · ${live.error}` : ""}`
+                : healthError || "Backend offline"
+            }
+            aria-label="Backend status — click to retry"
+          >
+            <span
+              className={`live-dot ${
+                health ? "live-live" : "live-error"
+              }`}
+              aria-hidden="true"
+            />
+            {health ? (health.llm?.available ? "LIVE LLM" : "LIVE API") : "DEMO"}
+          </button>
           <button
             type="button"
             className="theme-toggle"

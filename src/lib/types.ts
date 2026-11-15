@@ -55,7 +55,10 @@ export type CardKind =
   | "anomaly"
   | "earth-twins"
   | "story"
-  | "evidence";
+  | "evidence"
+  | "forecast"
+  | "opposite"
+  | "coverage";
 
 export type CanvasCard = {
   id: string;
@@ -64,20 +67,39 @@ export type CanvasCard = {
   point?: [number, number];
 };
 
+export type ChatSource = {
+  id?: string;
+  chunk_id?: string | null;
+  title: string;
+  source?: string | null;
+  score?: number | null;
+};
+
 export type ChatMessage = {
   id: string;
   role: "user" | "assistant";
   text: string;
   cardKind?: CardKind;
   cardId?: string;
+  generator?: string;
+  model?: string | null;
+  confidence?: string;
+  guardReason?: string | null;
+  sources?: ChatSource[];
 };
 
 export type StoryLanguage = "en" | "hi" | "kn";
 export type StoryAudience = "student" | "journalist" | "researcher";
 
 export type FingerprintDimension = {
-  key: VariableKey;
-  domain: "temperature" | "vegetation" | "rainfall" | "water";
+  key: string;
+  domain:
+    | "temperature"
+    | "vegetation"
+    | "rainfall"
+    | "water"
+    | "energy"
+    | "wind";
   label: string;
   shortLabel: string;
   slope: number;

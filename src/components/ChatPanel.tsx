@@ -2,8 +2,48 @@
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { SUGGESTIONS, generateReply } from "../lib/chat";
+import { sendChat, type ChatTurn } from "../lib/api";
 import { useInvestigation } from "../lib/context";
+import { getVariable } from "../lib/data";
 import { computeStats, generateSeries } from "../lib/trend";
+import type { CardKind } from "../lib/types";
+
+const KNOWN_CARD_KINDS: CardKind[] = [
+  "finding",
+  "trend-chart",
+  "slope-map",
+  "variable",
+  "caveat",
+  "fingerprint",
+  "anomaly",
+  "earth-twins",
+  "story",
+  "evidence",
+  "forecast",
+  "opposite",
+  "coverage",
+];
+
+function asCardKind(value: string | undefined): CardKind {
+  return KNOWN_CARD_KINDS.includes(value as CardKind)
+    ? (value as CardKind)
+    : "finding";
+}
+
+function guardNote(reason: string): string {
+  switch (reason) {
+    case "certainty_claim":
+      return "The model's draft turned a p-value into a certainty claim, so fact-locked deterministic prose was substituted.";
+    case "p_value_misuse":
+      return "The model's draft treated a p-value as a probability or confidence level, so fact-locked deterministic prose was substituted.";
+    case "band_misuse":
+      return "The model's draft described the p10–p90 interval as a 10–90% chance, so fact-locked deterministic prose was substituted.";
+    case "significance_misread":
+      return "The model's draft called a non-significant trend statistically significant, so fact-locked deterministic prose was substituted.";
+    default:
+      return "The model's draft mentioned a number not present in the backend facts, so fact-locked deterministic prose was substituted.";
+  }
+}
 
 export function ChatPanel() {
   const {
@@ -11,6 +51,10 @@ export function ChatPanel() {
     point,
     messages,
     pendingPrompt,
+    live,
+    health,
+    healthError,
+    refreshLive,
     setPendingPrompt,
     addCard,
     addMessage,
@@ -30,25 +74,71 @@ export function ChatPanel() {
       setDraft("");
       setBusy(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      const target = point ?? region.center;
+      const variable = getVariable(region.variable);
+      const history: ChatTurn[] = [
+        ...messages
+          .filter((message) => message.text.trim())
+          .slice(-8)
+          .map((message) => ({
+            role: message.role,
+            content: message.text,
+          })),
+        { role: "user", content: trimmed },
+      ];
 
-      const series = generateSeries(region);
-      const stats = computeStats(region, series);
-      const reply = generateReply(trimmed, region, stats);
-      const card = addCard({
-        kind: reply.cardKind,
-        point: point ?? undefined,
-      });
-
-      addMessage({
-        role: "assistant",
-        text: reply.text,
-        cardKind: reply.cardKind,
-        cardId: card.id,
-      });
-      setBusy(false);
+      try {
+        const reply = await sendChat({
+          lat: target[0],
+          lon: target[1],
+          messages: history,
+          regionName: region.name,
+          variable: variable.name,
+        });
+        const cardKind = asCardKind(reply.card_kind);
+        const card = addCard({
+          kind: cardKind,
+          point: point ?? undefined,
+        });
+        addMessage({
+          role: "assistant",
+          text: reply.text,
+          cardKind,
+          cardId: card.id,
+          generator: reply.generator,
+          model: reply.model,
+          confidence: reply.confidence,
+          guardReason: reply.guard_reason ?? null,
+          sources: reply.sources ?? [],
+        });
+      } catch (error) {
+        // Backend or LLM unavailable: keep the investigation usable with the
+        // deterministic local engine and say so explicitly.
+        const series = live.analysis?.series ?? generateSeries(region);
+        const stats = live.analysis?.stats ?? computeStats(region, series);
+        const reply = generateReply(trimmed, region, stats);
+        const card = addCard({
+          kind: reply.cardKind,
+          point: point ?? undefined,
+        });
+        addMessage({
+          role: "assistant",
+          text:
+            reply.text +
+            "\n\nNote: the backend chat endpoint was unreachable, so this reply uses the frontend's local demonstration engine — not live NASA data.",
+          cardKind: reply.cardKind,
+          cardId: card.id,
+          generator: "local-demo",
+          model: null,
+          confidence: "low",
+          sources: [],
+        });
+        console.warn("Earth Pulse backend chat failed:", error);
+      } finally {
+        setBusy(false);
+      }
     },
-    [region, point, addCard, addMessage],
+    [region, point, messages, live.analysis, addCard, addMessage],
   );
 
   useEffect(() => {
@@ -84,11 +174,35 @@ export function ChatPanel() {
 
   return (
     <section className="chat-panel" aria-label="Investigation conversation">
+      <div className="chat-engine-status">
+        <span className={`live-dot live-${live.status}`} aria-hidden="true" />
+        <span className="chat-engine-label">
+          {live.status === "live"
+            ? health?.rag?.enabled
+              ? `Live backend · HF RAG Space${
+                  health.rag.kb_chunks ? ` · ${health.rag.kb_chunks} sources indexed` : ""
+                }`
+              : health?.llm?.available
+                ? `Live backend · Ollama ${health.llm.model ?? ""}`
+                : "Live backend · templated LLM"
+            : live.status === "partial"
+              ? "Live backend · partial coverage"
+              : live.status === "error"
+                ? "Backend offline · local demo engine"
+                : "Connecting to backend…"}
+        </span>
+        {healthError || live.error ? (
+          <button type="button" className="chat-retry" onClick={refreshLive}>
+            Retry
+          </button>
+        ) : null}
+      </div>
       <div className="chat-messages" ref={scrollRef}>
         {messages.length === 0 && region ? (
           <div className="chat-bubble chat-bubble-assistant">
             Hi — I&apos;m your trend assistant for {region.name}. Ask me
-            anything: is it changing?, where?, what does significant mean?
+            anything: is it changing?, what does the forecast say?, where is the
+            anomaly? Answers come from the backend&apos;s NASA data and models.
           </div>
         ) : null}
 
@@ -102,12 +216,44 @@ export function ChatPanel() {
             }`}
           >
             {msg.text}
+            {msg.role === "assistant" && msg.generator ? (
+              <>
+                <span className="chat-bubble-meta">
+                  {msg.generator}
+                  {msg.model ? ` · ${msg.model}` : ""}
+                  {msg.confidence ? ` · ${msg.confidence} confidence` : ""}
+                </span>
+                {msg.sources && msg.sources.length > 0 ? (
+                  <span className="chat-sources">
+                    Sources ·{" "}
+                    {msg.sources.slice(0, 3).map((source) => (
+                      <span
+                        key={`${source.id ?? source.title}`}
+                        className="chat-source-chip"
+                        title={source.source ?? undefined}
+                      >
+                        {source.title}
+                      </span>
+                    ))}
+                  </span>
+                ) : null}
+                {msg.guardReason ? (
+                  <span className="chat-guard-note">
+                    {guardNote(msg.guardReason)}
+                  </span>
+                ) : null}
+              </>
+            ) : null}
           </div>
         ))}
 
         {busy ? (
           <div className="chat-bubble chat-bubble-assistant chat-bubble-busy">
-            Analysing…
+            {live.status === "live"
+              ? health?.rag?.enabled
+                ? "Consulting the HF RAG service…"
+                : "Consulting the local model…"
+              : "Analysing…"}
           </div>
         ) : null}
       </div>
