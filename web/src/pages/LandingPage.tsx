@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { TopBar } from "../components/TopBar";
+import { LandingNav } from "../components/landing/LandingNav";
 import { ArrivalSection } from "../components/landing/sections/ArrivalSection";
-import { PlanetMotionSection } from "../components/landing/sections/PlanetMotionSection";
-import { InvestigationSection } from "../components/landing/sections/InvestigationSection";
-import { InstrumentsSection } from "../components/landing/sections/InstrumentsSection";
-import { EvidenceSection } from "../components/landing/sections/EvidenceSection";
-import { DiscoverySection } from "../components/landing/sections/DiscoverySection";
+import { ObservationSection } from "../components/landing/sections/ObservationSection";
+import { AboutSection } from "../components/landing/sections/AboutSection";
+import { HowItWorksSection } from "../components/landing/sections/HowItWorksSection";
+import { RegionsSection } from "../components/landing/sections/RegionsSection";
+import { SignalsSection } from "../components/landing/sections/SignalsSection";
+import { VariablesSection } from "../components/landing/sections/VariablesSection";
+import { MethodsSection } from "../components/landing/sections/MethodsSection";
+import { DataSourcesSection } from "../components/landing/sections/DataSourcesSection";
+import { ImagerySection } from "../components/landing/sections/ImagerySection";
+import { TransparencySection } from "../components/landing/sections/TransparencySection";
+import { LaunchSection } from "../components/landing/sections/LaunchSection";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useLandingScroll } from "../hooks/useLandingScroll";
 import { useAnimeMicro } from "../hooks/useAnimeMicro";
@@ -13,7 +19,6 @@ import "../styles/landing.css";
 
 const DESKTOP_VIDEO = "/videos/earth-pulse-earth-desktop.mp4";
 const MOBILE_VIDEO = "/videos/earth-pulse-earth-mobile.mp4";
-// Mobile breakpoint: portrait/small viewports use the dedicated mobile (9:16) video.
 const MOBILE_QUERY = "(max-width: 768px)";
 
 function useIsMobile() {
@@ -50,13 +55,11 @@ export function LandingPage() {
 
   useAnimeMicro({ enabled: !reducedMotion, root: rootRef.current });
 
-  // Reset failure state when the selected source changes (e.g. breakpoint change)
   const videoSrc = isMobile ? MOBILE_VIDEO : DESKTOP_VIDEO;
   useEffect(() => {
     setVideoFailed(false);
   }, [videoSrc]);
 
-  // Anchor scrolling via Lenis when available (keeps ScrollTrigger in sync)
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -71,9 +74,12 @@ export function LandingPage() {
       e.preventDefault();
       const lenis = (root as any).__lenis;
       if (lenis && !reducedMotion) {
-        lenis.scrollTo(el as HTMLElement, { offset: -20 });
+        lenis.scrollTo(el as HTMLElement, { offset: -80 });
       } else {
-        (el as HTMLElement).scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+        (el as HTMLElement).scrollIntoView({
+          behavior: reducedMotion ? "auto" : "smooth",
+          block: "start",
+        });
       }
       history.pushState(null, "", hash);
     };
@@ -81,7 +87,6 @@ export function LandingPage() {
     return () => root.removeEventListener("click", onClick);
   }, [reducedMotion]);
 
-  // Respect reduced motion: do not autoplay a moving background video.
   const showVideo = !reducedMotion && !videoFailed;
 
   return (
@@ -106,14 +111,20 @@ export function LandingPage() {
       </div>
 
       <div className="landing-content">
-        <TopBar />
+        <LandingNav />
         <main id="main-content">
           <ArrivalSection />
-          <PlanetMotionSection />
-          <InvestigationSection />
-          <InstrumentsSection />
-          <EvidenceSection />
-          <DiscoverySection />
+          <ObservationSection />
+          <AboutSection />
+          <HowItWorksSection />
+          <RegionsSection />
+          <SignalsSection />
+          <VariablesSection />
+          <MethodsSection />
+          <DataSourcesSection />
+          <ImagerySection />
+          <TransparencySection />
+          <LaunchSection />
         </main>
       </div>
     </div>
