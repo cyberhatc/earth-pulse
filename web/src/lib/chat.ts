@@ -2,7 +2,6 @@ import { getVariable } from "./data";
 import {
   computeFingerprint,
   detectAnomalies,
-  findEarthTwins,
 } from "./intelligence";
 import { formatP, formatSlope, generateSeries } from "./trend";
 import type { CardKind, Region, TrendStats } from "./types";
@@ -35,7 +34,7 @@ export function generateReply(
     const fp = computeFingerprint(region);
     return {
       cardKind: "fingerprint",
-      text: `${fp.coupledInsight} (${fp.significantCount}/4 indicators significant).`,
+      text: `${fp.coupledInsight} (${fp.significantCount}/4 indicators significant). This is the offline demonstration fingerprint — the live backend produces the NASA POWER fingerprint.`,
     };
   }
 
@@ -43,16 +42,14 @@ export function generateReply(
     const anomalies = detectAnomalies(region, generateSeries(region));
     return {
       cardKind: "anomaly",
-      text: `I scanned ${region.name}'s monthly record relative to its historical seasonal cycle. ${anomalies.summary} Note: an anomaly is not automatically a disaster or a long-term climate trend.`,
+      text: `Offline demonstration scan of ${region.name}'s monthly series against its seasonal cycle. ${anomalies.summary} Note: an anomaly is not automatically a disaster or a long-term climate trend. Connect the backend for NASA POWER anomalies at your pinned cell.`,
     };
   }
 
   if (/twin|similar|other region|continent|compare/.test(q)) {
-    const twins = findEarthTwins(region);
-    const top = twins[0];
     return {
       cardKind: "earth-twins",
-      text: `Closest environmental twin to ${region.name} is ${top.name} (${top.continent}, ${top.similarity}% fingerprint match). Check dataset comparability notes before cross-continental claims.`,
+      text: `Earth twins are computed by the backend: k-means clustering of NASA POWER cell climatology, plus its opposite-trend detector for neighbouring cells that move against each other. That requires the live backend — nothing here fabricates a cross-continent match.`,
     };
   }
 
@@ -66,7 +63,7 @@ export function generateReply(
   if (/evidence|provenance|audit|missing data|resolution|dataset/.test(q)) {
     return {
       cardKind: "evidence",
-      text: `Here is the full Evidence & Confidence card tracing ${region.name}'s ${variable.shortName} findings back to satellite observations, spatial resolution, missing data, and limitations.`,
+      text: `Here is the full Evidence & Confidence card tracing ${region.name}'s ${variable.shortName} findings back to their source, spatial resolution, missing data, and limitations. With the backend offline the card shows demonstration labels; live it shows NASA POWER provenance.`,
     };
   }
 

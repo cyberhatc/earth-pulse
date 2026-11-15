@@ -6,7 +6,7 @@ import { Sparkline } from "../components/Sparkline";
 import { TopBar } from "../components/TopBar";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
-import { formatCoords, formatSlope, slopeAtPoint } from "../lib/trend";
+import { formatCoords, formatSlope } from "../lib/trend";
 import { useRegionRoute } from "../lib/useRegionRoute";
 
 export function RegionMapPage() {
@@ -31,29 +31,16 @@ export function RegionMapPage() {
   }
 
   const { variable, stats, sampledSeries, current } = analysis;
-  const pointAnalysis =
-    point &&
-    Math.abs(current.target[0] - point[0]) < 1e-9 &&
-    Math.abs(current.target[1] - point[1]) < 1e-9
-      ? current
-      : null;
-  const pointSlope = point
-    ? pointAnalysis?.isLive
-      ? pointAnalysis.stats.slope
-      : slopeAtPoint(point[0], point[1], region)
-    : null;
-  const pointSignificant =
-    pointSlope !== null
-      ? pointAnalysis?.isLive
-        ? pointAnalysis.stats.significant
-        : Math.abs(pointSlope) > 0.2
-      : false;
+  const pointSlope = point ? current.stats.slope : null;
+  const pointSignificant = point ? current.stats.significant : false;
   const pointColor =
     pointSlope === null
       ? "var(--accent)"
-      : pointSlope > 0
-        ? "var(--trend-up)"
-        : "var(--trend-down)";
+      : current.isLive
+        ? pointSlope > 0
+          ? "var(--trend-up)"
+          : "var(--trend-down)"
+        : "var(--trend-flat)";
 
   const handleDiscuss = () => {
     if (!point) return;

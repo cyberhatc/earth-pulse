@@ -18,7 +18,8 @@ def anomalies(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge
     except Exception as exc:
         raise HTTPException(503, detail=str(exc))
     cell, glat, glon = svc.nearest(store, lat, lon)
-    flags = anomalies_for_cell(store, cell, ["temperature", "precipitation", "ndvi", "wind", "humidity"],
+    anomaly_params = [p for p in ("temperature", "precipitation", "ndvi", "wind", "humidity") if p in store]
+    flags = anomalies_for_cell(store, cell, anomaly_params,
                                window=61, threshold=threshold)
     for f in flags:
         f["z"] = round(float(f["z"]), 3)

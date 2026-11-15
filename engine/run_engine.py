@@ -48,6 +48,9 @@ def main() -> None:
     trend_lookup: dict[int, dict] = {}
     periods_per_decade = 120.0  # monthly
     for var in VARIABLES:
+        if var not in store:
+            print(f"[engine] trends skipped: {var} (absent from store)")
+            continue
         arr = store[var]
         per_cell = {}
         for cell in range(G):
@@ -76,12 +79,12 @@ def main() -> None:
     # ---- opposite trends (ndvi & precipitation) ----
     # rebuild per-cell nested dict once (needed by find_opposite_pairs)
     per_cell_all: dict[int, dict] = {c: {} for c in range(G)}
-    for var in VARIABLES:
+    for var in trends:
         for c, rec in ((int(k), v) for k, v in trends[var].items()):
             per_cell_all[c][var] = rec
 
-    opposite_ndvi = find_opposite_pairs(grid_lat, grid_lon, n_lats, n_lons, per_cell_all, "ndvi", max_pairs=120)
-    opposite_precip = find_opposite_pairs(grid_lat, grid_lon, n_lats, n_lons, per_cell_all, "precipitation", max_pairs=120)
+    opposite_ndvi = find_opposite_pairs(grid_lat, grid_lon, n_lats, n_lons, per_cell_all, "ndvi", max_pairs=120) if "ndvi" in trends else []
+    opposite_precip = find_opposite_pairs(grid_lat, grid_lon, n_lats, n_lons, per_cell_all, "precipitation", max_pairs=120) if "precipitation" in trends else []
     print(f"[engine] opposite pairs: ndvi={len(opposite_ndvi)} precipitation={len(opposite_precip)}")
 
     # ---- climate twins (NaN-safe: fill masked params with that parameter's column mean) ----
@@ -100,11 +103,21 @@ def main() -> None:
                 col[bad] = m[j]
         return out
 
-    feat = np.stack([_filled_col(store["temperature"]).mean(axis=0),
-                     _filled_col(store["precipitation"]).mean(axis=0),
-                     _filled_col(store["ndvi"]).mean(axis=0),
-                     _filled_col(store["sst"]).mean(axis=0)], axis=1)
-    labels, _, _, scaler = cluster_cells(feat, k=8)
+    twin_feats = [("temperature_mean", "temperature"), ("precipitation_mean", "precipitation"),
+                  ("ndvi_mean", "ndvi"), ("sst_mean", "sst"), ("sea_level_mean", "sea_level")]
+    present = [name for name, src in twin_feats if src in store]
+    if len(present) >= 2:
+        twin_names = [name for name, _ in twin_feats if name in present]
+        feat = np.stack([_filled_col(store[src]).mean(axis=0) for _, src in twin_feats if src in store], axis=1)
+        labels, _, _, scaler = cluster_cells(feat, k=8)
+        twins = {"labels": [int(x) for x in labels], "k": 8,
+                 "features": twin_names,
+                 "scaler": scaler}
+    else:
+        labels = np.zeros(G, dtype=int)
+        twins = {"labels": [int(x) for x in labels], "k": 0,
+                 "features": [],
+                 "scaler": None}
     print("[engine] climate twins done")
 
     payload = {
@@ -117,9 +130,7 @@ def main() -> None:
         "grid": {"n_lats": n_lats, "n_lons": n_lons, "lats": lats.tolist(), "lons": lons.tolist()},
         "trends": trends,
         "opposite_trends": {"ndvi": opposite_ndvi, "precipitation": opposite_precip},
-        "climate_twins": {"labels": [int(x) for x in labels], "k": 8,
-                          "features": ["temperature_mean", "precipitation_mean", "ndvi_mean", "sst_mean"],
-                          "scaler": scaler},
+        "climate_twins": twins,
         "cells": [{"index": i, "lat": float(grid_lat[i]), "lon": float(grid_lon[i])} for i in range(G)],
         "compute_seconds": round(time.time() - t0, 2),
     }

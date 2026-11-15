@@ -72,7 +72,7 @@ def _artifact_config(artifact: Path) -> tuple[list[str], int]:
     try:
         meta = json.loads((artifact.parent / "forecaster_meta.json").read_text())
         meta_vars = meta.get("variables")
-        if isinstance(meta_vars, list) and meta_vars and set(meta_vars) <= set(STORE_VARIABLES):
+        if isinstance(meta_vars, list) and meta_vars and all(isinstance(v, str) for v in meta_vars):
             variables = [str(v) for v in meta_vars]
         meta_seq = int(meta.get("seq_len", SEQ_LEN))
         if meta_seq > 0:
@@ -131,7 +131,17 @@ def forecast_place(store, cell: int, horizon_months: int = 60,
         return ts
 
     artifact = _artifact_for(store)
-    if artifact.exists():
+    baseline_ok = True
+    try:
+        _artifact_config(artifact) if artifact.exists() else None
+        if artifact.exists():
+            # fail fast here if the store lacks the trained variables
+            model_vars_only, _ = _artifact_config(artifact)
+            from pipeline.build_features import prepare_cell_matrix as _pcm
+            _pcm(store, cell, model_vars_only)
+    except Exception:
+        baseline_ok = False
+    if artifact.exists() and baseline_ok:
         model = RidgeRollout.load(artifact)
         model_vars, seq_len = _artifact_config(artifact)
         dates, X = prepare_cell_matrix(store, cell, model_vars)

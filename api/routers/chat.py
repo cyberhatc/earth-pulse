@@ -36,7 +36,8 @@ def _build_facts(req: ChatRequest) -> dict:
     analysis = get_analysis()
     cell, glat, glon = svc.nearest(store, req.lat, req.lon)
 
-    finite = {p: int(np.isfinite(store[p][:, cell]).sum()) for p in svc.TS_PARAMS}
+    finite = {p: (int(np.isfinite(store[p][:, cell]).sum()) if p in store else 0)
+              for p in svc.TS_PARAMS}
     usable = [p for p, n in finite.items() if n >= 12]
     missing = [p for p, n in finite.items() if n < 12]
 
@@ -59,8 +60,9 @@ def _build_facts(req: ChatRequest) -> dict:
         deltas[p] = _r3(mean[-1] - mean[0]) if mean else None
     fc_dates = list(fc.get("dates") or [])
 
+    anomaly_params = [p for p in ("temperature", "precipitation", "ndvi") if p in store]
     anomalies = anomalies_for_cell(
-        store, cell, ["temperature", "precipitation", "ndvi"], window=61, threshold=3.5
+        store, cell, anomaly_params, window=61, threshold=3.5
     )
     anomaly_count = len(anomalies)
     anomalies = anomalies[-20:]

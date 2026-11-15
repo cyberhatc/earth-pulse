@@ -26,14 +26,14 @@ def picp(lower, upper, actual) -> float:
 
 
 def backtest_cell(X_full: np.ndarray, variables: list[str], seq_len: int = 24,
-                  test_months: int = 24, horizon: int = 24) -> dict:
+                  test_months: int = 24, horizon: int = 24, lam: float = 1e-2) -> dict:
     """X_full: (T, F) for ONE cell. Trains ridge on prefix, evaluates next `horizon`."""
     T, F = X_full.shape
     train_end = T - horizon
     if train_end <= seq_len + 12:
         return {"error": "series too short for backtest", "n": T}
     Xs_tr, ys_tr = make_windows(X_full[:train_end], seq_len)
-    model = RidgeRollout(lam=1e-2).fit(Xs_tr, ys_tr)
+    model = RidgeRollout(lam=lam).fit(Xs_tr, ys_tr)
     init = X_full[train_end - seq_len: train_end]
     pred = model.rollout(init, horizon)  # (horizon, F)
     actual = X_full[train_end: train_end + horizon]

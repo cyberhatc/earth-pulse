@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import type * as LeafletTypes from "leaflet";
 import type { Region } from "../lib/types";
-import { colorForSlope, slopeAtPoint } from "../lib/trend";
 
 type RegionMapProps = {
   region: Region;
@@ -24,20 +23,19 @@ export function RegionMap({
 
   onSelectRef.current = onSelectPoint;
 
+  // Create the map shell once per region.
   useEffect(() => {
     let cancelled = false;
     const container = containerRef.current;
     if (!container) return;
 
-    const markers: LeafletTypes.CircleMarker[] = [];
-
     async function initMap() {
       const L = await import("leaflet");
-      if (cancelled || !container) return;
+      if (cancelled || !containerRef.current) return;
 
       leafletRef.current = L;
 
-      const map = L.map(container, {
+      const map = L.map(containerRef.current, {
         center: region.center,
         zoom: region.zoom,
         zoomControl: true,
@@ -48,33 +46,6 @@ export function RegionMap({
         attribution: "&copy; OpenStreetMap contributors",
         maxZoom: 18,
       }).addTo(map);
-
-      const [[south, west], [north, east]] = region.bounds;
-      const safeNorth = Math.min(84, north);
-      const rows = 6;
-      const cols = 8;
-
-      for (let r = 0; r < rows; r += 1) {
-        for (let c = 0; c < cols; c += 1) {
-          const lat = south + ((r + 0.5) / rows) * (safeNorth - south);
-          const lng = west + ((c + 0.5) / cols) * (east - west);
-          const slope = slopeAtPoint(lat, lng, region);
-
-          const marker = L.circleMarker([lat, lng], {
-            radius: 18,
-            weight: 0,
-            fillColor: colorForSlope(slope),
-            fillOpacity: 1,
-          }).addTo(map);
-
-          marker.on("click", (e) => {
-            L.DomEvent.stopPropagation(e);
-            onSelectRef.current([lat, lng]);
-          });
-
-          markers.push(marker);
-        }
-      }
 
       map.on("click", (e: LeafletTypes.LeafletMouseEvent) => {
         onSelectRef.current([e.latlng.lat, e.latlng.lng]);
@@ -90,25 +61,12 @@ export function RegionMap({
 
       map.fitBounds(region.bounds, { padding: [18, 18] });
       mapRef.current = map;
-
-      if (selectedPoint) {
-        selectedMarkerRef.current = L.circleMarker(selectedPoint, {
-          radius: 9,
-          weight: 2,
-          color: "#14181A",
-          fillColor: "#FFFFFF",
-          fillOpacity: 1,
-        }).addTo(map);
-      }
     }
 
     void initMap();
 
     return () => {
       cancelled = true;
-      for (const marker of markers) {
-        marker.remove();
-      }
       if (selectedMarkerRef.current) {
         selectedMarkerRef.current.remove();
         selectedMarkerRef.current = null;
@@ -120,6 +78,7 @@ export function RegionMap({
     };
   }, [region]);
 
+  // Selected-point marker.
   useEffect(() => {
     const map = mapRef.current;
     const L = leafletRef.current;

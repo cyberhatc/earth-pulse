@@ -1,12 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { SUGGESTIONS, generateReply } from "../lib/chat";
 import { sendChat, type ChatTurn } from "../lib/api";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
 import { computeStats, generateSeries } from "../lib/trend";
 import type { CardKind } from "../lib/types";
+
+const SPACE_URL = "https://devildead-earth-pulse-ai.static.hf.space/";
 
 const KNOWN_CARD_KINDS: CardKind[] = [
   "finding",
@@ -172,6 +174,54 @@ export function ChatPanel() {
 
   const quickSuggestions = SUGGESTIONS.slice(0, 4);
 
+  const onDeviceUrl = useMemo(() => {
+    if (!region) return null;
+    const analysis = live.analysis;
+    const target = point ?? region.center;
+    const variable = getVariable(region.variable);
+    const stats = analysis?.stats ?? computeStats(region, generateSeries(region));
+    const coverage = analysis?.coverage ?? analysis?.payload?.data_coverage ?? null;
+    const tr = coverage?.time_range ?? ["1981-01", "2026-11"];
+    const synth = coverage ? coverage.synthetic_demo : true;
+    const anomalies =
+      analysis?.backendAnomalies?.length ??
+      analysis?.payload?.past.anomalies.length ??
+      0;
+
+    let delta: number | null = null;
+    const fc = analysis?.forecast;
+    const pkey = analysis?.param ?? null;
+    if (fc?.timeseries) {
+      const key =
+        pkey && fc.timeseries[pkey]
+          ? pkey
+          : Object.keys(fc.timeseries)[0];
+      const mean = key ? fc.timeseries[key]?.mean : undefined;
+      if (mean && mean.length > 1) {
+        delta = mean[mean.length - 1] - mean[0];
+      }
+    }
+
+    const params = new URLSearchParams({
+      region: region.name,
+      variable: variable.shortName,
+      unit: variable.unit,
+      slope: Number(stats.slope).toFixed(3),
+      pvalue: Number(stats.pValue).toFixed(4),
+      sig: stats.significant ? "true" : "false",
+      direction: stats.direction,
+      lat: Number(target[0]).toFixed(3),
+      lon: Number(target[1]).toFixed(3),
+      rec_start: tr[0],
+      rec_end: tr[1],
+      synth: synth ? "1" : "0",
+      anomalies: String(anomalies),
+      horizon: "60",
+    });
+    if (delta !== null) params.set("delta", delta.toFixed(3));
+    return `${SPACE_URL}?${params.toString()}`;
+  }, [region, point, live.analysis]);
+
   return (
     <section className="chat-panel" aria-label="Investigation conversation">
       <div className="chat-engine-status">
@@ -179,9 +229,13 @@ export function ChatPanel() {
         <span className="chat-engine-label">
           {live.status === "live"
             ? health?.rag?.enabled
-              ? `Live backend · HF RAG Space${
-                  health.rag.kb_chunks ? ` · ${health.rag.kb_chunks} sources indexed` : ""
-                }`
+              ? health.rag.backend === "hf-router"
+                ? `Live backend · HF serverless RAG${
+                    health.rag.model ? ` · ${health.rag.model.split("/").pop()}` : ""
+                  }`
+                : `Live backend · HF RAG Space${
+                    health.rag.kb_chunks ? ` · ${health.rag.kb_chunks} sources indexed` : ""
+                  }`
               : health?.llm?.available
                 ? `Live backend · Ollama ${health.llm.model ?? ""}`
                 : "Live backend · templated LLM"
@@ -195,6 +249,17 @@ export function ChatPanel() {
           <button type="button" className="chat-retry" onClick={refreshLive}>
             Retry
           </button>
+        ) : null}
+        {onDeviceUrl ? (
+          <a
+            className="chat-ondevice-link"
+            href={onDeviceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Free on-device assistant — open in a new tab"
+          >
+            On-device AI ↗
+          </a>
         ) : null}
       </div>
       <div className="chat-messages" ref={scrollRef}>

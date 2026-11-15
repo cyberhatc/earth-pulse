@@ -1,0 +1,1632 @@
+{
+ "version": "1.0",
+ "generated_at": "2026-11-15T15:44:06+00:00",
+ "generator": "scripts/build_rag_kb.py",
+ "sources": [
+  "README.md",
+  "docs/api-contract.md",
+  "docs/architecture.md",
+  "docs/data-sources.md",
+  "docs/deploy.md",
+  "docs/highres-belgaum.md",
+  "docs/limitations.md",
+  "docs/ml.md",
+  "docs/power-real-store.md",
+  "docs/real-data-ingestion.md",
+  "docs/VERIFICATION.md",
+  "docs/colab-scenario.md",
+  "docs/scenario-images.md",
+  "docs/rag-corpus/nasa-power-primer.md",
+  "docs/rag-corpus/earth-pulse-method.md",
+  "analysis:processed/analysis_power_real.json"
+ ],
+ "chunks": [
+  {
+   "id": "readme-earth-pulse",
+   "title": "Earth Pulse",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "Earth Pulse\n**An open-source, AI-powered explorer of how every place on Earth has changed over the last 40 years.**"
+  },
+  {
+   "id": "readme-earth-pulse-2",
+   "title": "Earth Pulse",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "Earth Pulse\nBuilt for the NASA Space Apps Challenge 2026, challenge: *Be An Earth System Trend Detective*.\n---"
+  },
+  {
+   "id": "readme-1-the-idea",
+   "title": "1. The Idea",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "1. The Idea\nClick anywhere on the globe and instantly see how that place has changed: temperature, vegetation, rainfall, and sea level. Earth Pulse draws the long-term trend, forecasts the next few years, flags unusual events, and explains it all in plain English."
+  },
+  {
+   "id": "readme-1-the-idea-2",
+   "title": "1. The Idea",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "1. The Idea\nThe signature feature is the **Opposite Trend Detector**: it finds neighbouring regions that are changing in opposite directions (one drying while the neighbour gets wetter) and explains why that can happen."
+  },
+  {
+   "id": "readme-2-who-it-helps",
+   "title": "2. Who It Helps",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "2. Who It Helps\n- Students and teachers who want climate data without reading raw charts\n- Journalists who need quick, credible visuals\n- Researchers who want cleaned, ready-to-use datasets and trained models"
+  },
+  {
+   "id": "readme-3-data-sources",
+   "title": "3. Data Sources",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "3. Data Sources\n| Data | Source | URL |\n|---|---|---|\n| Main hub for all NASA Earth data | NASA Earthdata | https://www.earthdata.nasa.gov |\n| Search and download | Earthdata Search | https://search.earthdata.nasa.gov |\n| Quick time-series analysis | NASA Giovanni | https://giovanni.gsfc.nasa.gov |\n| Global imagery for map layers | NASA Worldview and GIBS | https://worldview.earthdata.nasa.gov |\n| Land surface and vegetation | LP DAAC | https://lpdaac.usgs.gov |\n| Precipitation | GES DISC | https://disc.gsfc.nasa.gov |\n| Sea level and ocean physics | PO.DAAC | https://podaac.jpl.nasa.gov |\n| Ice sheets, snow, sea ice | NSIDC | https://nsidc.org |\n| Weather and solar data | NASA POWER | https://power.larc.nasa.gov |\n| Global temperature anomalies | NASA GISS | https://data.giss.nasa.gov/gistemp |\n| Fire hotspots | NASA FIRMS | https://firms.modaps.eosdis.nasa.gov |"
+  },
+  {
+   "id": "readme-3-data-sources-2",
+   "title": "3. Data Sources",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "3. Data Sources\n| Challenge page | NASA Space Apps 2026 | https://www.spaceappschallenge.org/2026/challenges/ |\n| Suggested datasets and starter code | Space Data Atlas | https://spacedata.swapniltamse.com |\n| Historical global weather since 1940 | Copernicus Climate Data Store | https://cds.climate.copernicus.eu |\n| Global weather and climate records | NOAA NCEI | https://www.ncei.noaa.gov |\n| Free weather API, no key needed | Open-Meteo | https://open-meteo.com |\n| Forest loss and gain | Global Forest Watch | https://www.globalforestwatch.org |\n| Surface water change | JRC Global Surface Water | https://global-surface-water.appspot.com |\n| Satellite archive | USGS EarthExplorer | https://earthexplorer.usgs.gov |\n| Air quality | OpenAQ | https://openaq.org |\n| Climate data for India | India Meteorological Department | https://mausam.imd.gov.in |"
+  },
+  {
+   "id": "readme-3-data-sources-3",
+   "title": "3. Data Sources",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "3. Data Sources\n| Open government data for India | data.gov.in | https://data.gov.in |\n| Country indicators | World Bank Open Data | https://data.worldbank.org |\n| Dataset search | Google Dataset Search | https://datasetsearch.research.google.com |\n| Datasets and models | Hugging Face | https://huggingface.co/datasets |"
+  },
+  {
+   "id": "readme-3-data-sources-4",
+   "title": "3. Data Sources",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "3. Data Sources\nSuggested variables: sea surface temperature, vegetation greenness (NDVI), precipitation, and sea level. Use monthly gridded files.\n**Core**"
+  },
+  {
+   "id": "readme-4-features",
+   "title": "4. Features",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "4. Features\n1. Global trend map with a time slider\n2. Click-to-inspect charts for any location\n3. Opposite Trend Detector for neighbouring regions moving in opposite directions\n4. Forecasting with uncertainty bands\n5. Anomaly detection for sudden unusual events\n**Signature**"
+  },
+  {
+   "id": "readme-4-features-2",
+   "title": "4. Features",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "4. Features\n6. Earth Memory: a place and a year that matters to you\n7. Ground Truth Check: citizen reports compared with satellite data\n8. Opposite Trend Detective: mystery case files for flagged regions\n**Bonus**"
+  },
+  {
+   "id": "readme-4-features-3",
+   "title": "4. Features",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "4. Features\n9. Climate twins clustering\n10. Plain-English language explainer\n11. Multilingual and low-bandwidth mode (English, Hindi, Kannada and more)\n12. Time-lapse, side-by-side compare, shareable cards, watchlist alerts, voice mode, public API"
+  },
+  {
+   "id": "readme-5-ai-ml-layers",
+   "title": "5. AI/ML Layers",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "5. AI/ML Layers\n| Layer | Model | Purpose |\n|---|---|---|\n| Trend estimation | Theil-Sen slope, Mann-Kendall test | Robust long-term trend per grid cell |\n| Forecasting | LSTM or temporal transformer | Predict the next few years |\n| Anomaly detection | Autoencoder or Isolation Forest | Flag unusual events automatically |\n| Clustering | K-Means or HDBSCAN | Find climate twins |\n| Explainer | Local Ollama LLM (default `qwen2.5:1.5b`) + templated fallback | Turn pre-computed facts into plain English without inventing numbers |"
+  },
+  {
+   "id": "readme-6-architecture",
+   "title": "6. Architecture",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "6. Architecture\n- **Data layer:** download from Earthdata, clean with xarray, store as Zarr or NetCDF\n- **Analysis layer:** Python with NumPy, SciPy, pymannkendall, scikit-learn, PyTorch\n- **API layer:** FastAPI serving trends, forecasts, and anomalies per location\n- **Frontend:** React with MapLibre GL or Leaflet, plus Plotly or D3 for charts\n- **Deployment:** one Render Docker web service (`render.yaml`) — FastAPI serves the built Vite app **and** the API from the same URL; GitHub Pages / Vercel / Netlify remain possible for the frontend only\nEverything can run at zero cost. Free plans change, so check current limits."
+  },
+  {
+   "id": "readme-7-free-tier-stack",
+   "title": "7. Free-Tier Stack",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "7. Free-Tier Stack\n- Code: GitHub\n- Frontend hosting: same-service on Render (recommended) · Vercel / Netlify / GitHub Pages optional\n- API hosting: Hugging Face Spaces or Render\n- Training: Google Colab and Kaggle notebooks\n- Models and datasets: Hugging Face Hub\n- Database for citizen reports: Supabase free tier\n- Maps: MapLibre GL with OpenStreetMap tiles\n- Language explainer: open models on Hugging Face or a free Gemini tier"
+  },
+  {
+   "id": "readme-7-free-tier-stack-2",
+   "title": "7. Free-Tier Stack",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "7. Free-Tier Stack\n**Staying free:** precompute everything, keep grids coarse, train on free GPUs, cache API calls, avoid paid map services."
+  },
+  {
+   "id": "readme-8-eight-day-plan",
+   "title": "8. Eight-Day Plan",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "8. Eight-Day Plan\n| Day | Goal |\n|---|---|\n| Pick variables, register for the challenge, set up the repo |\n| Team sync, download and clean data |\n| Trend engine and Opposite Trend Detector |\n| Forecasting model |\n| Anomaly detection and web map |\n|  Frontend polish, kick-off event |\n|  Bonus features, README, demo video (submission opens 9:00 AM) |\n| Final fixes, submit before 11:59 PM |\nAgree on a shared JSON format for trend results on day one."
+  },
+  {
+   "id": "readme-10-repo-layout",
+   "title": "10. Repo Layout",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "10. Repo Layout\n```text\nearth-pulse/\nREADME.md\nLICENSE\ndata/\npipeline/\nengine/\nmodels/\napi/\nweb/\nnotebooks/\ndocs/\ntests/\n```"
+  },
+  {
+   "id": "readme-11-setup",
+   "title": "11. Setup",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "11. Setup\n1. Clone the repository from GitHub.\n2. Create a free NASA Earthdata account and save your login as an environment variable.\n3. Install the Python requirements and run the pipeline script.\n4. Run the trend engine to produce the trend files.\n5. Start the API locally, then start the web app.\n6. Open the app and click anywhere on the globe."
+  },
+  {
+   "id": "readme-12-open-source",
+   "title": "12. Open Source",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "12. Open Source\n- Code license: MIT\n- Data: follow each provider's terms and cite NASA Earthdata\n- Contributions welcome via pull requests"
+  },
+  {
+   "id": "readme-13-credits",
+   "title": "13. Credits",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "13. Credits\nData courtesy of NASA Earthdata and partner space agencies. Built for the NASA Space Apps Challenge 2026.\n---"
+  },
+  {
+   "id": "readme-14-what-s-implemented-in-this-repo-v0-1-0",
+   "title": "14. What's implemented in this repo (v0.1.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "14. What's implemented in this repo (v0.1.0)\nThis repository now contains a **working offline-first implementation** of the Earth Pulse stack (deterministic synthetic demo store; swap in real NASA products for research):"
+  },
+  {
+   "id": "readme-14-what-s-implemented-in-this-repo-v0-1-0-2",
+   "title": "14. What's implemented in this repo (v0.1.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "14. What's implemented in this repo (v0.1.0)\n- **`pipeline/`** — sample store generator (`--sample`), NASA POWER point fetcher, GIBS tile builder, FIRMS fires (optional key), MERRA-2/MODIS/GPM OPeNDAP fetch path, CMR discovery, cleaning + feature engineering.\n- **`engine/`** — Theil–Sen + Mann–Kendall trends for all grid cells, **Opposite Trend Detector** (NDVI/precipitation), K-Means **climate twins** → `data/processed/analysis.json`.\n- **`models/`** — multivariate ridge-rollout forecaster with p10–p90 bands (real-POWER artifact `data/processed/forecaster_power_real.npz`, synthetic demo artifact `models/artifacts/forecaster.npz`; the loader picks the one trained on the same store distribution), transparent linear-trend fallback, rolling robust-z anomalies, rolling-origin backtest, dependency-free **SVG projected maps**, optional (disabled-by-default) AI scenario module."
+  },
+  {
+   "id": "readme-14-what-s-implemented-in-this-repo-v0-1-0-3",
+   "title": "14. What's implemented in this repo (v0.1.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "14. What's implemented in this repo (v0.1.0)\n- **`api/`** — FastAPI serving **unified `GET /place?lat&lon` payload** (trends, forecast, anomalies, opposite trends, GIBS past imagery, projected SVG maps, explainer), `/imagery/projected`, `/tier-b`, `/health` (including local-LLM status), and **`POST /chat`** (facts-locked Ollama conversation). Dockerfile for HF Spaces/Render free tier.\n- **`web/`** — React + Vite + TypeScript frontend (**Leaflet** map, conversation-first UI, fact-locked Ollama chat, live coverage/forecast/opposite/twin/evidence cards, dark theme, localStorage dossier). In dev it proxies `/api` → `:8000`; in production the backend serves `web/dist` directly from the same origin. `cd web && npm install && npm run dev` (http://localhost:3000).\n- **`docs/`** — architecture, data sources (with the honest 40-year coverage check), API contract, ML/accuracy notes, UI/UX spec, free deployment guide, parallel-session prompts."
+  },
+  {
+   "id": "readme-14-what-s-implemented-in-this-repo-v0-1-0-4",
+   "title": "14. What's implemented in this repo (v0.1.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "14. What's implemented in this repo (v0.1.0)\n- **`notebooks/`, `tests/`, CI** — 01 explore NASA POWER/GIBS · 02 train · 03 backtest; pytest suite; GitHub Actions CI + Pages deploy."
+  },
+  {
+   "id": "readme-quickstart-offline",
+   "title": "Quickstart (offline)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "Quickstart (offline)\n```bash\npip install numpy scipy fastapi uvicorn httpx pydantic pytest\nmake sample-data engine train test   # deterministic demo store → analysis.json → artifact → tests\nmake api                             # http://localhost:8000 (try /place?lat=12.97&lon=77.59)\ncd web && npm install && npm run dev  # http://localhost:3000 (Vite proxies /api -> :8000)\n```\n`docker compose up --build api` runs the **single-service** image on :8000 (API + built frontend), or run native: `npm run build` in `web/` first, then `uvicorn api.main:app --port 8000` — same URL for the app and `/api/*`. `render.yaml` deploys that image to Render as one free Docker web service (`healthCheckPath: /api/health`); see `docs/deploy.md`."
+  },
+  {
+   "id": "readme-honest-limitations",
+   "title": "Honest limitations",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "Honest limitations\nBundled demo data is **synthetic** (physically motivated, deterministic). Real accuracy requires real products (`docs/data-sources.md`) and overlap-period training; forecasts are probabilistic (p10–p90), not certain futures. Never claim \"40 years\" for NDVI/SST/sea level (~2000/2002/1993 onward).\n---"
+  },
+  {
+   "id": "readme-15-implementation-status-verified-2026-11-09-10-",
+   "title": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)\nEverything below was **run and verified on this tree on Nov 9, 2026**; see `docs/parallel-prompts.md` status log. Full detail: `docs/limitations.md` (honest limits) and `docs/submission-checklist.md` (Space Apps pre-submit QA).\n**Implemented pieces (all verified today)**"
+  },
+  {
+   "id": "readme-15-implementation-status-verified-2026-11-09-10--2",
+   "title": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)\n| Piece | What ships |\n|---|---|\n| `pipeline/` | deterministic synthetic store generator (`--sample` → `data/samples/earth_pulse_sample.npz`, 498 months 1985-01→2026-06, 240-cell 15° grid), NASA POWER fetch, GIBS tiles, FIRMS/OPeNDAP/CMR (opt-in) |\n| `engine/` | Theil–Sen + Mann–Kendall per cell → `data/processed/analysis.json` (407 KB), Opposite Trend Detector (120+120 candidate pairs), K-Means climate twins |\n| `models/` | ridge-rollout forecaster; real-POWER artifact `forecaster_power_real.npz` (126,480 pooled samples), synthetic demo artifact `forecaster.npz`, p10–p90 bands, backtest, projected SVG maps; store-matched artifact selection |\n| `api/` | FastAPI `GET /health` (LLM status), `/place`, `/imagery/past|projected`, `/trends/cell|/opposite`, `/twins`, `/forecast`, `/anomalies`, `/tier-b`, `POST /explain`, **`POST /chat`** (local Ollama) — schema_version `1.0.0` |"
+  },
+  {
+   "id": "readme-15-implementation-status-verified-2026-11-09-10--3",
+   "title": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)\n| `web/` | React + Vite + TS + Leaflet; `npm run build` → ~366 KB JS (114 KB gzip); served same-origin by the API in production |\n| `docs/` | architecture, api-contract, data-sources, deploy, ml, ui-ux, **limitations (new)**, **submission-checklist (new)** |\n**Verified today (actual outputs, not claims)**"
+  },
+  {
+   "id": "readme-15-implementation-status-verified-2026-11-09-10--4",
+   "title": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)\n- `docker compose config` → parses; services `api`, `web`. ✅\n- `docker compose build api` → image **`nasa-api:latest`** built: python-3.12-slim + numpy/scipy/fastapi/uvicorn, sample + engine + **train** executed at build time (artifact baked in). First attempt hit a transient PyPI metadata error for scipy; retry succeeded. ✅\n- `uvicorn api.main:app --port 8000` → `/health` `{\"status\":\"ok\",\"schema_version\":\"1.0.0\",\"sample_store\":true,\"store\":{\"synthetic\":false,\"provenance\":\"nasa_power_monthly_1981_present\"},\"analysis\":true}`; `/place?lat=12.97&lon=77.59` → full payload (ridge_rollout forecast, 4 opposite-trend pairs, templated explainer, climate_twin); `/imagery/projected?parameter=temperature&year=2030` → SVG; `/tier-b` → **fetched 596 months of real NASA POWER data, cached**. ✅"
+  },
+  {
+   "id": "readme-15-implementation-status-verified-2026-11-09-10--5",
+   "title": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)\n- `cd web && npm install && VITE_API_BASE=http://localhost:8000 npm run build` → ✅ (API base confirmed embedded in `dist/assets/*.js`); `npm run preview -- --port 4173` → HTML + JS + CSS + favicon all HTTP 200. ✅\n**Quickstart (all offline-capable)**"
+  },
+  {
+   "id": "readme-15-implementation-status-verified-2026-11-09-10--6",
+   "title": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)\n```bash\npip install numpy scipy fastapi uvicorn httpx pydantic pytest\nmake sample-data engine train test   # synthetic store → analysis.json → artifact → tests\nmake api                             # http://localhost:8000/health\ncd web && npm install && npm run build && npm run preview   # http://localhost:4173\ndocker compose up --build            # same stack in containers (image verified above)\n```"
+  },
+  {
+   "id": "readme-15-implementation-status-verified-2026-11-09-10--7",
+   "title": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "15. Implementation status — verified 2026-11-09, 10:06 IST (Session D/E/F append)\n**Limitations** — the demo store is synthetic (15°×15° grid, trends baked in); the default real-POWER store has no NDVI/SST/sea-level, so those parameters are omitted rather than faked; forecast skill decays with horizon and the local 1.5B LLM is small (post-generation guards reject certainty claims, p-value misreadings, p10–p90 band misreadings, false significance claims, and any number absent from the facts, then fall back to deterministic prose); Gemini/HF explainer backends remain optional and are not required (`/docs-payload` likewise future). Specifics: `docs/limitations.md`."
+  },
+  {
+   "id": "readme-15-land-ocean-mask-ai-scenario-cards-v0-2-0",
+   "title": "15. Land/ocean mask + AI scenario cards (v0.2.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "15. Land/ocean mask + AI scenario cards (v0.2.0)\n- **Mask layer** (`pipeline/land_ocean.py`): demo store now masks SST/sea level over land and NDVI over ocean (illustrative 15° dominant-class mask, labeled). Production mask derives from real SST NaN fraction — see `docs/real-data-ingestion.md`.\n- **Tier B cache** (`pipeline/cache.py`): POWER/FIRMS responses cached in `data/cache/` (TTL `EP_CACHE_TTL`).\n- **AI scenario cards** (`models/scenario_image.py` + `models/scenario_cards.py` + notebook 04): disabled-by-default, GPU-offline pipeline; `GET /imagery/scenario` returns conditioning only — generation never happens inside HTTP. Always labeled \"AI-generated scenario — not an observation\". See `docs/scenario-images.md`.\n- **Strict JSON**: engine writes `allow_nan=False`; masked parameters are omitted from API payloads (UI shows explicit \"No coverage\")."
+  },
+  {
+   "id": "readme-15-land-ocean-mask-ai-scenario-cards-v0-2-0-2",
+   "title": "15. Land/ocean mask + AI scenario cards (v0.2.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "15. Land/ocean mask + AI scenario cards (v0.2.0)\n- Quick check: `python3 models/scenario_cards.py --lat 12.97 --lon 77.59 --parameter ndvi` (prints prompts, no GPU needed)."
+  },
+  {
+   "id": "readme-16-real-nasa-data-is-now-wired-in-no-credentials",
+   "title": "16. REAL NASA data is now wired in — no credentials needed (v0.3.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "16. REAL NASA data is now wired in — no credentials needed (v0.3.0)\nThe demo ships a deterministic synthetic store, but the repo can now build and serve a **real, measured/modelled NASA POWER record (1981-01 → 2026-11, monthly, 240 cells, 0 failures)** with zero login:"
+  },
+  {
+   "id": "readme-16-real-nasa-data-is-now-wired-in-no-credentials-2",
+   "title": "16. REAL NASA data is now wired in — no credentials needed (v0.3.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "16. REAL NASA data is now wired in — no credentials needed (v0.3.0)\n```bash\npython3 pipeline/build_real_power_store.py     # ~10 min, 240 open NASA POWER calls, cached\npython3 engine/run_engine.py --input data/processed/earth_pulse_power_real.npz \\\n--output data/processed/analysis_power_real.json\nEP_STORE_PATH=$PWD/data/processed/earth_pulse_power_real.npz \\\nEP_ANALYSIS_PATH=$PWD/data/processed/analysis_power_real.json uvicorn api.main:app --port 8000\n```"
+  },
+  {
+   "id": "readme-16-real-nasa-data-is-now-wired-in-no-credentials-3",
+   "title": "16. REAL NASA data is now wired in — no credentials needed (v0.3.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "16. REAL NASA data is now wired in — no credentials needed (v0.3.0)\nHighlights from the first real run: global mean warming **+0.21 °C/decade** (115/240 cells significant), Siberian cell **+0.67 °C/decade, p=0.004**; NDVI/SST/sea level honestly absent (POWER has none); strict JSON; `data_coverage` flips `synthetic_demo: false` automatically. Details & verification: `docs/power-real-store.md`."
+  },
+  {
+   "id": "readme-16-real-nasa-data-is-now-wired-in-no-credentials-4",
+   "title": "16. REAL NASA data is now wired in — no credentials needed (v0.3.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "16. REAL NASA data is now wired in — no credentials needed (v0.3.0)\nFor the full real stack (NDVI/SST/sea level from MODIS/PO.DAAC + real mask) you need a free **NASA Earthdata login** — see `docs/real-data-ingestion.md`."
+  },
+  {
+   "id": "readme-17-high-resolution-real-data-path-belgaum-case-s",
+   "title": "17. High-resolution, real-data path (Belgaum case study)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "17. High-resolution, real-data path (Belgaum case study)\nSub-kilometre analysis for a single place is now supported via the point-level\npipeline:"
+  },
+  {
+   "id": "readme-17-high-resolution-real-data-path-belgaum-case-s-2",
+   "title": "17. High-resolution, real-data path (Belgaum case study)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "17. High-resolution, real-data path (Belgaum case study)\n```bash\npython3 scripts/build_belgaum.py            # builds data/processed/point_15m8497_74m4977.npz + .json\nuvicorn api.main:app --port 8000\n```"
+  },
+  {
+   "id": "readme-get-point-lat-15-8497-lon-74-4977-horizon-months",
+   "title": "GET /point?lat=15.8497&lon=74.4977&horizon_months=60",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "GET /point?lat=15.8497&lon=74.4977&horizon_months=60\nSee `docs/highres-belgaum.md` for the resolution ladder (POWER 40-yr point series,\nMODIS 250 m NDVI, Sentinel-2 10 m imagery), the AI scenario-card image\ngeneration pipeline, and the frontend 🛰 Hi-Res / 📍 Belgaum controls."
+  },
+  {
+   "id": "readme-18-rag-chatbot-retrieval-augmented-facts-locked-",
+   "title": "18. RAG chatbot — retrieval-augmented, facts-locked narration (v0.4.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "18. RAG chatbot — retrieval-augmented, facts-locked narration (v0.4.0)\n`POST /chat` now has an optional retrieval layer and a Hugging Face Space backend, keeping the facts-locked design (the LLM never computes a number; guards reject certainty claims, p-value misuse, band misuse, non-significant-as-significant, and invented numbers — on every backend):"
+  },
+  {
+   "id": "readme-18-rag-chatbot-retrieval-augmented-facts-locked--2",
+   "title": "18. RAG chatbot — retrieval-augmented, facts-locked narration (v0.4.0)",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "18. RAG chatbot — retrieval-augmented, facts-locked narration (v0.4.0)\n```bash\npython3 scripts/build_rag_kb.py --sync-space   # builds data/rag/kb.json (BM25 KB: docs + NASA POWER/method notes + store-derived coverage) and syncs hf-space/"
+  },
+  {
+   "id": "readme-after-creating-a-space-at-huggingface-co-spaces-",
+   "title": "after creating a Space at huggingface.co/spaces (Docker SDK, free CPU):",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "after creating a Space at huggingface.co/spaces (Docker SDK, free CPU):\nEP_RAG_BACKEND=hf HF_RAG_SPACE_URL=https://<you>-earth-pulse-rag.hf.space uvicorn api.main:app --port 8000\n```"
+  },
+  {
+   "id": "readme-after-creating-a-space-at-huggingface-co-spaces--2",
+   "title": "after creating a Space at huggingface.co/spaces (Docker SDK, free CPU):",
+   "source": "README.md",
+   "topic": "readme",
+   "text": "after creating a Space at huggingface.co/spaces (Docker SDK, free CPU):\nWith `EP_RAG_BACKEND=hf`, answers carry `sources: [{id, title, source}]` (rendered as a muted \"Sources\" line in the chat UI); with the Space down, chat falls back to Ollama, then to templated prose — never a hard failure. Design, deploy runbook, token setup and rollback: `docs/rag.md`."
+  },
+  {
+   "id": "docs-api-contract-api-contract-get-place-and-friends",
+   "title": "API contract — `GET /place` and friends",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "API contract — `GET /place` and friends\nBase URL: `http://localhost:8000` (local) or your deployed API origin.\nAll parameters are query-string. All responses are JSON unless noted. `schema_version` is `1.0.0`."
+  },
+  {
+   "id": "docs-api-contract-get-health",
+   "title": "`GET /health`",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "`GET /health`\n```json\n{\n\"status\": \"ok\",\n\"schema_version\": \"1.0.0\",\n\"sample_store\": true,\n\"store\": {\n\"path\": \"data/processed/earth_pulse_power_real.npz\",\n\"name\": \"earth_pulse_power_real.npz\",\n\"exists\": true,\n\"synthetic\": false,\n\"real_data\": true,\n\"provenance\": \"nasa_power_monthly_1981_present\",\n\"time_range\": [\"1981-01\", \"2026-11\"],\n\"n_months\": 551\n},\n\"analysis\": true,\n\"analysis_path\": \"data/processed/analysis_power_real.json\",\n\"llm\": {\n\"backend\": \"ollama\",\n\"available\": true,\n\"model\": \"qwen2.5:1.5b\",\n\"base_url\": \"http://localhost:11434\",\n\"installed_models\": [\"qwen2.5:1.5b\"]\n}\n}\n```\n`store.synthetic` is the authoritative real-vs-demo flag; the legacy `sample_store` field only means “a store file exists.” `llm.backend` is `ollama` when a local model answers, `templated` when no LLM is reachable or `EP_LLM_BACKEND` disables it.\nThe unified on-click payload. Example (abridged; arrays truncated with …):"
+  },
+  {
+   "id": "docs-api-contract-get-place-lat-float-lon-float-horizon-months-int",
+   "title": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`\n```json\n{\n\"schema_version\": \"1.0.0\",\n\"location\": { \"lat\": 12.97, \"lon\": 77.59, \"cell_index\": 134, \"grid_lat\": 15.0, \"grid_lon\": 75.0, \"name\": null },\n\"data_coverage\": {\n\"synthetic_demo\": true,\n\"parameters_used\": [\"temperature\",\"precipitation\",\"ndvi\",\"sst\",\"sea_level\",\"solar_radiation\",\"humidity\",\"wind\"],\n\"sources\": { \"temperature\": \"merra2/nasa_power (sample: synthetic)\" },\n\"time_range\": [\"1985-01\", \"2026-06\"],\n\"overlap_used_for_training\": [\"2000-01\", \"2026-06\"],\n\"gaps\": [\"Sea level & SST are coastal/ocean-relevant; synthetic everywhere in demo\"],\n\"notes\": \"NASA POWER + GIBS + precomputed engine outputs. Tier B discovery is opt-in.\"\n},\n\"past\": {\n\"dates\": [\"1985-01\", \"…\"],\n\"timeseries\": {\n\"temperature\": [23.1, \"…\"],\n\"precipitation\": […],\n\"ndvi\": […],\n\"sst\": […],\n\"sea_level\": […],\n\"solar_radiation\": […],"
+  },
+  {
+   "id": "docs-api-contract-get-place-lat-float-lon-float-horizon-months-int-2",
+   "title": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`\n\"humidity\": […],\n\"wind\": […]\n},\n\"imagery\": [\n{ \"date\": \"2024-06-01\", \"type\": \"gibs\", \"layer\": \"MODIS_Terra_CorrectedReflectance_TrueColor\", \"url\": \"https://gibs.earthdata.nasa.gov/...\" }\n],\n\"anomalies\": [\n{ \"parameter\": \"temperature\", \"date\": \"2016-04\", \"z\": 3.9, \"severity\": \"high\", \"kind\": \"warm\" }\n]\n},\n\"trends\": {\n\"temperature\": { \"slope_per_decade\": 0.31, \"p_value\": 0.0002, \"significant\": true, \"direction\": \"increasing\", \"cell_lat\": 15.0, \"cell_lon\": 75.0 },\n\"precipitation\": { \"slope_per_decade\": -1.8, \"p_value\": 0.04, \"significant\": true, \"direction\": \"decreasing\" }\n},\n\"forecast\": {\n\"horizon_months\": 60,\n\"issued\": \"2026-06\",\n\"dates\": [\"2026-07\", \"…\"],\n\"timeseries\": {\n\"temperature\": { \"mean\": […], \"lower\": […], \"upper\": […] }\n},"
+  },
+  {
+   "id": "docs-api-contract-get-place-lat-float-lon-float-horizon-months-int-3",
+   "title": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`\n\"backtest\": { \"mae\": 0.62, \"rmse\": 0.83, \"picp_p10_p90\": 0.86, \"vs_baselines\": { \"persistence\": 0.71 } },\n\"projected_images\": [\n{ \"date\": \"2030\", \"parameter\": \"temperature\", \"url\": \"/imagery/projected?parameter=temperature&year=2030\", \"label\": \"Model-projected (Theil–Sen extrapolation)\" }\n],\n\"scenarios\": [\n{ \"name\": \"median\", \"generated_image_url\": null, \"label\": \"AI-generated scenario — not an observation\" }\n]\n},\n\"opposite_trends\": [\n{\n\"parameter\": \"precipitation\",\n\"cell_a\": { \"lat\": 15.0, \"lon\": 75.0, \"slope_per_decade\": -1.8 },\n\"cell_b\": { \"lat\": 15.0, \"lon\": 90.0, \"slope_per_decade\": 1.6 },\n\"strength\": \"strong\",\n\"explanation\": \"Neighboring cells trend in opposite directions…\"\n}\n],\n\"climate_twin\": { \"cluster_id\": 7, \"k\": 8, \"features\": [\"temperature_mean\", \"precipitation_mean\", \"ndvi_mean\", \"sst_mean\"] },"
+  },
+  {
+   "id": "docs-api-contract-get-place-lat-float-lon-float-horizon-months-int-4",
+   "title": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`\n\"explanation\": {\n\"text\": \"…\",\n\"language\": \"en\",\n\"generator\": \"templated|hf_inference\",\n\"confidence\": \"low|medium|high\"\n}\n}\n```"
+  },
+  {
+   "id": "docs-api-contract-get-place-lat-float-lon-float-horizon-months-int-5",
+   "title": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "`GET /place?lat={float}&lon={float}&horizon_months={int=60}`\n> `generator` values actually produced by `api/services/explainer.py`: `templated` (default for `/place`), `ollama` (local LLM), `hf-rag` (when `EP_RAG_BACKEND=hf` and the Hugging Face RAG Space answers — retrieval over the bundled knowledge base + a small instruct model), `hf_inference` (when `HF_TOKEN` is set and the endpoint responds), and `templated-guard` (the LLM failed a post-generation fact check, so deterministic prose was substituted). A `gemini` backend is reserved/planned and is **not yet wired**. The forecast block includes `artifact` (e.g. `forecaster_power_real.npz`) so callers can see which trained model produced it. See `docs/rag.md` for the RAG design and runbook."
+  },
+  {
+   "id": "docs-api-contract-post-chat",
+   "title": "`POST /chat`",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "`POST /chat`\nConversational, facts-locked narration backed by the Hugging Face RAG Space (when `EP_RAG_BACKEND=hf`), a local Ollama model (default), or deterministic templated prose (fallback). The server assembles the facts (trends, forecast deltas, anomalies, opposite pairs, climate twin, coverage) from the same store and engine as `/place`; the model only re-words them and never computes or changes a number. With `EP_RAG_BACKEND=hf`, retrieval runs over a bundled BM25 knowledge base (repo docs + NASA POWER / method notes + store-derived coverage facts) and answers carry `sources: [{id, title, source}]`. Every draft passes the same post-generation guards regardless of backend."
+  },
+  {
+   "id": "docs-api-contract-post-chat-2",
+   "title": "`POST /chat`",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "`POST /chat`\nRequest:\n```json\n{\n\"lat\": 15.8497,\n\"lon\": 74.4977,\n\"region_name\": \"Western Ghats + Arabian Sea\",\n\"variable\": \"Precipitation\",\n\"horizon_months\": 60,\n\"language\": \"en\",\n\"messages\": [\n{ \"role\": \"user\", \"content\": \"What does the 5-year forecast say, and how uncertain is it?\" }\n]\n}\n```"
+  },
+  {
+   "id": "docs-api-contract-post-chat-3",
+   "title": "`POST /chat`",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "`POST /chat`\nResponse:\n```json\n{\n\"text\": \"The 5-year forecast indicates a net increase in temperature of +0.165 °C over 60 months …\",\n\"generator\": \"ollama\",\n\"model\": \"qwen2.5:1.5b\",\n\"confidence\": \"medium\",\n\"card_kind\": \"forecast\",\n\"llm_available\": true,\n\"guard_reason\": null,\n\"guard_numbers\": [],\n\"sources\": [{ \"id\": \"S1\", \"title\": \"Earth Pulse methodology\", \"source\": \"docs/rag-corpus/earth-pulse-method.md\" }],\n\"facts\": { \"trends\": {}, \"forecast_deltas\": {}, \"parameters_unavailable\": [] }\n}\n```\n`guard_reason` and `guard_numbers` are always present; the latter is empty unless a numeric guard rejected a draft."
+  },
+  {
+   "id": "docs-api-contract-post-chat-4",
+   "title": "`POST /chat`",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "`POST /chat`\nForecast deltas are **net change across the full horizon**, not per-decade rates. If Ollama is unreachable the endpoint returns deterministic `templated` prose instead of failing. Post-generation guards protect the facts: answers that convert a p-value into a certainty/probability claim, call a non-significant trend significant, or contain a number absent from the facts are rejected and replaced with `templated-guard` prose. `guard_reason` is one of `certainty_claim`, `p_value_misuse`, `band_misuse`, `significance_misread`, or `unverified_numbers`; `guard_numbers` lists any rejected numerical tokens (empty otherwise)."
+  },
+  {
+   "id": "docs-api-contract-other-endpoints",
+   "title": "Other endpoints",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "Other endpoints\n| Endpoint | Returns |\n|---|---|\n| `GET /trends/cell?lat&lon` | Trends for every parameter at the nearest cell |\n| `GET /trends/opposite?lat&lon` | Opposite-trend pairs involving the nearest neighborhood |\n| `GET /twins?lat&lon` | KMeans cluster id + the cells sharing it (\\\"climate twins\\\") |\n| `GET /forecast?lat&lon&horizon_months=60` | Just the `forecast` block |\n| `GET /anomalies?lat&lon` | Rolling robust-z anomalies per parameter |\n| `POST /explain` | `{ \"facts\": {…} }` → `{ text, generator, confidence }` (numbers unchanged) |\n| `POST /chat` | Facts-locked conversation via HF RAG Space or local Ollama; falls back to templated prose. Replies may carry `sources` (RAG citations) |\n| `GET /imagery/past?lat&lon` | GIBS URLs for several layers/dates + a Landsat EarthExplorer link |"
+  },
+  {
+   "id": "docs-api-contract-other-endpoints-2",
+   "title": "Other endpoints",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "Other endpoints\n| `GET /imagery/projected?parameter=temperature&year=2030` | **SVG** heat-map (Theil–Sen extrapolation), labeled model-projected |\n| `GET /docs-payload` | **Planned — not yet served by the API.** Frontend dev fallback: embedded fixture `web/src/lib/fallbackPayload.json` (mirrors this contract) and the live `/openapi.json` |"
+  },
+  {
+   "id": "docs-api-contract-error-model",
+   "title": "Error model",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "Error model\nNon-2xx responses: `{ \"error\": \"machine_code\", \"detail\": \"human-readable\", \"partial\": { … } }`.\nIf a subsystem fails (e.g., no model artifact yet) the API still answers with `partial` and an explanatory `data_coverage.gaps` entry — it never fabricates numbers."
+  },
+  {
+   "id": "docs-api-contract-versioning",
+   "title": "Versioning",
+   "source": "docs/api-contract.md",
+   "topic": "docs-api-contract",
+   "text": "Versioning\n`schema_version` bumps on breaking changes; additions only otherwise. Frontend pins `^1.0`."
+  },
+  {
+   "id": "docs-architecture-earth-pulse-architecture",
+   "title": "Earth Pulse — Architecture",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "Earth Pulse — Architecture\n**Goal:** click anywhere on Earth → see past + present + forecast for that place over\nup to ~40 years (where data exists), with real imagery, honest uncertainty, and a\nplain-English explanation. Everything runs free and open."
+  },
+  {
+   "id": "docs-architecture-system-diagram",
+   "title": "System diagram",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "System diagram\n```text\n┌──────────────────────────────┐\n│  NASA / partner open data    │\n│  Earthdata · Giovanni · GIBS │\n│  LP DAAC · GES DISC · PO.DAAC│\n│  NSIDC · POWER · GISS · FIRMS│\n│  (+ ERA5, Landsat — README)  │\n└───────────────┬──────────────┘\n│  (offline / CI)\n┌───────────────▼──────────────┐\n│  pipeline/  (Python)          │\n│  auth · discover · fetch_*    │\n│  clean · build_features       │\n│  export_store → data/samples/ │\n│  earth_pulse_sample.npz       │\n└───────────────┬───────────────┘\n│"
+  },
+  {
+   "id": "docs-architecture-system-diagram-2",
+   "title": "System diagram",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "System diagram\n┌───────────────▼──────────────┐\n│  engine/  (precompute)        │\n│  Theil–Sen + Mann–Kendall     │\n│  Opposite Trend Detector      │\n│  KMeans climate twins         │\n│  → data/processed/analysis.json│\n└───────────────┬───────────────┘\n│\n┌───────────────▼───────────────┐\n│ models/  (train + inference)   │\n│ Ridge/LSTM forecaster +        │\n│ p10/p50/p90 bands · anomaly    │\n│ backtest → artifacts/forecaster │\n└───────────────┬───────────────┘\n│\n┌───────────────▼───────────────┐"
+  },
+  {
+   "id": "docs-architecture-system-diagram-3",
+   "title": "System diagram",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "System diagram\n│ api/  (FastAPI)                │\n│ GET /place?lat&lon → unified   │\n│ payload (Tier A instant)       │\n│ + Tier B discover/cache hooks  │\n│ + LLM explainer (fallback tpl) │\n└───────────────┬───────────────┘\n│\n┌───────────────▼───────────────┐\n│ web/  (React + Vite + TS)      │\n│ MapLibre GL · SVG ch/erts      │\n│ coverage badges · imagery      │\n│ gallery · opposite/explainer   │\n└────────────────────────────────┘\n```"
+  },
+  {
+   "id": "docs-architecture-layers",
+   "title": "Layers",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "Layers\n| Layer | Tech | Folder | Purpose |\n|---|---|---|---|\n| Data pipeline | Python, xarray (optional), NumPy | `pipeline/` | Ingest/clean NASA data → portable `.npz`/Zarr store + coverage metadata |\n| Analysis engine | NumPy / SciPy (+ pymannkendall optional) | `engine/` | Robust trends, Opposite Trend Detector, climate twins |\n| ML models | NumPy ridge (default) · PyTorch LSTM (optional) | `models/` | Multivariate forecast + uncertainty bands, anomaly detection, backtest |\n| API | FastAPI + Uvicorn | `api/` | Unified on-click payload; Tier A (precomputed) + Tier B (on-demand, bounded/cached) |\n| Frontend | React, Vite, TypeScript, MapLibre GL | `web/` | Map-first UI: click → charts, imagery, coverage, explainer |\n| Docs | Markdown | `docs/` | This file, data sources, API contract, ML, UI/UX, deployment |"
+  },
+  {
+   "id": "docs-architecture-on-click-data-flow-tier-a-instant",
+   "title": "On-click data flow (Tier A — instant)",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "On-click data flow (Tier A — instant)\n1. User clicks `(lat, lon)` on the MapLibre GL map.\n2. Frontend → `GET /place?lat=..&lon=..&horizon_months=60`.\n3. API finds nearest grid cell, assembles: precomputed trends (Theil–Sen/Mann–Kendall), forecast (bundled model), anomalies (rolling robust z), opposite-trend pairs nearby, GIBS past imagery, POWER/FIRMS hints (Tier A), `data_coverage` provenance, plain-English narrative.\n4. UI renders: coverage badge → charts (past + forecast with p10–p90 band) → past imagery gallery → optional data-driven projected map → Opposite Trend card → explainer."
+  },
+  {
+   "id": "docs-architecture-on-click-data-flow-tier-a-instant-2",
+   "title": "On-click data flow (Tier A — instant)",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "On-click data flow (Tier A — instant)\nTier B (`api/services/ondemand.py`) does bounded live discovery via CMR and caches; it is **opt-in**, never required for the demo, and never blocks Tier A."
+  },
+  {
+   "id": "docs-architecture-data-store-formats",
+   "title": "Data store formats",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "Data store formats\n**Sample/demo (`data/samples/earth_pulse_sample.npz`)** — deterministic synthetic gridded multivariate series (see `pipeline/export_store.py`). Keys: `dates`, `lats`, `lons`, `grid_lat`, `grid_lon`, and one array per parameter `(T, G)`."
+  },
+  {
+   "id": "docs-architecture-data-store-formats-2",
+   "title": "Data store formats",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "Data store formats\n**Real-data path** — `run_pipeline.py --sample` (or `--gridded` for real Earthdata path) would write a consolidated Zarr store (`pipeline/export_store.py::export_zarr`) and the engine reads it with the same variable layout. The demo intentionally ships a tiny synthetic store so anyone can run the project offline."
+  },
+  {
+   "id": "docs-architecture-unified-payload-contract",
+   "title": "Unified payload contract",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "Unified payload contract\nSee `docs/api-contract.md`. `schema_version` is versioned (`1.0.0`); the frontend types in `web/src/types/payload.ts` mirror it."
+  },
+  {
+   "id": "docs-architecture-accuracy-honesty-guarantees",
+   "title": "Accuracy & honesty guarantees",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "Accuracy & honesty guarantees\n- Robust stats (Theil–Sen/Mann–Kendall) alongside ML — trends carry significance, not vibes.\n- Forecasts are probabilistic: **p10/p50/p90**; UI never shows a single \"certain\" future.\n- `data_coverage` reports which parameters/sources/years were actually used per place.\n- Observed vs Forecast vs **AI-generated scenario** are visually distinct labels.\n- The bundled demo data is **synthetic** (deterministic, physically motivated) and labeled as such everywhere; swap in real products for real analysis (`docs/data-sources.md`)."
+  },
+  {
+   "id": "docs-architecture-free-tier-deployment-path",
+   "title": "Free-tier deployment path",
+   "source": "docs/architecture.md",
+   "topic": "docs-architecture",
+   "text": "Free-tier deployment path\nGitHub (code) → HF Hub (model weights/artifacts) → API on Hugging Face Spaces or Render (Dockerfile in `api/`) → frontend on Vercel/Netlify/GitHub Pages (static build from `web/`). Details in `docs/deploy.md`."
+  },
+  {
+   "id": "docs-data-sources-nasa-and-partner-data-sources-what-to-use-where-",
+   "title": "NASA (and partner) data sources — what to use, where to get it, how much history",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "NASA (and partner) data sources — what to use, where to get it, how much history\nEarth Pulse is built **only** on free, open data. This document lists every source,\nwhat parameters it provides, how to access it, and — critically — **how many years of\nhistory you can realistically get**. Coverage varies by variable; never claim \"40 years\nfor everything\" in the UI. Per-parameter coverage is surfaced in the app via\n`data_coverage` (see `configs/params.yaml`)."
+  },
+  {
+   "id": "docs-data-sources-nasa-and-partner-data-sources-what-to-use-where--2",
+   "title": "NASA (and partner) data sources — what to use, where to get it, how much history",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "NASA (and partner) data sources — what to use, where to get it, how much history\nLegend: **access** = how the code fetches it · **history** = typical start of usable record.\n---"
+  },
+  {
+   "id": "docs-data-sources-1-nasa-earthdata-hub-earthdata-search",
+   "title": "1. NASA Earthdata (hub) + Earthdata Search",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "1. NASA Earthdata (hub) + Earthdata Search\n- **What:** discovery + download for almost all NASA Earth-observation products (DAAC holdings).\n- **Gives you:** virtually any gridded/remote-sensing variable, via CMR / `earthaccess`.\n- **Access:** `earthaccess` Python API or direct OPeNDAP/download. Requires a **free Earthdata login** (set `EARTHDATA_USERNAME` / `EARTHDATA_PASSWORD`).\n- **History:** product-dependent (see per-DAAC rows below).\n- **Links:** https://www.earthdata.nasa.gov · https://search.earthdata.nasa.gov\n- **In this repo:** `pipeline/auth.py` (login), `pipeline/discover.py` (CMR discovery), `pipeline/fetch_gridded.py` (OPeNDAP/xarray fetch)."
+  },
+  {
+   "id": "docs-data-sources-2-nasa-giovanni",
+   "title": "2. NASA Giovanni",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "2. NASA Giovanni\n- **What:** quick, interactive time-series and area-average analysis across hundreds of variables.\n- **Gives you:** many of the same variables as time series/maps — ideal for **prototyping and validation**, not bulk production.\n- **Access:** web UI; some service endpoints. Best used to sanity-check the numbers produced by this repo.\n- **Links:** https://giovanni.gsfc.nasa.gov"
+  },
+  {
+   "id": "docs-data-sources-3-nasa-gibs-worldview",
+   "title": "3. NASA GIBS / Worldview",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "3. NASA GIBS / Worldview\n- **What:** global **map tile layers** (near-real-time + historical), best for showing imagery on click and past views.\n- **Gives you:** true color, corrected reflectance, NDVI/EVI layers, fires/thermal anomalies, aerosols, SST, snow/ice, precipitation, blue marble.\n- **Access:** **GIBS WMTS** tiles, e.g. `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/<layer>/default/<date>/GoogleMapsCompatible_Level9/<z>/<y>/<x>.jpg|png`. No key.\n- **History:** layer-dependent; most modern MODIS/VIIRS layers are ~2000+.\n- **Links:** https://worldview.earthdata.nasa.gov\n- **In this repo:** `pipeline/fetch_gibs.py` builds tile URLs; the frontend `LayerToggles`/`ImageryGallery` render them."
+  },
+  {
+   "id": "docs-data-sources-4-lp-daac-land-via-earthdata",
+   "title": "4. LP DAAC (land) — via Earthdata",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "4. LP DAAC (land) — via Earthdata\n- **What:** land surface and vegetation.\n- **Gives you:** **NDVI/EVI** (MODIS MOD13A3/MYD13A3), **LST** (MOD11A2), land cover, evapotranspiration (MOD16A2), burned area.\n- **Access:** earthaccess/OPeNDAP, subset by bounding box or point.\n- **History:** ~**2000–present** for MODIS (VIIRS continues post-2012). **Not 40 years.**\n- **Links:** https://lpdaac.usgs.gov"
+  },
+  {
+   "id": "docs-data-sources-5-ges-disc-precipitation-atmosphere-via-earthdat",
+   "title": "5. GES DISC (precipitation / atmosphere) — via Earthdata",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "5. GES DISC (precipitation / atmosphere) — via Earthdata\n- **What:** precipitation, soil moisture, atmospheric composition, aerosols.\n- **Gives you:** **precipitation** (GPM IMERG V07; TRMM V7 before it), humidity, surface met fields, aerosol optical depth.\n- **Access:** earthaccess / OPeNDAP; subset to monthly.\n- **History:** GPM/IMERG **~2000–present** (stitch with TRMM 1998–2015 carefully). **Not 40 years** for the consistent record. MERRA-2 lives here too (see §11).\n- **Links:** https://disc.gsfc.nasa.gov"
+  },
+  {
+   "id": "docs-data-sources-6-po-daac-ocean-via-earthdata",
+   "title": "6. PO.DAAC (ocean) — via Earthdata",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "6. PO.DAAC (ocean) — via Earthdata\n- **What:** ocean physics — sea surface temperature, sea level, winds, salinity, currents.\n- **Gives you:** **SST** (e.g., GHRSST MUR 0.01° daily), **sea-level anomalies** (satellite altimetry).\n- **Access:** earthaccess / PO.DAAC APIs / OPeNDAP.\n- **History:** SST MUR **~2002–present**; altimetry **~1993–present**. **Not 40 years.**\n- **Links:** https://podaac.jpl.nasa.gov"
+  },
+  {
+   "id": "docs-data-sources-7-nsidc-cryosphere-via-earthdata",
+   "title": "7. NSIDC (cryosphere) — via Earthdata",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "7. NSIDC (cryosphere) — via Earthdata\n- **What:** ice sheets, snow, sea ice.\n- **Gives you:** sea-ice concentration/extent (Sea Ice Index / SMMR–SSM/I), snow cover fraction.\n- **Access:** earthaccess / direct.\n- **History:** sea-ice concentration **~1979–present** (product-dependent); snow cover similar; ice-sheet products vary.\n- **Links:** https://nsidc.org"
+  },
+  {
+   "id": "docs-data-sources-8-nasa-power",
+   "title": "8. NASA POWER",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "8. NASA POWER\n- **What:** agroclimatology / energy-oriented point time series.\n- **Gives you:** **T2M (mean/max/min), precipitation, solar radiation (ALLSKY_SFC_SW_DWN), relative humidity (RH2M), wind speed (WS2M), surface pressure (PS)** — queried for any lat/lon.\n- **Access:** **POWER REST API, no key**, e.g. `https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=T2M&latitude=..&longitude=..&start=1981&end=2024&format=JSON`.\n- **History:** ~**1981–present** (parameter-dependent; solar & met core are long).\n- **Links:** https://power.larc.nasa.gov/data-access-viewer/\n- **In this repo:** `pipeline/fetch_power.py` (Tier A on-click); sample demo also uses MERRA-2-style series."
+  },
+  {
+   "id": "docs-data-sources-9-nasa-giss-gistemp",
+   "title": "9. NASA GISS (GISTEMP)",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "9. NASA GISS (GISTEMP)\n- **What:** global surface air temperature anomaly.\n- **Gives you:** monthly global & coarse-grid anomaly context.\n- **Access:** published datasets (CSV), https://data.giss.nasa.gov/gistemp/.\n- **History:** **1880–present**. Perfect for long-term context, not local full-field mapping."
+  },
+  {
+   "id": "docs-data-sources-10-nasa-firms-fire-hotspots",
+   "title": "10. NASA FIRMS (fire hotspots)",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "10. NASA FIRMS (fire hotspots)\n- **What:** near-real-time active fire / thermal anomaly detections.\n- **Gives you:** fire pixel detections (MODIS/VIIRS), fire radiative power.\n- **Access:** FIRMS API with a **free map key** (`FIRMS_MAP_KEY`), e.g. `https://firms.modaps.eosdis.nasa.gov/api/area/csv/<key>/MODIS_NRT/<W,S,E,N>/<day_range>`.\n- **History:** ~**2000–present**.\n- **In this repo:** `pipeline/fetch_firms.py`; used as an anomaly/event signal, not a continuous climate field."
+  },
+  {
+   "id": "docs-data-sources-11-merra-2-nasa-gmao-reanalysis-via-ges-disc",
+   "title": "11. MERRA-2 (NASA GMAO reanalysis, via GES DISC)",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "11. MERRA-2 (NASA GMAO reanalysis, via GES DISC)\n- **What:** the best **NASA backbone for 40+ years** of consistent multivariate fields.\n- **Gives you:** 2m temperature, total precipitation, humidity, winds, radiation, pressure — consistently across **1980–present**.\n- **Access:** earthaccess/OPeNDAP; monthly means (e.g., `M2TSMNXSLV`, `M2TMNXPER` collections).\n- **History:** **1980–present (~45 years).** This is what powers genuine 40-year multivariate training in Earth Pulse.\n- **Note:** ERA5 (Copernicus, 1940–present) can extend further but is not NASA; it is listed in the README as an allowed partner source."
+  },
+  {
+   "id": "docs-data-sources-12-partner-supplementary-sources-from-readme",
+   "title": "12. Partner / supplementary sources (from README)",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "12. Partner / supplementary sources (from README)\n| Source | What it adds | History |\n|---|---|---|\n| **USGS EarthExplorer (Landsat)** | Real historical **photos/scenes** of any place | 1972–present (practical continuous ~1984+) |\n| **Copernicus CDS (ERA5)** | 5th-generation atmospheric reanalysis | **1940–present** |\n| **NOAA NCEI** | Global weather/climate records, GHCN | varies |\n| **Open-Meteo** | Free weather API, no key — forecast companion | recent years |\n| **Global Forest Watch** | Forest loss/gain | ~2000–present |\n| **JRC Global Surface Water** | Surface water occurrence change | ~1984–2021 |\n| **OpenAQ** | Air quality | varies |\n| **IMD / data.gov.in** | India-specific weather & open govt data | varies |\n| **World Bank Open Data** | Country indicators | varies |\n| **Hugging Face Hub** | Hosting trained models/datasets | n/a |\n---"
+  },
+  {
+   "id": "docs-data-sources-how-much-history-can-you-honestly-get-the-40-yea",
+   "title": "How much history can you honestly get? (the 40-year check)",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "How much history can you honestly get? (the 40-year check)\n| Parameter | Source | Realistic range |\n|---|---|---|\n| Air temperature / solar / humidity / wind / pressure (point) | NASA POWER | **~1981–present** |\n| Consistent multivariate met (gridded) | MERRA-2 | **1980–present** |\n| Global temperature anomaly context | GISTEMP | **1880–present** |\n| Sea ice concentration | NSIDC | **~1979–present** (product-dependent) |\n| Sea surface temperature | PO.DAAC MUR | ~2002–present |\n| Sea level (altimetry) | PO.DAAC | ~1993–present |\n| NDVI/EVI, LST, evapotranspiration, burned area | LP DAAC (MODIS) | **~2000–present** |\n| Precipitation (satellite) | GPM IMERG / TRMM | ~2000–present |\n| Fire hotspots | FIRMS | ~2000–present |\n| Real-scene imagery | Landsat | 1972–present |"
+  },
+  {
+   "id": "docs-data-sources-how-much-history-can-you-honestly-get-the-40-yea-2",
+   "title": "How much history can you honestly get? (the 40-year check)",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "How much history can you honestly get? (the 40-year check)\n**Bottom line:** a genuine **~40-year backbone** exists (MERRA-2 / NASA POWER / GISTEMP / NSIDC sea ice, plus ERA5 if you opt in). Modern-sensor parameters (NDVI, SST, sea level, fires) have **~20–25 years** — do not stretch them. The app always reports per-parameter coverage, trains multivariate models on the **overlap period**, and shows gaps instead of hiding them.\n---"
+  },
+  {
+   "id": "docs-data-sources-practical-fetch-order-used-by-earth-pulse",
+   "title": "Practical fetch order used by Earth Pulse",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "Practical fetch order used by Earth Pulse\n1. **Tier A (on click, instant):** NASA POWER point series + GIBS imagery tiles + FIRMS events (if key) + precomputed gridded trends/forecasts. No login, no heavy downloads.\n2. **Tier B (on demand, bounded):** `discover.py` queries CMR/OPeNDAP for the exact product coverage at that point; subsets and caches. Results are merged into the place payload with an explicit `data_coverage` report.\n3. **Precompute (offline/CI):** the full globe is processed into a Zarr store by `pipeline/run_pipeline.py` + `engine/run_engine.py`; the API serves ready-made results keyed by grid cell."
+  },
+  {
+   "id": "docs-data-sources-licensing-citation",
+   "title": "Licensing & citation",
+   "source": "docs/data-sources.md",
+   "topic": "docs-data-sources",
+   "text": "Licensing & citation\n- NASA Earthdata data are generally free and open; **cite NASA Earthdata** and the specific product (e.g., \"MODIS/Terra Vegetation Indices, LP DAAC\") per each provider's terms.\n- Code is MIT. See `LICENSE`."
+  },
+  {
+   "id": "docs-deploy-deployment-free-open-reproducible",
+   "title": "Deployment — free, open, reproducible",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "Deployment — free, open, reproducible\nEverything below stays at **$0**. Free-tier limits change; verify current terms before submission."
+  },
+  {
+   "id": "docs-deploy-recommended-one-render-docker-web-service-fronte",
+   "title": "Recommended: ONE Render Docker web service (frontend + API together)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "Recommended: ONE Render Docker web service (frontend + API together)\nThe repo root has a multi-stage `Dockerfile` (Node build of `web/` → Python runtime) and a\n`render.yaml` Blueprint. One service serves both:\n- `/` → the built frontend (`web/dist`), with SPA deep-link fallback\n- `/api/*` → the FastAPI endpoints (the same handlers are also mounted at `/` for back-compat)"
+  },
+  {
+   "id": "docs-deploy-recommended-one-render-docker-web-service-fronte-2",
+   "title": "Recommended: ONE Render Docker web service (frontend + API together)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "Recommended: ONE Render Docker web service (frontend + API together)\nRender deploys it directly: New → Blueprint → select this repo (root dir), or\n`render.yaml` is picked up automatically. Plan: **free** Docker web service;\n`healthCheckPath: /api/health`. No `VITE_API_BASE` is needed (same origin).\nRender injects `PORT`; the image already honors it. Data: the bundled synthetic\nsample store is built at image time; for real NASA POWER data, build\n`earth_pulse_power_real.npz` once and mount it or pass\n`EP_STORE_PATH`/`EP_ANALYSIS_PATH` as env vars."
+  },
+  {
+   "id": "docs-deploy-recommended-one-render-docker-web-service-fronte-3",
+   "title": "Recommended: ONE Render Docker web service (frontend + API together)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "Recommended: ONE Render Docker web service (frontend + API together)\n```bash\ndocker build -t earth-pulse .\ndocker run --rm -p 8000:8000 -e PORT=8000 earth-pulse\n```"
+  },
+  {
+   "id": "docs-deploy-prerequisites",
+   "title": "Prerequisites",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "Prerequisites\n- GitHub repo (public) — code, issues, CI, GitHub Pages.\n- Python ≥ 3.10, Node ≥ 18.\n- (Optional) NASA Earthdata login — only for **real** data downloads, not for the bundled demo.\n- (Optional) Google Colab / Kaggle — free GPU for training the LSTM.\n- (Optional) Hugging Face account — free hosting for model weights + Docker Spaces."
+  },
+  {
+   "id": "docs-deploy-1-run-locally-5-minutes",
+   "title": "1) Run locally (5 minutes)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "1) Run locally (5 minutes)\n```bash\npython3 -m venv .venv && . .venv/bin/activate\npip install numpy scipy fastapi uvicorn httpx pytest\nmake sample-data      # deterministic synthetic store (offline)\nmake engine           # precompute trends / opposite / twins → data/processed/analysis.json\nmake test             # pytest suite\nmake api              # http://localhost:8000  (docs at /docs)\n# second terminal:\ncd web && npm install && npm run dev   # http://localhost:3000\n```\n`docker compose up --build api` alternative (see `docker-compose.yml`) — single-service image on :8000, or the hot-reload dev flow with `web` (:3000 → proxies /api to :8000)."
+  },
+  {
+   "id": "docs-deploy-2-host-the-api-for-free",
+   "title": "2) Host the API for free",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "2) Host the API for free\n**Option A — Hugging Face Spaces (recommended)**\n1. Create Space → SDK **Docker**. 2. Copy `api/Dockerfile` + repo (or make Space root = repo root).\n3. Space secrets: none required for demo; add `EARTHDATA_USERNAME/PASSWORD` for real pipeline, `HF_TOKEN` if pulling weights.\n4. On boot: `make sample-data && make engine` then `uvicorn api.main:app --host 0.0.0.0 --port 7860`.\n5. The Space URL becomes your `VITE_API_BASE`."
+  },
+  {
+   "id": "docs-deploy-2-host-the-api-for-free-2",
+   "title": "2) Host the API for free",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "2) Host the API for free\n**Option B — Render (free web service)**: same Dockerfile; set `PORT=10000` (Render injects `PORT`); free instance sleeps — cold starts ~1 min.\n**Option C — Local/on-stage laptop** (demo day): `make api` + `ngrok http 8000` (free tunnel) for remote judges."
+  },
+  {
+   "id": "docs-deploy-3-host-the-frontend-for-free",
+   "title": "3) Host the frontend for free",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "3) Host the frontend for free\n**Option A — Vercel** (`vercel` CLI or Git import): build command `npm run build`, output `web/dist`, env `VITE_API_BASE=https://<your-space>.hf.space`.\n**Option B — Netlify**: identical (publish `web/dist`); drag-drop `web/dist` works too.\n**Option C — GitHub Pages** (via `.github/workflows/deploy-web.yml`): set `VITE_API_BASE` as a repo variable; pushes to `main` publish `web/dist` to `https://<user>.github.io/<repo>/`.\n```bash"
+  },
+  {
+   "id": "docs-deploy-after-training-colab-kaggle-laptop",
+   "title": "after training (Colab/Kaggle/laptop):",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "after training (Colab/Kaggle/laptop):\npython3 models/download_models.py --push   # or manual hf_hub upload\n```\n- `models/train.py` saves `models/artifacts/forecaster.npz` (small, NumPy ridge) — safe to commit via Git LFS-free, or keep in repo (<2 MB).\n- For the LSTM path, push `lstm_forecaster.pt` to Hub with `huggingface_hub.upload_file`, set `EP_MODEL_REPO=<user>/<repo>`; `models/download_models.py` fetches it at deploy time.\n- Spaces may force-pull on rebuild; keep weights < 50 MB for CPU basic tier."
+  },
+  {
+   "id": "docs-deploy-5-training-on-free-gpus-colab-kaggle",
+   "title": "5) Training on free GPUs (Colab / Kaggle)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "5) Training on free GPUs (Colab / Kaggle)\n- Open `notebooks/02_train_forecast.ipynb` in Colab → Runtime → Change runtime type → GPU.\n- Cells install deps, mount/load store, call `models.train.main()`, run rolling-origin backtest, upload artifact to HF Hub.\n- Kaggle: add datasets or the repo as a notebook; same commands. Save versions → artifact in notebook output."
+  },
+  {
+   "id": "docs-deploy-6-ci-github-actions-free-for-public-repos",
+   "title": "6) CI (GitHub Actions, free for public repos)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "6) CI (GitHub Actions, free for public repos)\n`.github/workflows/ci.yml` runs on PRs: install Python deps → `make sample-data engine` → `pytest`.\n`deploy-web.yml` on `main`: builds `web/`, deploys Pages. Private Spaces deploy via Space's own Git push if preferred."
+  },
+  {
+   "id": "docs-deploy-7-secrets-config",
+   "title": "7) Secrets & config",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "7) Secrets & config\n| Var | Needed for | Default |\n|---|---|---|\n| `EARTHDATA_USERNAME/PASSWORD` | Real NASA downloads | unset → synthetic demo only |\n| `FIRMS_MAP_KEY` | Fire hotspot fetch | unset → reported unavailable |\n| `HF_TOKEN` | Push/pull weights, HF Inference | unset → templated explainer |\n| `GEMINI_API_KEY` | Optional Gemini explainer (**planned; not yet wired** in `explainer.py`) | unset → templated |\n| `VITE_API_BASE` | Web → API wiring | `http://localhost:8000` |\n**Never commit `.env`.** Use Render/Space/Vercel secret stores."
+  },
+  {
+   "id": "docs-deploy-8-going-from-demo-real-data-post-hackathon",
+   "title": "8) Going from demo → real data (post-hackathon)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "8) Going from demo → real data (post-hackathon)\n1. `python3 pipeline/run_pipeline.py --gridded --start 2000-01` (needs Earthdata login; subset OPeNDAP, consolidate to Zarr).\n2. Re-run `make engine` and retrain LSTM on the real overlap period.\n3. Point `api/services/store.py` at the Zarr path instead of the sample `.npz` (same dict layout; set `EP_STORE_PATH`).\n4. Ship; `data_coverage` will automatically reflect actual sources/years."
+  },
+  {
+   "id": "docs-deploy-9-submission-checklist-nasa-space-apps",
+   "title": "9) Submission checklist (NASA Space Apps)",
+   "source": "docs/deploy.md",
+   "topic": "docs-deploy",
+   "text": "9) Submission checklist (NASA Space Apps)\n- Public GitHub repo (MIT license) · working demo URL · README quick-start · 30-sec demo video · citations (`docs/data-sources.md`) · honest limitations (`docs/limitations.md`, with model-specific failure modes in `docs/ml.md`). Full pre-submission QA list: `docs/submission-checklist.md`."
+  },
+  {
+   "id": "docs-highres-belgaum-high-resolution-real-data-path-any-place-on-eart",
+   "title": "High-resolution, real-data path — any place on Earth (Belgaum case study)",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "High-resolution, real-data path — any place on Earth (Belgaum case study)\nThis document describes how Earth Pulse goes from the bundled 15° synthetic demo\nto a **sub-kilometre, real-data** analysis for a single place, using\n**Belgaum (Belagavi), Karnataka (15.8497 N, 74.4977 E)** as the showcase."
+  },
+  {
+   "id": "docs-highres-belgaum-works-for-any-place-on-earth",
+   "title": "Works for any place on Earth",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "Works for any place on Earth\nThe `/point` endpoint and `pipeline/fetch_highres_point.py` accept **any** lat/lon\n(-90..90, -180..180). The frontend has a global place search (OpenStreetMap\nNominatim) plus a 📍 Belgaum shortcut; clicking anywhere on the map in\n🛰 Hi-Res mode also triggers a high-res point build. Ocean points are handled\nhonestly (NDVI masked, SST/sea level reported as unavailable from POWER)."
+  },
+  {
+   "id": "docs-highres-belgaum-resolution-ladder",
+   "title": "Resolution ladder",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "Resolution ladder\n| Product | Resolution | Period | Used for |\n|---|---|---|---|\n| NASA POWER (point API) | ~0.5° source, interpolated to point | 1981–present | temperature, precipitation, humidity, wind, solar |\n| MODIS MOD13Q1 NDVI | 250 m, 16-day | 2000–present | vegetation greenness (via AppEEARS, Earthdata login) |\n| GPM IMERG | 0.1°, 30-min | 2000–present | high-res precipitation (optional, Earthdata login) |\n| Sentinel-2 L2A | 10 m | 2015–present | true-colour + NDVI imagery (Planetary Computer, no login) |\n| Landsat 8/9 | 30 m | 2013–present | longer imagery archive (Planetary Computer, no login) |\n| GIBS MODIS tiles | 250 m–1 km | 2000–present | map backdrop tiles |"
+  },
+  {
+   "id": "docs-highres-belgaum-resolution-ladder-2",
+   "title": "Resolution ladder",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "Resolution ladder\nNo single product gives 40 years at 0.5 km. Earth Pulse is honest about this:\nPOWER provides the 40-year climate record at point level; MODIS adds 250 m\nvegetation since 2000; Sentinel-2 adds 10 m imagery since 2015. Forecasts are\nprobabilistic (p10–p90) and labeled as model outlooks, never as certain futures.\n```bash\nexport EARTHDATA_USERNAME=... EARTHDATA_PASSWORD=...\npython3 scripts/build_belgaum.py"
+  },
+  {
+   "id": "docs-highres-belgaum-3-serve",
+   "title": "3. Serve",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "3. Serve\nEP_STORE_PATH is ignored for /point (it uses data/processed/points/...)\nuvicorn api.main:app --port 8000\n```"
+  },
+  {
+   "id": "docs-highres-belgaum-then-curl-http-localhost-8000-point-lat-15-8497-",
+   "title": "then: curl \"http://localhost:8000/point?lat=15.8497&lon=74.4977&horizon_months=60\"",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "then: curl \"http://localhost:8000/point?lat=15.8497&lon=74.4977&horizon_months=60\"\nProbe only (no write):\n```bash\npython3 scripts/build_belgaum.py --probe\npython3 pipeline/fetch_highres_point.py --lat 15.8497 --lon 74.4977 --probe\n```"
+  },
+  {
+   "id": "docs-highres-belgaum-api",
+   "title": "API",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "API\n- `GET /point?lat&lon&horizon_months=60` — high-res point payload (real NASA\ndata, point-level trends, forecast, anomalies, next-move summary).\n- `GET /point/imagery?lat&lon` — Sentinel-2 / Landsat scene list from\nPlanetary Computer (free, no login).\n- `GET /imagery/scenario?lat&lon&parameter=ndvi` — AI scenario-card\nconditioning (generation stays offline, GPU only).\nScenario cards are AI-generated illustrations, never observations:"
+  },
+  {
+   "id": "docs-highres-belgaum-ai-image-generation-scenarios",
+   "title": "AI image generation (scenarios)",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "AI image generation (scenarios)\n```bash\nEP_SCENARIO_IMAGES=1 python3 models/scenario_cards.py --generate \\\n--lat 15.8497 --lon 74.4977 --parameter ndvi\n```"
+  },
+  {
+   "id": "docs-highres-belgaum-ai-image-generation-scenarios-2",
+   "title": "AI image generation (scenarios)",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "AI image generation (scenarios)\nRequires `pip install diffusers transformers accelerate pillow torch`. Output\nlands in `models/artifacts/scenarios/`. The UI always labels these as\n\"AI-generated scenario — not an observation\"."
+  },
+  {
+   "id": "docs-highres-belgaum-frontend",
+   "title": "Frontend",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "Frontend\nThe web app has a **🛰 Hi-Res** toggle and a **📍 Belgaum** shortcut button.\nWith Hi-Res on, clicking (or the Belgaum button) queries `/point` instead of\n`/place`, showing the real point series, the 5-year predicted move, and\nsatellite scene links."
+  },
+  {
+   "id": "docs-highres-belgaum-honest-limits",
+   "title": "Honest limits",
+   "source": "docs/highres-belgaum.md",
+   "topic": "docs-highres-belgaum",
+   "text": "Honest limits\n- POWER is satellite+model agroclimatology, not native 0.5 km.\n- NDVI needs Earthdata login for 250 m; otherwise unavailable (never faked).\n- SST/sea level are ocean variables; for an inland place like Belgaum they are\nmasked (NaN) and reported as unavailable.\n- Forecasts are probabilistic p10–p90; the \"next move\" summary is a\ndirection/magnitude hint, not a prediction of discrete events.\n- Scenario images are illustrative only."
+  },
+  {
+   "id": "docs-limitations-earth-pulse-honest-limitations",
+   "title": "Earth Pulse — honest limitations",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "Earth Pulse — honest limitations\nRead this before trusting any number the app shows. Every limitation below is\ngrounded in the code; citing it in the UI or demo is encouraged, not embarrassing."
+  },
+  {
+   "id": "docs-limitations-1-the-bundled-demo-data-is-synthetic-not-real-ob",
+   "title": "1. The bundled demo data is synthetic — not real observations",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "1. The bundled demo data is synthetic — not real observations\n- `data/samples/earth_pulse_sample.npz` is **generated by code**\n(`pipeline/run_pipeline.py --sample` → `pipeline/export_store.py`), deterministic\nand physically motivated, but it is **not measured data**.\n- The trends are **baked in**: e.g., temperature warms, precipitation drifts, sea\nlevel rises at 3.4 mm/yr, SST resumes +0.10 °C/decade — by construction. Demo\ncharts therefore *illustrate the app*, they do **not** quantify real climate.\n- The store metadata says exactly this (`synthetic: true`,\n`provenance: \"synthetic_demo\"`), and the API repeats it in\n`data_coverage.synthetic_demo` + the explainer. Keep that label everywhere."
+  },
+  {
+   "id": "docs-limitations-2-demo-grid-resolution-is-very-coarse",
+   "title": "2. Demo grid resolution is very coarse",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "2. Demo grid resolution is very coarse\n- The synthetic store is a **15° × 15°** grid: 10 latitudes (−60…75) × 24\nlongitudes (−180…165) = **240 cells**, 498 months (**1985-01 → 2026-06**).\n- Clicking New York and Cape Town 15° apart can hit the same cell. Real products\nwould use 0.25°–1° resolution and a proper land/ocean mask."
+  },
+  {
+   "id": "docs-limitations-3-real-data-record-lengths-differ-per-parameter-",
+   "title": "3. Real-data record lengths differ per parameter — never claim \"40 years\" for everything",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "3. Real-data record lengths differ per parameter — never claim \"40 years\" for everything\nSee `docs/data-sources.md` for the full check. Bottom line:\n| Record | Honest start |\n|---|---|\n| MERRA-2 / POWER backbone | ~1980 / ~1981 |\n| GISTEMP anomaly context | 1880 |\n| Sea ice (NSIDC) | ~1979 |\n| MODIS NDVI/LST/fire | ~2000 (**~25 y**) |\n| SST (MUR GHRSST) | ~2002 |\n| Sea-level altimetry | ~1993 |\nThe app trains multivariate models only on the **overlap period** and reports\nper-parameter coverage instead of hiding the differences."
+  },
+  {
+   "id": "docs-limitations-4-forecast-skill-degrades-with-horizon",
+   "title": "4. Forecast skill degrades with horizon",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "4. Forecast skill degrades with horizon\n- Default horizon is **60 months**; uncertainty bands inflate with √h\n(residual σ·√h). Error bars grow, skill drops — the p10–p90 ribbon is a\n*probabilistic outlook*, not a guarantee.\n- The bands are calibrated on the data they were trained on (backtest PICP). The\nreal-POWER store has a genuine rolling-origin backtest, but it still covers one\nregion/horizon; the synthetic demo's PICP says nothing about real-world\ncoverage.\n- Regime shifts (volcanic eruptions, ENSO flips, abrupt land-use change) are\noutside the training distribution; the model cannot anticipate them."
+  },
+  {
+   "id": "docs-limitations-5-regional-teleconnections-are-unmodeled",
+   "title": "5. Regional teleconnections are unmodeled",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "5. Regional teleconnections are unmodeled\n- Features are per-parameter lags + month harmonics (sin/cos) + a year index.\nENSO, monsoon dynamics, ocean–atmosphere coupling and other teleconnections\nhave **no explicit representation** — \"opposite trends\" explanations are\ngeneric, not mechanism-specific."
+  },
+  {
+   "id": "docs-limitations-6-opposite-trend-detector-is-statistical-not-cau",
+   "title": "6. Opposite Trend Detector is statistical, not causal",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "6. Opposite Trend Detector is statistical, not causal\n- It pairs neighbouring cells whose slopes have opposite signs and rates the\npair strong only when both Mann–Kendall tests are significant\n(`engine/opposite.py`). It is a *detective lead*, not evidence of cause; it\nsays nothing about which mechanism (land use, irrigation, orography, local\npollution) drives the divergence."
+  },
+  {
+   "id": "docs-limitations-7-climate-twins-are-an-arbitrary-clustering",
+   "title": "7. Climate twins are an arbitrary clustering",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "7. Climate twins are an arbitrary clustering\n- K-Means, k=8 (`configs/model.yaml`), z-scored multivariate cell features with a\nfixed seed. Different k reassigns cells; clusters are a *didactic similarity\nview*, not a recognized climate classification."
+  },
+  {
+   "id": "docs-limitations-8-synthetic-store-ignores-geography",
+   "title": "8. Synthetic store ignores geography",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "8. Synthetic store ignores geography\n- No land/ocean/coast mask: SST and sea level are shown for inland cells\n(symbolic). No elevation, land cover or irrigation variables per cell."
+  },
+  {
+   "id": "docs-limitations-9-narration-local-llm-is-optional-guarded-and-sm",
+   "title": "9. Narration: local LLM is optional, guarded, and small",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "9. Narration: local LLM is optional, guarded, and small\n- `POST /chat` uses a **local Ollama** model (default `qwen2.5:1.5b`) when it is\nrunning. `/place` explanations stay **templated** by default; set\n`EP_EXPLAIN_LLM=1` to use Ollama there too (slower). If Ollama is unreachable,\nboth endpoints return deterministic templated prose instead of failing. - **HF Inference** (`HF_TOKEN`) is an optional alternate backend. The **Gemini**\nbackend is planned and **not yet wired** (`api/services/explainer.py`; key\nalready plumbed through `docker-compose.yml`). - The LLM only re-words backend facts; it never computes a statistic. A 1.5B\nlocal model can still misread statistics, so post-generation guards reject\ncertainty claims, p-values framed as probabilities/confidence, p10–p90 bands\ndescribed as 10–90% chances, non-significant trends called significant, and\nany number absent from the facts."
+  },
+  {
+   "id": "docs-limitations-9-narration-local-llm-is-optional-guarded-and-sm-2",
+   "title": "9. Narration: local LLM is optional, guarded, and small",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "9. Narration: local LLM is optional, guarded, and small\nRejected drafts are replaced with\n`templated-guard` prose and report `guard_reason` / `guard_numbers`."
+  },
+  {
+   "id": "docs-limitations-10-deployment-operational-limits",
+   "title": "10. Deployment/operational limits",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "10. Deployment/operational limits\n- API is read-mostly (`GET` plus `POST /explain` and `POST /chat`), in-process\nrate limiting; no auth — built for demo scale, not hostile public traffic.\n- Free tiers sleep (Render) or force cold rebuilds (HF Spaces); first request may\nbe slow.\n- The web map pulls OSM/GIBS tiles from the network; low-bandwidth mode strips\nimagery but MapLibre still needs connectivity for the base map.\n- Watchlist/alerts live in `localStorage` only — no accounts, no server-side\nnotification transport."
+  },
+  {
+   "id": "docs-limitations-11-what-the-demo-must-never-be-claimed-to-be",
+   "title": "11. What the demo must never be claimed to be",
+   "source": "docs/limitations.md",
+   "topic": "docs-limitations",
+   "text": "11. What the demo must never be claimed to be\n- A measurements product, an operational forecast, a peer-reviewed study, or an\nattribution tool. It is an **open educational explorer** with honest labels:\n*Observed* (real sources, when wired) · *Model forecast (p10–p90)* ·\n*Synthetic demo* · *AI-generated scenario* (disabled by default)."
+  },
+  {
+   "id": "docs-ml-ml-ai-layers-models-inputs-outputs-failure-modes",
+   "title": "ML / AI layers — models, inputs, outputs, failure modes",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "ML / AI layers — models, inputs, outputs, failure modes\nEarth Pulse uses the right tool per layer. Numbers are computed by statistics/ML; the LLM only narrates structured facts and is templated-fallback capable. Accuracy = probabilistic skill + honest coverage — never vibes."
+  },
+  {
+   "id": "docs-ml-1-trend-estimation-per-grid-cell-per-parameter",
+   "title": "1. Trend estimation (per grid cell, per parameter)",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "1. Trend estimation (per grid cell, per parameter)\n- **Method:** Theil–Sen slope (median of all pairwise slopes) + **Mann–Kendall** test (S, normal approximation w/ tie correction, two-sided p).\n- **Why:** ordinary least squares is wrecked by outliers/gaps; Theil–Sen is robust; MK gives a significance for \"is this really changing?\".\n- **Output:** `{ slope_per_decade, p_value, significant, direction }` per cell/parameter.\n- **Code:** `engine/trends.py`, precomputed by `engine/run_engine.py` → `data/processed/analysis.json`."
+  },
+  {
+   "id": "docs-ml-2-opposite-trend-detector-signature-feature",
+   "title": "2. Opposite Trend Detector (signature feature)",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "2. Opposite Trend Detector (signature feature)\n- **Method:** grid neighbor graph (radius = `neighbor_radius_grid_steps`, default 1). For each parameter, flag neighbor pairs whose slopes have opposite signs; if both are Mann–Kendall significant → `strength: strong`, otherwise `weak`. Rank by min(|slope_a|, |slope_b|).\n- **Why:** surfaces divergence across neighboring places (e.g., one drying, one greening) — the \"case file\" for the detective UI.\n- **Output:** `[{ parameter, cell_a, cell_b, strength, context_note }]`.\n- **Code:** `engine/opposite.py`."
+  },
+  {
+   "id": "docs-ml-3-climate-twins-clustering",
+   "title": "3. Climate twins (clustering)",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "3. Climate twins (clustering)\n- **Method:** standardize (z-score) the per-cell multivariate vector `[temperature, precipitation, ndvi, sst]` (+ optional `sea_level`), then **K-Means** (NumPy implementation, seeded, k=8).\n- **Note:** HDBSCAN is listed in `configs/model.yaml` as a pluggable option but is **not installed** and has no implementation path in the shipped code.\n- **Output:** cluster id per cell; UI shows \"places with the same climate signature\".\n- **Code:** `engine/climate_twins.py`."
+  },
+  {
+   "id": "docs-ml-4-forecasting-multivariate-with-uncertainty",
+   "title": "4. Forecasting (multivariate, with uncertainty)",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "4. Forecasting (multivariate, with uncertainty)\n- **Implemented (used by default):** `models/forecast.py::RidgeRollout` — closed-form ridge regression on lag features, autoregressive roll-out, residual-based p10/p50/p90 bands inflated by √h. Works offline, trains in seconds.\n- **LSTM / PyTorch:** `models/forecast.py` contains a `LSTMForecaster` **class stub** only. It is **never instantiated, trained, or saved** by `models/train.py`. The `--torch` flag in `train.py` is parsed but has no effect. The Colab notebook (`notebooks/02_train_forecast.ipynb`) is a **demo**, not a trained artifact. Treat LSTM as **unimplemented**.\n- **Features:** flattened 24-month windows of all parameters (`prepare_cell_matrix`). No lat/lon features are added in the current implementation.\n- **Horizon:** 60 months (5 years) default."
+  },
+  {
+   "id": "docs-ml-4-forecasting-multivariate-with-uncertainty-2",
+   "title": "4. Forecasting (multivariate, with uncertainty)",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "4. Forecasting (multivariate, with uncertainty)\n- **Uncertainty:** residual σ·√h widening per step. PicP ≥ 0.80 at 80% nominal is a **target**, not an enforced assertion — measured backtest PICP is 96–100% on the synthetic store.\n- **Evaluation:** rolling-origin backtest (`models/backtest.py`) vs persistence & seasonal-naive & linear-trend baselines. Run on the synthetic store; PicP on synthetic data is not indicative of real-world coverage.\n- **Code:** `models/forecast.py`, `models/dataset.py`, `models/backtest.py`, `models/train.py`, `models/infer.py`."
+  },
+  {
+   "id": "docs-ml-5-anomaly-detection",
+   "title": "5. Anomaly detection",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "5. Anomaly detection\n- **Method:** **rolling robust z-score** `(x − rolling_median) / (1.4826 · rolling_MAD)`, window 61 months, |z| ≥ 3.5 → flag. `models/anomaly.py` implements only this. The Isolation Forest backend listed in `configs/model.yaml` is **not wired** into `api/routers/place.py` today.\n- **Output:** `{ parameter, date, z, severity (moderate|high), kind }`.\n- **Code:** `models/anomaly.py`."
+  },
+  {
+   "id": "docs-ml-6-explainable-narrative-llm",
+   "title": "6. Explainable narrative (LLM)",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "6. Explainable narrative (LLM)\n- **Method:** facts-only prompt (numbers, coverage, uncertainty) → short plain-English paragraph. Implemented backends: **templated** (offline, always works) and **HF Inference API** (`HF_TOKEN`) — both in `api/services/explainer.py`.\n- **Not wired:** a **Gemini** backend is referenced in docs but is **not implemented** in the codebase.\n- The LLM only words numbers; it never computes them.\n- **Code:** `api/services/explainer.py`."
+  },
+  {
+   "id": "docs-ml-7-future-image-what-it-honest-what-it-isn-t",
+   "title": "7. “Future image” — what it honest & what it isn't",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "7. “Future image” — what it honest & what it isn't\n- **Default & honest:** `models/project_maps.py` renders **SVG heat-maps** of model-projected parameter fields (Theil–Sen extrapolation). URL: `GET /imagery/projected?parameter=temperature&year=2030`.\n- **Optional & labeled:** `models/scenario_image.py` — conditioned diffusion image-to-image for lower/median/upper scenario cards. **Must** display \"AI-generated scenario — not an observation.\"\n- **Feature exists:** `models/scenario_cards.py` CLI can generate PNGs offline with a GPU (or CPU with SD-Turbo). `api/routers/scenario.py` exposes conditioning-only via HTTP.\n- **But** `configs/model.yaml → scenario_image.enabled` is set to `true` in this repo because the pipeline is working; the doc’s “disabled by default” was the intended safe default, not the current state.\n- **Past photos:** GIBS tiles (`pipeline/fetch_gibs.py`) + USGS EarthExplorer link for Landsat scene-level imagery."
+  },
+  {
+   "id": "docs-ml-real-data-not-synthetic",
+   "title": "Real data (not synthetic)",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "Real data (not synthetic)\n- The API serves the **real NASA POWER store by default** when `data/processed/earth_pulse_power_real.npz` exists.\n- **NDVI / SST / sea level are absent** from POWER and are shown as \"No coverage\" in the UI — never faked. Hi-Res `/point` mode fills NDVI from Sentinel-2 (10m, no login).\n- Real-store backtest Artifact: `models/artifacts/forecaster_real.npz` (trained on 126,480 real pooled windows). The grid-mode ridge artifact `forecaster.npz` is the same architecture but was trained on the synthetic store — if you want real-grid forecasts, set `EP_STORE_PATH=data/processed/earth_pulse_power_real.npz`."
+  },
+  {
+   "id": "docs-ml-alignment-with-configs-model-yaml",
+   "title": "Alignment with `configs/model.yaml`",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "Alignment with `configs/model.yaml`\n| Section | Used by | Status |\n|---|---|---|\n| `model.torch_lstm.*` | — | Unused (stub only) |\n| `backtest.*` | `models/backtest.py` | Used; metrics reported, not enforced |\n| `anomaly.*` | `models/anomaly.py` | Used (window/threshold only) |\n| `opposite_trend.*` | `engine/opposite.py` | Used |\n| `climate_twins.*` | `engine/climate_twins.py` | Used (k=8) |\n| `scenario_image.*` | `models/scenario_image.py` + `scenario_cards.py` | Enabled in this repo; normally disabled |"
+  },
+  {
+   "id": "docs-ml-known-failure-modes-be-honest-in-the-ui",
+   "title": "Known failure modes (be honest in the UI)",
+   "source": "docs/ml.md",
+   "topic": "docs-ml",
+   "text": "Known failure modes (be honest in the UI)\n- Regime shifts outside the training distribution (e.g., volcanic aerosol, abrupt land-use change).\n- Cross-sensor bias when stitching TRMM↔GPM or MODIS↔VIIRS.\n- Static coast/ocean masks are ignored in the synthetic store (SST shown inland is symbolic).\n- Extrapolation inflates p10/p90 optimistically — always show band width and backtest PicP.\n- Synthetic-train PicP=96-100% says nothing about real-world skill."
+  },
+  {
+   "id": "docs-power-real-store-real-data-run-nasa-power-store-built-verified",
+   "title": "Real data run — NASA POWER store (built & verified)",
+   "source": "docs/power-real-store.md",
+   "topic": "docs-power-real-store",
+   "text": "Real data run — NASA POWER store (built & verified)\n**Built 2026-11-09** by `pipeline/build_real_power_store.py`. No login required — NASA POWER is open."
+  },
+  {
+   "id": "docs-power-real-store-what-it-is",
+   "title": "What it is",
+   "source": "docs/power-real-store.md",
+   "topic": "docs-power-real-store",
+   "text": "What it is\nA **real, measured/modelled** multivariate store (1981-01 → 2026-11, monthly) covering the demo grid:"
+  },
+  {
+   "id": "docs-power-real-store-what-it-is-2",
+   "title": "What it is",
+   "source": "docs/power-real-store.md",
+   "topic": "docs-power-real-store",
+   "text": "What it is\n| Field | Source (POWER parameter) | Coverage | Units |\n|---|---|---|---|\n| temperature | T2M | 1981-01 → 2026-09 (2 trailing months pending upstream) | °C |\n| precipitation | PRECTOTCORR × days-in-month | same | mm/month |\n| solar_radiation | ALLSKY_SFC_SW_DWN | 511 months (1981–1984 gaps) | kWh/m²/day (auto-converted from MJ ÷3.6 if upstream changes) |\n| humidity | RH2M | same | % |\n| wind | WS2M | same | m/s |\n| ndvi, sst, sea_level | — | **not available from POWER; intentionally NaN** | — |"
+  },
+  {
+   "id": "docs-power-real-store-what-it-is-3",
+   "title": "What it is",
+   "source": "docs/power-real-store.md",
+   "topic": "docs-power-real-store",
+   "text": "What it is\nBuild log: **240/240 cells, 1 failure, 8.5 MB**, dates `1981-01..2026-11` (551 months). POWER `-999` sentinels parsed to NaN; the API injects nothing, only reports `< 12 finite months` ⇒ parameter is dropped from that cell's payload (never fabricated)."
+  },
+  {
+   "id": "docs-power-real-store-how-to-reproduce",
+   "title": "How to reproduce",
+   "source": "docs/power-real-store.md",
+   "topic": "docs-power-real-store",
+   "text": "How to reproduce\n```bash\npython3 pipeline/build_real_power_store.py          # ~10 min (240 REST calls, cached 30 days in data/cache/)\npython3 engine/run_engine.py --input data/processed/earth_pulse_power_real.npz \\\n--output data/processed/analysis_power_real.json\npython3 models/train.py --input data/processed/earth_pulse_power_real.npz \\\n--output data/processed/forecaster_real.npz\nEP_STORE_PATH=$PWD/data/processed/earth_pulse_power_real.npz \\\nEP_ANALYSIS_PATH=$PWD/data/processed/analysis_power_real.json \\\nuvicorn api.main:app --port 8000\n```"
+  },
+  {
+   "id": "docs-power-real-store-verified-results-real-output-not-claims",
+   "title": "Verified results (real output, not claims)",
+   "source": "docs/power-real-store.md",
+   "topic": "docs-power-real-store",
+   "text": "Verified results (real output, not claims)\n- `synthetic_demo: false` in `data_coverage`; `provenance: nasa_power_monthly_1981_present`\n- Global mean Theil–Sen warming **+0.21 °C/decade** across 115/240 cells significant-increasing\n- Siberian cell (75°N, 60°E): **+0.67 °C/decade, p = 0.004** — clear Arctic amplification\n- Engine analysis is strict-JSON (`allow_nan=False`); 0 opposite-NDVI pairs (masked — honest), 120 opposite precipitation pairs\n- API served from real store reports `data_coverage` sources as `NASA POWER … (1981→present)` — no longer mislabeled as synthetic\n- Forecaster trained on the real store: `forecaster_real.npz` (residual σ ≈ 1.4 °C temperature / 45 mm rain / 0.4 humidity / 0.6 wind)\n- `docker compose build api` re-ran with the honest-source fix inside the image"
+  },
+  {
+   "id": "docs-power-real-store-serving-it-vs-the-demo",
+   "title": "Serving it vs the demo",
+   "source": "docs/power-real-store.md",
+   "topic": "docs-power-real-store",
+   "text": "Serving it vs the demo\n| | Demo (default) | Real POWER |\n|---|---|---|\n| Store | synthetic (labeled) | `earth_pulse_power_real.npz` (labeled real) |\n| `make sample-data engine train test` | ✓ works | point `EP_STORE_PATH`/`EP_ANALYSIS_PATH` at the real artifacts |\n| NDVI / SST / sea level | synthetic values shown | **absent — shown as \"No coverage\"** |\n| Forecaster artifact | `models/artifacts/forecaster.npz` (gitignored, rebuilt) | `data/processed/forecaster_real.npz` (real-trained copy) |\n| CI | green without network | unchanged; real fetch is opt-in |"
+  },
+  {
+   "id": "docs-power-real-store-what-this-is-not",
+   "title": "What this is NOT",
+   "source": "docs/power-real-store.md",
+   "topic": "docs-power-real-store",
+   "text": "What this is NOT\n- POWER is **satellite+model agroclimatology** (CERES/GEOS-class), not raw native satellite — excellent for a free 40-year record, slightly conservative vs raw in-situ/reanalysis (see docs/limitations.md).\n- NDVI/SST/sea level still need **Earthdata login** (MODIS/PO.DAAC) — see `docs/real-data-ingestion.md`; the POWER path is the no-credentials real-data backbone.\n- 15°×15° grid is illustrative; production → 1° (same code, ~4000× more cells — watch memory on the monthly chunks)."
+  },
+  {
+   "id": "docs-real-data-ingestion-from-synthetic-demo-real-nasa-data-end-to-end",
+   "title": "From synthetic demo → real NASA data (end-to-end)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "From synthetic demo → real NASA data (end-to-end)\nThe repo ships a deterministic synthetic store so everything runs offline. This guide flips it to real NASA products with **no code changes** — only environment variables and one ingestion run."
+  },
+  {
+   "id": "docs-real-data-ingestion-what-changes",
+   "title": "What changes",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "What changes\n| Piece | Synthetic (default) | Real data |\n|---|---|---|\n| Store | `data/samples/earth_pulse_sample.npz` (7.4 MB, deterministic) | Zarr store from `pipeline/run_pipeline.py --gridded` |\n| Mask | Embedded 15° dominant-class mask (`pipeline/land_ocean.py`) | Derived: ocean where SST is finite ≥50% of climatology |\n| `data_coverage.synthetic_demo` | `true` | `false` (auto) |\n| `synthetic_demo` labels in UI/API | shown | gone |"
+  },
+  {
+   "id": "docs-real-data-ingestion-prerequisites",
+   "title": "Prerequisites",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Prerequisites\n```bash\npip install earthaccess xarray netCDF4 zarr\nexport EARTHDATA_USERNAME=you@example.com   # free: https://urs.earthdata.nasa.gov\nexport EARTHDATA_PASSWORD=...               # never commit; use Space secrets in deploy\n```"
+  },
+  {
+   "id": "docs-real-data-ingestion-step-1-real-ingestion-tier-b-batch",
+   "title": "Step 1 — Real ingestion (Tier B / batch)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Step 1 — Real ingestion (Tier B / batch)\n`pipeline/fetch_gridded.py` (already in repo) discovers granules via earthaccess and opens them with xarray; subset to monthly, to a bounding box or point:"
+  },
+  {
+   "id": "docs-real-data-ingestion-step-1-real-ingestion-tier-b-batch-2",
+   "title": "Step 1 — Real ingestion (Tier B / batch)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Step 1 — Real ingestion (Tier B / batch)\n```bash\npython3 - <<'PY'\nfrom pipeline.fetch_gridded import fetch_gridded_subset\nds = fetch_gridded_subset(12.97, 77.59, \"2000-01-01\", \"2026-06-30\", product=\"ndvi_mod13\")\nprint(ds)\nPY\n```"
+  },
+  {
+   "id": "docs-real-data-ingestion-step-1-real-ingestion-tier-b-batch-3",
+   "title": "Step 1 — Real ingestion (Tier B / batch)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Step 1 — Real ingestion (Tier B / batch)\nKnown `product` keys (see `fetch_gridded.PRODUCTS`): `merra2_slv`, `merra2_per`, `ndvi_mod13`, `gpm_imerg`, `ghrsst_mur_sst`.\nBatch-to-Zarr (adapt for your grid):"
+  },
+  {
+   "id": "docs-real-data-ingestion-step-1-real-ingestion-tier-b-batch-4",
+   "title": "Step 1 — Real ingestion (Tier B / batch)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Step 1 — Real ingestion (Tier B / batch)\n```python\nimport xarray as xr\nfrom pipeline.export_store import export_zarr   # requires xarray+zarr\nexport_zarr(merged_ds, \"data/raw/earth_pulse_real.zarr\")\n```"
+  },
+  {
+   "id": "docs-real-data-ingestion-step-2-mask-derivation-no-extra-downloads",
+   "title": "Step 2 — Mask derivation (no extra downloads)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Step 2 — Mask derivation (no extra downloads)\n```python\nfrom pipeline.land_ocean import derive_mask_from_sst\nimport xarray as xr\nsst = xr.open_zarr(\"data/raw/earth_pulse_real.zarr\")[\"analysed_sst\"].values  # (time, lat, lon)\nmask = derive_mask_from_sst(sst, min_fraction_finite=0.5)  # 1=ocean, 0=land\n```"
+  },
+  {
+   "id": "docs-real-data-ingestion-step-2-mask-derivation-no-extra-downloads-2",
+   "title": "Step 2 — Mask derivation (no extra downloads)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Step 2 — Mask derivation (no extra downloads)\nApply semantics: SST & sea level → ocean cells only; NDVI → land cells only. For the demo store this is already applied in `export_store.py`; for real Zarr stores apply the same in your export step (or mask at read time in `services/store.py`)."
+  },
+  {
+   "id": "docs-real-data-ingestion-step-3-serve-the-real-store",
+   "title": "Step 3 — Serve the real store",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Step 3 — Serve the real store\n```bash\nexport EP_STORE_PATH=/abs/path/store.zarr_or_npz   # engine/models accept either layout via load_store\npython3 engine/run_engine.py --input \"$EP_STORE_PATH\" --output data/processed/analysis_real.json\nexport EP_ANALYSIS_PATH=/abs/path/analysis_real.json\nuvicorn api.main:app --port 8000\n```"
+  },
+  {
+   "id": "docs-real-data-ingestion-step-3-serve-the-real-store-2",
+   "title": "Step 3 — Serve the real store",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Step 3 — Serve the real store\n`EP_REQUIRE_REAL_DATA=1 pytest` fails CI if the analysis still reports `synthetic_demo == true`."
+  },
+  {
+   "id": "docs-real-data-ingestion-step-4-cache-tier-b-on-demand",
+   "title": "Step 4 — Cache (Tier B, on-demand)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Step 4 — Cache (Tier B, on-demand)\n`pipeline/cache.py` stores JSON responses in `data/cache/<slug>.json` with TTL. Wired into `api/services/ondemand.py` for POWER and FIRMS (TTL `EP_CACHE_TTL`, default 3600 s; FIRMS 300 s when no key). Delete `data/cache/` to flush; for production swap the file backend for Redis/Supabase — call sites stay unchanged."
+  },
+  {
+   "id": "docs-real-data-ingestion-nan-json-hygiene-the-silent-killer",
+   "title": "NaN & JSON hygiene (the silent killer)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "NaN & JSON hygiene (the silent killer)\nEvery artifact must be **strict JSON** (no `NaN` tokens — browsers reject them):"
+  },
+  {
+   "id": "docs-real-data-ingestion-nan-json-hygiene-the-silent-killer-2",
+   "title": "NaN & JSON hygiene (the silent killer)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "NaN & JSON hygiene (the silent killer)\n- Engine sanitizes non-finite slopes/p-values → `0.0 / 1.0 / direction: \"insufficient data\"` (`engine/run_engine.py`).\n- `analysis.json` is written with `allow_nan=False` — CI will fail loudly if a NaN leaks in.\n- API omits parameters with <12 finite months from charts/forecasts instead of emitting NaN (`api/routers/place.py`); the UI renders \"No coverage\" cards for them.\n- SVG projected maps render masked cells as neutral gray (`models/project_maps.py`)."
+  },
+  {
+   "id": "docs-real-data-ingestion-verification",
+   "title": "Verification",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Verification\n```bash\npython3 scripts/verify_offline.py                 # synthetic path sanity\nEP_REQUIRE_REAL_DATA=1 python3 -m pytest tests/   # must NOT be synthetic_demo\ncurl -s localhost:8000/place?lat=12.97\\&lon=77.59 | python3 -m json.tool > /dev/null   # strict parse\n```"
+  },
+  {
+   "id": "docs-real-data-ingestion-cost-rate-limits",
+   "title": "Cost & rate limits",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Cost & rate limits\nEverything here is free: Earthdata (no egress fee for small subsets), POWER (unmetered), GIBS (no key), FIRMS (free MAP_KEY). Tier B is **opt-in per click** (`/tier-b`) and cached — never run it in a tight loop; for the full globe, precompute offline once."
+  },
+  {
+   "id": "docs-real-data-ingestion-recommended-product-set-start-small-verify-then-",
+   "title": "Recommended product set (start small, verify, then widen)",
+   "source": "docs/real-data-ingestion.md",
+   "topic": "docs-real-data-ingestion",
+   "text": "Recommended product set (start small, verify, then widen)\n1. `merra2_slv` + `merra2_per` (temp, precip, winds, humidity, pressure) — 1980+, the backbone.\n2. `ndvi_mod13` (NDVI/EVI) — 2000+, land-only.\n3. `gpm_imerg` (precip) — cross-check MERRA-2 precip.\n4. `ghrsst_mur_sst` — ocean only; needed for the real mask.\n5. ERA5 (Copernicus CDS) if you want 1940+ met backbone — not NASA but listed in README; one Accept-CDS-terms opt-in."
+  },
+  {
+   "id": "docs-verification-earth-pulse-implementation-verification-report",
+   "title": "Earth Pulse — Implementation Verification Report",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "Earth Pulse — Implementation Verification Report\n> Based on actual code inspection and execution, not memory. Generated 2026-11-14."
+  },
+  {
+   "id": "docs-verification-legend",
+   "title": "Legend",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "Legend\n- ✅ **Done and verified** — code exists, runs, tests pass\n- ⚠️ **Partially done / needs external action** — code exists but needs credentials, GPU, or deployment\n- ❌ **Not done** — no code or artifact exists\n---"
+  },
+  {
+   "id": "docs-verification-1-repo-code",
+   "title": "1. Repo & Code",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "1. Repo & Code\n| Item | Status | Evidence |\n|---|---|---|\n| MIT LICENSE | ✅ | `Test-Path LICENSE` → True |\n| README.md with \"What's implemented\" section | ✅ | `README.md` lines 166-248 describe v0.1-v0.3 |\n| Project title + challenge in README header | ✅ | Line 5-6: \"NASA Space Apps Challenge 2026, challenge: Be An Earth System Trend Detective\" |\n| `.env` not committed (`.gitignore`) | ✅ | `.gitignore` contains `.env`, `web/.env` |\n| Commit history tells build story | ✅ | `git log --oneline` shows 15+ commits with descriptive messages |\n| `make sample-data engine train test` exits green | ✅ | Ran above — 40/40 tests pass |\n| `python -m pytest tests/ -q` green | ✅ | 40 passed, 0 failed |\n| `docker compose config` parses | ⚠️ | **Docker not installed** on this machine; `docker-compose.yml` exists but untested here |\n| `docker compose build api` succeeds | ⚠️ | Same — not tested |"
+  },
+  {
+   "id": "docs-verification-1-repo-code-2",
+   "title": "1. Repo & Code",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "1. Repo & Code\n| CI green (`.github/workflows/ci.yml`) | ✅ | File exists, runs sample→engine→pytest + web typecheck/build |\n| Pages deploy (`.github/workflows/deploy-web.yml`) | ✅ | File exists |"
+  },
+  {
+   "id": "docs-verification-2-working-demo",
+   "title": "2. Working Demo",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "2. Working Demo\n| Item | Status | Evidence |\n|---|---|---|\n| Deployed API URL (HF Spaces / Render) | ❌ | **Not deployed** — runs on localhost:8000 + localhost.run tunnel |\n| Deployed frontend URL (Vercel / Netlify) | ❌ | **Not deployed** — runs on localhost:5173 + localhost.run tunnel |\n| Offline fallback verified | ✅ | `fallbackPayload.json` embedded; `usingFallback` state in Home.tsx |\n| Demo-day laptop plan | ⚠️ | localhost.run tunnel active but expires; no permanent deployment |\n| Screenshot of full flow | ❌ | No screenshots in repo |"
+  },
+  {
+   "id": "docs-verification-3-demo-video",
+   "title": "3. Demo Video",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "3. Demo Video\n| Item | Status | Evidence |\n|---|---|---|\n| 30-60s demo video | ❌ | **No video file** in repo or elsewhere |"
+  },
+  {
+   "id": "docs-verification-4-space-apps-portal-fields",
+   "title": "4. Space Apps Portal Fields",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "4. Space Apps Portal Fields\n| Item | Status | Evidence |\n|---|---|---|\n| Team name + members + roles | ⚠️ | README §9 has empty \"Team Roles\" section |\n| Challenge selected | ⚠️ | README mentions it but portal not submitted |\n| GitHub repo URL pasted | ✅ | `https://github.com/cyberhatc/earth-pulse` exists and is public |\n| Demo URL pasted | ❌ | No public deployment URL |\n| Video URL pasted | ❌ | No video |\n| \"What it does / How we built it\" drafts | ⚠️ | Not written |"
+  },
+  {
+   "id": "docs-verification-5-data-citations",
+   "title": "5. Data & Citations",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "5. Data & Citations\n| Item | Status | Evidence |\n|---|---|---|\n| NASA Earthdata credited | ✅ | README §3 table lists all sources |\n| Per-product citations for fetched data | ✅ | `docs/data-sources.md` lines 3-50 |\n| Synthetic data labeled in UI | ✅ | Coverage badge shows \"SYNTHETIC DEMO STORE\" or real POWER source |\n| Imagery usage complies with GIBS/OSM terms | ✅ | GIBS tiles used with attribution; OSM tiles used for base map |"
+  },
+  {
+   "id": "docs-verification-6-honesty-accuracy-guardrails",
+   "title": "6. Honesty & Accuracy Guardrails",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "6. Honesty & Accuracy Guardrails\n| Item | Status | Evidence |\n|---|---|---|\n| Observed / Forecast / Synthetic / AI-scenario labels distinct | ✅ | UI uses colored tags (green/blue/red); code uses `tag observed`, `tag forecast`, `tag scenario` |\n| Never claim \"40 years\" for NDVI/SST/sea level | ⚠️ | Code enforces via `parameters_unavailable`, but README §14 says \"498 months 1985-01→2026-06\" which implies 41 years for all params — misleading |\n| Limitations surfaced (`docs/limitations.md`) | ✅ | File exists, linked from README |\n| No fabricated numbers in explainer | ✅ | Templated explainer uses facts-only prompt; numbers extracted from payload, not invented |"
+  },
+  {
+   "id": "docs-verification-7-accessibility-polish",
+   "title": "7. Accessibility & Polish",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "7. Accessibility & Polish\n| Item | Status | Evidence |\n|---|---|---|\n| Keyboard navigation closes panel (Esc) | ❌ | **No Esc handler** found in PlacePanel.tsx or Home.tsx |\n| Focus ring visible | ✅ | `:focus-visible` defined in globals.css line 9 |\n| Contrast ≥ 4.5:1 | ⚠️ | Used CSS variables but not programmatically verified |\n| Low-bandwidth toggle works | ✅ | `lowBandwidth` state in Home.tsx; tested in DevTools? Not verified |\n| EN / HI / KN strings render | ✅ | `i18n.ts` has all keys for en/hi/kn; no placeholders |"
+  },
+  {
+   "id": "docs-verification-8-final-30-minutes",
+   "title": "8. Final 30 Minutes",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "8. Final 30 Minutes\n| Item | Status | Evidence |\n|---|---|---|\n| `curl <deployed-api>/health` → ok | ❌ | No deployed API URL |\n| `curl <deployed-api>/place?lat=12.97&lon=77.59` → schema_version | ❌ | Same |\n| Hit submit | ❌ | Not submitted |\n---"
+  },
+  {
+   "id": "docs-verification-engine-trends",
+   "title": "Engine — trends",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "Engine — trends\n```\n$ python engine/run_engine.py\nopposite pairs: ndvi=81 precipitation=120\nclimate twins done\nwrote -> data/processed/analysis_power_real.json (376 KB)\n```\n✅ Working. Theil-Sen + Mann-Kendall + opposite trends + K-Means twins."
+  },
+  {
+   "id": "docs-verification-models-backtest",
+   "title": "Models — backtest",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "Models — backtest\n```\ncell 0   temperature  MAE=0.671  PICP=1.000\ncell 50  temperature  MAE=0.704  PICP=0.958\ncell 120 temperature  MAE=0.901  PICP=0.958\n```\n✅ 96-100% prediction interval coverage."
+  },
+  {
+   "id": "docs-verification-api-real-data",
+   "title": "API — real data",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "API — real data\n```\n/health         → {\"status\":\"ok\",\"schema_version\":\"1.0.0\",\"sample_store\":true,\"analysis\":true}\n/place          → synthetic: False, model: ridge_rollout\n/point          → synthetic: False, ndvi: insufficient data (5 real Sentinel-2 values)\n```\n✅ API serves real NASA POWER data by default; honest synthetic fallback."
+  },
+  {
+   "id": "docs-verification-frontend",
+   "title": "Frontend",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "Frontend\n```\nnpm run typecheck → passes\nnpm run build     → passes (52 modules, ~1 MB JS)\n```\n✅ Builds cleanly."
+  },
+  {
+   "id": "docs-verification-ai-image-generation",
+   "title": "AI Image Generation",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "AI Image Generation\n```\nEP_SCENARIO_IMAGES=1 python models/scenario_cards.py --generate ...\n→ status: generated, 3 PNGs created (lower/median/upper, ~550 KB each)\n```\n✅ Stable Diffusion v1.5 downloaded (5.11 GB), runs on CPU."
+  },
+  {
+   "id": "docs-verification-time-lapse-gif",
+   "title": "Time-lapse GIF",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "Time-lapse GIF\n```\n/imagery/timelapse.gif?lat=15.8497&lon=74.4977&start_year=2015&end_year=2024\n→ 512×512, 10 frames, ~1 MB, animated, red crosshair at click location\n```\n✅ ~1 km resolution, 5×5 tile mosaic covering ~1280 km."
+  },
+  {
+   "id": "docs-verification-real-power-store",
+   "title": "Real POWER Store",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "Real POWER Store\n```\ndata/processed/earth_pulse_power_real.npz  → 8.5 MB, 551 months (1981-01→2026-11), 240 cells, 1 failure\ndata/processed/analysis_power_real.json      → 376 KB\nmodels/artifacts/forecaster_real.npz         → 126,480 samples, ridge trained on real data\n```\n✅ Real NASA data pipeline works end-to-end.\n---"
+  },
+  {
+   "id": "docs-verification-10-summary",
+   "title": "10. Summary",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "10. Summary\n| Category | ✅ Done | ⚠️ Partial | ❌ Not Done |\n|---|---|---|---|\n| Repo & Code | 8 | 1 | 0 |\n| Working Demo | 1 | 1 | 2 |\n| Demo Video | 0 | 0 | 1 |\n| Portal Fields | 1 | 3 | 1 |\n| Data & Citations | 3 | 0 | 0 |\n| Honesty & Guardrails | 3 | 1 | 0 |\n| Accessibility | 2 | 1 | 1 |\n| Final 30 Min | 0 | 0 | 3 |\n| **Total** | **18** | **7** | **8** |"
+  },
+  {
+   "id": "docs-verification-what-s-verified-and-working-right-now",
+   "title": "What's verified and working right now",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "What's verified and working right now\n1. ✅ 40/40 tests pass\n2. ✅ API serves real NASA POWER data (not synthetic)\n3. ✅ Hi-Res point mode with Sentinel-2 NDVI (10m)\n4. ✅ AI scenario image generation (SD 1.5)\n5. ✅ Time-lapse video GIF (~1km resolution)\n6. ✅ Frontend builds cleanly with animations\n7. ✅ Offline fallback works\n8. ✅ Public tunnel: https://f83bb5c6602103.app.lhr.life"
+  },
+  {
+   "id": "docs-verification-what-s-blocked-on-external-action",
+   "title": "What's blocked on external action",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "What's blocked on external action\n1. ❌ Deploy API to HF Spaces / Render (needs account + Docker)\n2. ❌ Deploy frontend to Vercel / Netlify / Pages (needs account)\n3. ❌ Record demo video (needs screen recording)\n4. ❌ Submit to Space Apps portal (needs submission)\n5. ❌ Docker build test (needs Docker installed)\n6. ❌ Esc-to-close keyboard handler (code change, 5 lines)\n7. ⚠️ README \"40 years\" claim is misleading for non-temperature params\n---"
+  },
+  {
+   "id": "docs-verification-what-s-blocked-on-external-action-2",
+   "title": "What's blocked on external action",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "What's blocked on external action\n*Report generated by reading actual files and running actual commands, not from memory.*"
+  },
+  {
+   "id": "docs-verification-doc-alignment-status",
+   "title": "Doc alignment status",
+   "source": "docs/VERIFICATION.md",
+   "topic": "docs-verification",
+   "text": "Doc alignment status\n- docs/ml.md updated to reflect actual ML stack (LSTM stub, HDBSCAN not wired, backtest on synthetic store).\n- docs/scenario-images.md updated: enabled: true in this repo; CPU (SD-Turbo) works offline already.\n- docs/ui-ux.md updated to full-screen panel, time-lapse, GIF, no Esc shortcut.\n- docs/power-real-store.md updated: 1 failure; artifact is\norecaster_real.npz."
+  },
+  {
+   "id": "docs-colab-scenario-one-click-ai-scenario-cards-in-google-colab-free",
+   "title": "One-click: AI scenario cards in Google Colab (free GPU)",
+   "source": "docs/colab-scenario.md",
+   "topic": "docs-colab-scenario",
+   "text": "One-click: AI scenario cards in Google Colab (free GPU)\n**Requirements:** just a Google account. No API keys, no sign-ups, no credits. GPU optional — the notebook auto-switches to a CPU-friendly distilled model when no GPU is available."
+  },
+  {
+   "id": "docs-colab-scenario-steps-about-10-15-minutes",
+   "title": "Steps (about 10–15 minutes)",
+   "source": "docs/colab-scenario.md",
+   "topic": "docs-colab-scenario",
+   "text": "Steps (about 10–15 minutes)\n1. Open this URL (it loads the notebook directly from the repo):\n**https://colab.research.google.com/github/cyberhatc/earth-pulse/blob/main/notebooks/04_scenario_images.ipynb**\n2. Optional: **Runtime → Change runtime type → GPU** (T4) → Save. Not connected? Don't panic — Section 4 **auto-detects**: GPU → SD 1.5 @ 30 steps; no GPU → SD-Turbo @ 4 steps (works on CPU).\n3. Top menu: **Runtime → Run all** (or press `Ctrl+F9`).\n4. Wait for the download (~4 GB model on first run) — do nothing; it's normal.\n5. When it finishes, **Section 5 shows the three images** inline: lower / median / upper.\n6. **Files pane (left sidebar)** → `earth-pulse-scenarios.zip` → hover → **Download**. Everything you need for the demo.\nWhat the notebook does, in order:"
+  },
+  {
+   "id": "docs-colab-scenario-steps-about-10-15-minutes-2",
+   "title": "Steps (about 10–15 minutes)",
+   "source": "docs/colab-scenario.md",
+   "topic": "docs-colab-scenario",
+   "text": "Steps (about 10–15 minutes)\n| Cell | Action |\n|---|---|\n| 1 | checks `nvidia-smi` (must list a GPU) |\n| 2 | shallow-clones `github.com/cyberhatc/earth-pulse` |\n| 3 | installs deps (`diffusers`, `transformers`, …) |\n| 4 | builds the bundled demo store + engine + ridge forecaster |\n| 5 | runs `models/scenario_cards.py --generate --lat 12.97 --lon 77.59 --parameter ndvi` with `EP_SCENARIO_IMAGES=1` |\n| 6 | displays the PNGs from `models/artifacts/scenarios/` |\n| 7 | zips them for download |\n| 8+ | troubleshooting + optional HF Hub push |"
+  },
+  {
+   "id": "docs-colab-scenario-honesty-guarantees-enforced-in-code-not-just-doc",
+   "title": "Honesty guarantees (enforced in code, not just docs)",
+   "source": "docs/colab-scenario.md",
+   "topic": "docs-colab-scenario",
+   "text": "Honesty guarantees (enforced in code, not just docs)\n- Label on every card/UI: `AI-generated scenario — not an observation`.\n- Conditioning: **same geography** (coastline, rivers, roads, settlements) — only land-cover balance shifts.\n- Prompts are **printed in the output** (Section 4 prints the exact three prompts) — auditable, not magic."
+  },
+  {
+   "id": "docs-colab-scenario-what-it-will-look-like",
+   "title": "What it will look like",
+   "source": "docs/colab-scenario.md",
+   "topic": "docs-colab-scenario",
+   "text": "What it will look like\nThree satellite-style map tiles of Bengaluru with shifted vegetation cover:\nbrowner (lower), ~unchanged-ish (median), slightly greener/denser (upper) — or whatever the current model forecast says. The exact pixels depend on the model + seed; the pipeline itself is deterministic."
+  },
+  {
+   "id": "docs-colab-scenario-if-something-breaks",
+   "title": "If something breaks",
+   "source": "docs/colab-scenario.md",
+   "topic": "docs-colab-scenario",
+   "text": "If something breaks\n**“await connected: disconnected” (runtime never connects):**\n1. Close the tab → **private/incognito window** with **extensions OFF** (ad-block/privacy extensions block `ssl.gstatic.com`); allow third-party cookies on `*.google.com`.\n2. Reload the notebook → click **Connect** → **Runtime → Run all**.\n3. Likely **free GPU quota exhausted** → wait a few hours, or let Section 4 auto-switch to CPU mode (it now picks `sd-turbo` @ 4 steps automatically when no GPU is present).\n4. **Different network** — this network dropped external hosts all evening (codeload/OSM/raw fetches failed).\n5. **Sync your system clock** — TLS handshakes to gstatic fail otherwise even when the page looks loaded.\n6. `Runtime → Restart and run all` and try again."
+  },
+  {
+   "id": "docs-colab-scenario-if-something-breaks-2",
+   "title": "If something breaks",
+   "source": "docs/colab-scenario.md",
+   "topic": "docs-colab-scenario",
+   "text": "If something breaks\n**Other issues:**\n- No GPU → you forgot Step 2 (GPU). Section 4 auto-falls back to CPU mode regardless.\n- First run downloads ~4 GB — don't close the tab during Section 4.\n- Rate limit/429 → wait, or set `EP_SCENARIO_MODEL=<repo>` before Section 4.\n- Want more quality on CPU → `EP_SCENARIO_STEPS=8` (default CPU is 4)."
+  },
+  {
+   "id": "docs-colab-scenario-optional-serve-the-images-in-the-live-app",
+   "title": "Optional: serve the images in the live app",
+   "source": "docs/colab-scenario.md",
+   "topic": "docs-colab-scenario",
+   "text": "Optional: serve the images in the live app\n```python\n!huggingface-cli login\n!huggingface-cli upload <you>/earth-pulse-scenarios /content/earth-pulse/models/artifacts/scenarios\n```\nThen point the `forecast.scenarios[].generated_image_url` fields in the payload at the Hub URLs — the frontend already renders them under the red \"AI-generated scenario\" badge."
+  },
+  {
+   "id": "docs-scenario-images-ai-scenario-cards-the-honest-future-image-featur",
+   "title": "AI scenario cards — the honest \"future image\" feature",
+   "source": "docs/scenario-images.md",
+   "topic": "docs-scenario-images",
+   "text": "AI scenario cards — the honest \"future image\" feature\n**What this is:** an optional, currently-enabled pipeline (disable via config) that produces three labeled **scenario images** (lower / median / upper) of a place, conditioned on the latest real map tile and the model's predicted parameter deltas."
+  },
+  {
+   "id": "docs-scenario-images-ai-scenario-cards-the-honest-future-image-featur-2",
+   "title": "AI scenario cards — the honest \"future image\" feature",
+   "source": "docs/scenario-images.md",
+   "topic": "docs-scenario-images",
+   "text": "AI scenario cards — the honest \"future image\" feature\n**What this is not:** a photograph of the future; a prediction of actual events; a replacement for observed data. The label `AI-generated scenario — not an observation` travels with every card (UI badge, file-level context, and this doc)."
+  },
+  {
+   "id": "docs-scenario-images-design-rules-enforced-in-code",
+   "title": "Design rules (enforced in code)",
+   "source": "docs/scenario-images.md",
+   "topic": "docs-scenario-images",
+   "text": "Design rules (enforced in code)\n1. OFF unless `configs/model.yaml → scenario_image.enabled: true` **or** `EP_SCENARIO_IMAGES=1`.\n2. Every call must pass `acknowledge_not_observation=True` (CLI sets it; HTTP never generates).\n3. Generation happens **offline** (GPU optional; SD-Turbo (CPU, 4-bit) works, SD v1.5 (GPU, 30 steps) is recommended), never inside an API request — the endpoint `/imagery/scenario` only returns the deterministic conditioning (prompts, deltas, source tile) and enablement status.\n4. Negative prompt bans text/borders/people/fake buildings; geography (coastline, rivers, roads, settlements) must be preserved; only land-cover color balance shifts.\n5. Strength: lower 0.25 / median 0.35 / upper 0.45 — lower variants are nearer the source tile, so they are conservative."
+  },
+  {
+   "id": "docs-scenario-images-files",
+   "title": "Files",
+   "source": "docs/scenario-images.md",
+   "topic": "docs-scenario-images",
+   "text": "Files\n| File | Role |\n|---|---|\n| `models/scenario_image.py` | Guards + `build_conditioning` (offline-inspectable) + `generate_scenario_cards` (diffusers path) |\n| `models/scenario_cards.py` | CLI: `--lat --lon --parameter` → prints conditioning; `--generate` on GPU → PNGs in `models/artifacts/scenarios/` |\n| `notebooks/04_scenario_images.ipynb` | Colab/Kaggle walkthrough + HF Hub push |\n| `api/routers/scenario.py` | `GET /imagery/scenario?lat&lon&parameter=ndvi` → status + conditioning; never generates |\n| `web/src/components/ScenarioStatus.tsx` | \"Check scenario pipeline\" button + prompt viewer in the panel |\n| `configs/model.yaml` | `scenario_image.enabled: true (repo state; set false to disable)` by default |\n```bash\npip install diffusers transformers accelerate pillow requests torch\npython3 models/scenario_cards.py --lat 12.97 --lon 77.59 --parameter ndvi"
+  },
+  {
+   "id": "docs-scenario-images-then-generate",
+   "title": "then generate:",
+   "source": "docs/scenario-images.md",
+   "topic": "docs-scenario-images",
+   "text": "then generate:\nEP_SCENARIO_IMAGES=1 python3 models/scenario_cards.py --generate --lat 12.97 --lon 77.59 --parameter ndvi\n```"
+  },
+  {
+   "id": "docs-scenario-images-then-generate-2",
+   "title": "then generate:",
+   "source": "docs/scenario-images.md",
+   "topic": "docs-scenario-images",
+   "text": "then generate:\nOutputs: `models/artifacts/scenarios/<slug>_{lower,median,upper}.png` + prompts in the printed conditioning JSON."
+  },
+  {
+   "id": "docs-scenario-images-model-choice",
+   "title": "Model choice",
+   "source": "docs/scenario-images.md",
+   "topic": "docs-scenario-images",
+   "text": "Model choice\nDefault `runwayml/stable-diffusion-v1-5` via `StableDiffusionImg2ImgPipeline` (override with `EP_SCENARIO_MODEL=...`). Rules for any model you swap in: img2img/inpainting only (preserves geometry), license compatible with redistribution, keep the label."
+  },
+  {
+   "id": "docs-scenario-images-why-the-prompts-look-like-maps",
+   "title": "Why the prompts look like maps",
+   "source": "docs/scenario-images.md",
+   "topic": "docs-scenario-images",
+   "text": "Why the prompts look like maps\nThe prompt fixes the **same terrain** and asks only for a parameter-driven land-cover shift derived from the **trained model's own forecast** (e.g., ΔNDVI = projected end − last observed). The conditioning JSON is auditable — the web UI shows the exact three prompts."
+  },
+  {
+   "id": "docs-scenario-images-known-failure-modes",
+   "title": "Known failure modes",
+   "source": "docs/scenario-images.md",
+   "topic": "docs-scenario-images",
+   "text": "Known failure modes\n- Mode shift (out-of-distribution prompts) → generic-looking images; mitigate with lower strength and seed variation.\n- Cloud/shadow artifacts from the source tile are copied (img2img) → pick cloud-free tiles.\n- Human bias: users may read any image as \"the future\" → the UI never removes the red badge."
+  },
+  {
+   "id": "docs-scenario-images-shipping-to-users",
+   "title": "Shipping to users",
+   "source": "docs/scenario-images.md",
+   "topic": "docs-scenario-images",
+   "text": "Shipping to users\n1. Generate the three PNGs offline; push to HF Hub (`huggingface-cli upload <you>/earth-pulse-scenarios ./models/artifacts/scenarios`).\n2. Serve the folder statically or from the Space; reference URLs in the payload's `forecast.scenarios` array.\n3. Keep `scenario_image.enabled: true (repo state; set false to disable)` by default; demos enable per-event."
+  },
+  {
+   "id": "docs-rag-corpus-nasa-power-primer-nasa-power-primer-curated-summary",
+   "title": "NASA POWER primer (curated summary)",
+   "source": "docs/rag-corpus/nasa-power-primer.md",
+   "topic": "docs-rag-corpus-nasa-power-primer",
+   "text": "NASA POWER primer (curated summary)\nCurated by the Earth Pulse team from NASA's public documentation. This is a\nplain-English summary for the chatbot's knowledge base, not an official NASA\ntext. When in doubt, consult the official source: https://power.larc.nasa.gov"
+  },
+  {
+   "id": "docs-rag-corpus-nasa-power-primer-what-nasa-power-is",
+   "title": "What NASA POWER is",
+   "source": "docs/rag-corpus/nasa-power-primer.md",
+   "topic": "docs-rag-corpus-nasa-power-primer",
+   "text": "What NASA POWER is\nNASA POWER (Prediction Of Worldwide Energy Resources) provides solar and\nmeteorological time series for renewable-energy, building, and agroclimatology\napplications. It fuses satellite observations and model reanalysis into a\nanalysis-ready monthly (and daily) time series, distributed free of charge via\nthe POWER API, with no login required for most parameters."
+  },
+  {
+   "id": "docs-rag-corpus-nasa-power-primer-why-earth-pulse-uses-it",
+   "title": "Why Earth Pulse uses it",
+   "source": "docs/rag-corpus/nasa-power-primer.md",
+   "topic": "docs-rag-corpus-nasa-power-primer",
+   "text": "Why Earth Pulse uses it\n- Free, open, reproducible — matches the project's open-data rule.\n- Monthly resolution matches the app's trend detection (Theil–Sen + Mann–Kendall).\n- Long record: the MERRA-2-based backbone starts around 1980/1981, which is\nenough for 40+ years of trend estimation per cell — but per-parameter\ncoverage still differs and must always be reported, never assumed."
+  },
+  {
+   "id": "docs-rag-corpus-nasa-power-primer-parameters-nasa-power-provides-used-by-earth-pul",
+   "title": "Parameters NASA POWER provides (used by Earth Pulse)",
+   "source": "docs/rag-corpus/nasa-power-primer.md",
+   "topic": "docs-rag-corpus-nasa-power-primer",
+   "text": "Parameters NASA POWER provides (used by Earth Pulse)\n- Temperature (T2M): 2-meter air temperature, in °C.\n- Precipitation (PRECTOTCORR): bias-corrected total precipitation, mm/month (or mm/day in daily products).\n- Solar radiation (ALLSKY_SFC_SW_DWN): all-sky surface shortwave downward irradiance; POWER publishes Wh/m²/day or kWh/m²/day depending on community (Earth Pulse uses community=RE, metric, kWh/m²/day).\n- Relative humidity (RH2M): 2-meter relative humidity, %.\n- Wind speed (WS2M): 2-meter wind speed, m/s."
+  },
+  {
+   "id": "docs-rag-corpus-nasa-power-primer-what-nasa-power-does-not-provide",
+   "title": "What NASA POWER does NOT provide",
+   "source": "docs/rag-corpus/nasa-power-primer.md",
+   "topic": "docs-rag-corpus-nasa-power-primer",
+   "text": "What NASA POWER does NOT provide\n- NDVI / vegetation index — use MODIS/VIIRS via LP DAAC (~2000–present), not POWER.\n- Sea surface temperature — use PO.DAAC / MUR GHRSST (~2002–present), not POWER.\n- Sea-level height — use altimetry products (~1993–present), not POWER.\nEarth Pulse reports these as **unavailable** at POWER-backed cells rather than\ninventing values."
+  },
+  {
+   "id": "docs-rag-corpus-nasa-power-primer-grid-and-resolution",
+   "title": "Grid and resolution",
+   "source": "docs/rag-corpus/nasa-power-primer.md",
+   "topic": "docs-rag-corpus-nasa-power-primer",
+   "text": "Grid and resolution\nThe POWER community=RE native grid is roughly 0.5° × 0.625°. Earth Pulse ships\nan illustrative 15° × 15° grid (10 latitudes × 24 longitudes = 240 cells) so\nthe hackathon build stays small and fast; the finest click point is the\nnearest 15° cell center, not sub-cell truth. Real deployments should regrid to\nthe native POWER resolution or finer."
+  },
+  {
+   "id": "docs-rag-corpus-nasa-power-primer-community-units-and-access",
+   "title": "Community, units and access",
+   "source": "docs/rag-corpus/nasa-power-primer.md",
+   "topic": "docs-rag-corpus-nasa-power-primer",
+   "text": "Community, units and access\n- Community: RE (renewable energy) is the default for agroclimatology use in Earth Pulse.\n- Access: HTTPS API at power.larc.nasa.gov — no key required. `pipeline/fetch_power.py` shows the request pattern used here.\n- Provenance string in the store metadata: `nasa_power_monthly_1981_present`."
+  },
+  {
+   "id": "docs-rag-corpus-nasa-power-primer-honest-caveats",
+   "title": "Honest caveats",
+   "source": "docs/rag-corpus/nasa-power-primer.md",
+   "topic": "docs-rag-corpus-nasa-power-primer",
+   "text": "Honest caveats\n- POWER is satellite+model agroclimatology, not a physical weather station at your exact location.\n- Parameter record lengths differ; \"1981–present\" applies to the POWER backbone, not to MODIS-era parameters.\n- POWER monthly values are regional/point agroclimatology; local microclimates differ.\n- Trend estimates are statistical associations in the record, not causal attribution to human activity."
+  },
+  {
+   "id": "docs-rag-corpus-earth-pulse-method-earth-pulse-methodology-method-notes",
+   "title": "Earth Pulse methodology (method notes)",
+   "source": "docs/rag-corpus/earth-pulse-method.md",
+   "topic": "docs-rag-corpus-earth-pulse-method",
+   "text": "Earth Pulse methodology (method notes)\nHow the numbers shown in Earth Pulse are produced. Written for the chatbot's\nknowledge base; grounded in this repository's code (`engine/trends.py`,\n`models/anomaly.py`, `models/forecast.py`, `engine/climate_twins.py`,\n`engine/opposite.py`, `api/services/explainer.py`)."
+  },
+  {
+   "id": "docs-rag-corpus-earth-pulse-method-trend-estimation-theil-sen-mann-kendall",
+   "title": "Trend estimation: Theil–Sen + Mann–Kendall",
+   "source": "docs/rag-corpus/earth-pulse-method.md",
+   "topic": "docs-rag-corpus-earth-pulse-method",
+   "text": "Trend estimation: Theil–Sen + Mann–Kendall\n- Slope per decade is the Theil–Sen median-of-pairwise-slopes estimator — robust to outliers.\n- Significance is the Mann–Kendall p-value on the monthly record. p < 0.05 is the conventional threshold for calling a trend \"statistically significant\".\n- A non-significant p-value does NOT prove there is no change — it means the data cannot confirm one at that threshold.\n- A p-value is not a confidence level, probability, or certainty. Never state \"100% certain\" or convert p into a percentage of confidence.\n- Roughly 40–45 years of monthly data (~500 points) is what each cell carries; shorter records widen p-values."
+  },
+  {
+   "id": "docs-rag-corpus-earth-pulse-method-anomalies-rolling-robust-z-score",
+   "title": "Anomalies: rolling robust z-score",
+   "source": "docs/rag-corpus/earth-pulse-method.md",
+   "topic": "docs-rag-corpus-earth-pulse-method",
+   "text": "Anomalies: rolling robust z-score\n- Each month is compared against a rolling seasonal window (61 months) using a modified robust z-score (median/MAD-based).\n- |z| ≥ 3.5 flags an \"unusual month\". Anomalies are temporary departures from the seasonal cycle, not proof of a permanent regime shift or a disaster.\n- Earth Pulse reports the count and the largest departures; it does not attribute causes."
+  },
+  {
+   "id": "docs-rag-corpus-earth-pulse-method-forecasting-ridge-rollout-with-p10-p90-bands",
+   "title": "Forecasting: ridge rollout with p10–p90 bands",
+   "source": "docs/rag-corpus/earth-pulse-method.md",
+   "topic": "docs-rag-corpus-earth-pulse-method",
+   "text": "Forecasting: ridge rollout with p10–p90 bands\n- Features: per-parameter lags + month harmonics (sin/cos) + a year index; a ridge model rolls forward month by month.\n- Forecasts are probabilistic outlooks with p10–p90 bands. The band widens with horizon (√h growth of residual σ).\n- The reported \"delta\" in `/chat` facts is the TOTAL NET CHANGE from the first to the last forecast month — it is NOT a per-decade rate.\n- Backtest skill (MAE/RMSE/PICP) is reported per parameter in the /place payload when a trained artifact is available. PICP = prediction interval coverage probability (should sit near 80% for a calibrated p10–p90 band).\n- Regime shifts (volcanoes, abrupt ENSO flips, land-use change) are outside the training distribution and are not anticipated."
+  },
+  {
+   "id": "docs-rag-corpus-earth-pulse-method-climate-twins-k-means-over-cell-fingerprints",
+   "title": "Climate twins: K-Means over cell fingerprints",
+   "source": "docs/rag-corpus/earth-pulse-method.md",
+   "topic": "docs-rag-corpus-earth-pulse-method",
+   "text": "Climate twins: K-Means over cell fingerprints\n- Cells are clustered (k=8) on z-scored multivariate features. Clusters are a didactic similarity view, not a recognized climate classification; different k reassigns cells.\n- A \"twin\" is a hypothesis for cross-region comparison, not proof of shared causes. Compare dataset resolution and coverage before claims."
+  },
+  {
+   "id": "docs-rag-corpus-earth-pulse-method-opposite-trends-statistical-dipoles-not-causatio",
+   "title": "Opposite trends: statistical dipoles, not causation",
+   "source": "docs/rag-corpus/earth-pulse-method.md",
+   "topic": "docs-rag-corpus-earth-pulse-method",
+   "text": "Opposite trends: statistical dipoles, not causation\n- Pairs of neighbouring cells with opposite-sign slopes; marked \"strong\" only when both Mann–Kendall tests are significant.\n- This is a detective lead. Mechanisms (irrigation, land use, orography, microclimate) need local evidence."
+  },
+  {
+   "id": "docs-rag-corpus-earth-pulse-method-facts-locked-narration-why-the-chatbot-is-carefu",
+   "title": "Facts-locked narration (why the chatbot is careful)",
+   "source": "docs/rag-corpus/earth-pulse-method.md",
+   "topic": "docs-rag-corpus-earth-pulse-method",
+   "text": "Facts-locked narration (why the chatbot is careful)\n- The LLM never computes or changes numbers. Backend code assembles a FACTS dict (trends, forecast deltas, anomalies, coverage); the LLM only re-words it.\n- Post-generation guards reject: certainty claims, p-values framed as probabilities/confidence, p10–p90 bands described as a \"10–90% chance\", non-significant trends called significant, and numbers that do not appear in the facts (no model arithmetic allowed).\n- Failing any guard substitutes deterministic templated prose (generator `templated-guard`) instead of publishing a false claim."
+  },
+  {
+   "id": "docs-rag-corpus-earth-pulse-method-rag-design-what-retrieval-adds",
+   "title": "RAG design (what retrieval adds)",
+   "source": "docs/rag-corpus/earth-pulse-method.md",
+   "topic": "docs-rag-corpus-earth-pulse-method",
+   "text": "RAG design (what retrieval adds)\n- Retrieval adds CONTEXT (domain docs, method notes, data-coverage facts) next to FACTS (the cell's actual numbers).\n- Facts still win on conflict: the prompt instructs the model that FACTS SUMMARY overrides CONTEXT; guards still run on the output.\n- Citations: sources used are returned as [S1], [S2] … and shown in the chat UI as a \"Sources\" line."
+  },
+  {
+   "id": "store-analysis-overview",
+   "title": "Earth Pulse active data store",
+   "source": "analysis:processed/analysis_power_real.json",
+   "topic": "data-store",
+   "boost": 1.25,
+   "text": "Earth Pulse active data store: provenance=nasa_power_monthly_1981_present. synthetic_demo=False. Coverage 1981-01 to 2026-11 (551 months). Grid: 10 latitudes x 24 longitudes = 240 cells (illustrative 15-degree coarse grid; click points snap to the nearest cell). Real NASA POWER satellite+model agroclimatology (community=RE, metric). Temperature, precipitation, solar radiation, humidity and wind are real 1981-present values. NDVI, SST and sea level are NOT available from POWER and are intentionally reported as unavailable — never faked."
+  },
+  {
+   "id": "store-trend-coverage",
+   "title": "Per-parameter trend coverage across the grid",
+   "source": "analysis:processed/analysis_power_real.json",
+   "topic": "data-store",
+   "boost": 1.25,
+   "text": "Precomputed Theil–Sen/Mann–Kendall coverage per parameter: humidity: usable in 240/240 cells, 113 cells with a statistically significant Mann–Kendall trend, 134 cells rising, 103 falling (of those usable). ndvi: usable in 0/240 cells, 0 cells with a statistically significant Mann–Kendall trend, no usable cells. precipitation: usable in 240/240 cells, 92 cells with a statistically significant Mann–Kendall trend, 118 cells rising, 106 falling (of those usable). sea_level: usable in 0/240 cells, 0 cells with a statistically significant Mann–Kendall trend, no usable cells. solar_radiation: usable in 240/240 cells, 40 cells with a statistically significant Mann–Kendall trend, 119 cells rising, 97 falling (of those usable). sst: usable in 0/240 cells, 0 cells with a statistically significant Mann–Kendall trend, no usable cells. temperature: usable in 240/240 cells, 120 cells with a statistically significant Mann–Kendall trend, 209 cells rising, 30 falling (of those usable). wind: usable in 240/240 cells, 82 cells with a statistically significant Mann–Kendall trend, 125 cells rising, 91 falling (of those usable)."
+  },
+  {
+   "id": "store-climate-twins",
+   "title": "Climate twin clustering",
+   "source": "analysis:processed/analysis_power_real.json",
+   "topic": "data-store",
+   "boost": 1.25,
+   "text": "Earth Pulse clusters grid cells with K-Means (k=8) over z-scored features: temperature_mean, precipitation_mean, ndvi_mean, sst_mean. Clusters are a didactic similarity view, not a recognized climate classification. Treat twins as hypotheses; check per-cell coverage first."
+  },
+  {
+   "id": "store-opposite-trends",
+   "title": "Opposite-trend pairs detected",
+   "source": "analysis:processed/analysis_power_real.json",
+   "topic": "data-store",
+   "boost": 1.25,
+   "text": "Neighbouring cell pairs with opposite-sign slopes (precomputed): ndvi: 0 pairs, precipitation: 120 pairs. Opposite trends are statistical dipoles, not causal evidence; inspect land use, irrigation, orography and microclimate locally."
+  }
+ ]
+}

@@ -1,20 +1,22 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
 import {
   buildEvidenceRecord,
   computeFingerprint,
-  findEarthTwins,
   generateLocalStory,
 } from "../lib/intelligence";
+import {
+  fetchGridTrends,
+  type BackendGridTrends,
+} from "../lib/api";
 import {
   colorForSlope,
   formatCoords,
   formatP,
   formatSignedNumber,
   formatSlope,
-  slopeAtPoint,
 } from "../lib/trend";
 import {
   coverageGaps,
@@ -217,6 +219,30 @@ export function CardRenderer({
   const { setPoint } = useInvestigation();
   const navigate = useNavigate();
 
+  // Real per-cell Theil–Sen slopes for the slope-map card (NASA POWER grid).
+  // Fetched only in live mode; otherwise the card says so honestly.
+  const [grid, setGrid] = useState<BackendGridTrends | null>(null);
+  const [gridStatus, setGridStatus] = useState<
+    "idle" | "loading" | "ready" | "unavailable"
+  >("idle");
+  const gridParam =
+    analysis.isLive && analysis.param ? analysis.param : null;
+  useEffect(() => {
+    if (!gridParam) {
+      setGridStatus("idle");
+      return;
+    }
+    const controller = new AbortController();
+    setGridStatus("loading");
+    fetchGridTrends(gridParam, controller.signal)
+      .then((g) => {
+        setGrid(g);
+        setGridStatus("ready");
+      })
+      .catch(() => setGridStatus("unavailable"));
+    return () => controller.abort();
+  }, [gridParam]);
+
   if (card.kind === "fingerprint") {
     const fp = fingerprint;
     return (
@@ -305,7 +331,9 @@ export function CardRenderer({
         <div className="card-head">
           <span className="card-head-label">Earth Anomaly Detective</span>
           <span className="card-head-meta">
-            Hotspot {formatCoords(report.hotspot[0], report.hotspot[1], 1)}
+            {report.hotspot
+              ? `Analysis cell ${formatCoords(report.hotspot[0], report.hotspot[1], 1)}`
+              : "Regional anomaly scan"}
           </span>
         </div>
         <div className="card-body">
@@ -377,18 +405,26 @@ export function CardRenderer({
 
           <div className="anomaly-caution">{report.cautionNote}</div>
 
-          <div className="anomaly-actions">
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setPoint(report.hotspot);
-                navigate(`/region/${region.slug}/map`);
-              }}
-            >
-              Inspect hotspot on map ({formatCoords(report.hotspot[0], report.hotspot[1], 1)}) →
-            </button>
-          </div>
+          {report.hotspot ? (
+            <div className="anomaly-actions">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  setPoint(report.hotspot);
+                  navigate(`/region/${region.slug}/map`);
+                }}
+              >
+                Inspect this cell on map (
+                {formatCoords(report.hotspot[0], report.hotspot[1], 1)}) →
+              </button>
+            </div>
+          ) : (
+            <p className="evidence-source-note">
+              No coordinate to pin — connect the backend and this scan reports
+              the nearest 15° POWER analysis cell.
+            </p>
+          )}
         </div>
         <EvidenceFooter region={region} analysis={analysis} card={card} />
       </article>
@@ -396,86 +432,102 @@ export function CardRenderer({
   }
 
   if (card.kind === "earth-twins") {
-    const twins = findEarthTwins(region, fingerprint);
-    const backendTwin = analysis.payload?.climate_twin;
+    const payload = analysis.payload;
+    const backendTwin = payload?.climate_twin ?? null;
+    const opposites = analysis.opposite;
     return (
       <article className="card">
         <div className="card-head">
           <span className="card-head-label">Earth Twin Finder</span>
           <span className="card-head-meta">
-            {analysis.isLive ? "Live fingerprint" : "Demo fingerprint"} · reference catalog
+            {analysis.isLive ? "Backend · NASA POWER" : "Backend offline"}
           </span>
         </div>
         <div className="card-body">
-          <div className="twin-list">
-            {twins.map((twin) => (
-              <div key={twin.slug} className="twin-row">
+          {analysis.isLive && backendTwin ? (
+            <div className="twin-list">
+              <div className="twin-row">
                 <div className="twin-head">
                   <div>
-                    <div className="twin-name">{twin.name}</div>
+                    <div className="twin-name">
+                      Climate twin cluster {backendTwin.cluster_id ?? "—"} of{" "}
+                      {backendTwin.k}
+                    </div>
                     <div className="twin-sub">
-                      {twin.continent} · {twin.climate}
+                      k-means over standardised cell climatology (
+                      {(backendTwin.features || []).join(", ") ||
+                        "temperature_mean, precipitation_mean"}
+                      ). NDVI and SST are excluded — NASA POWER does not
+                      provide them.
                     </div>
                   </div>
                   <div className="twin-meta-inline">
-                    <span className="stamp stamp-sig">
-                      {twin.similarity}% match
-                    </span>
-                    <span aria-hidden="true">·</span>
-                    <span
-                      className={`stamp ${twin.comparableDatasets ? "stamp-sig" : "stamp-not-sig"}`}
-                    >
-                      {twin.comparableDatasets
-                        ? "Comparable data"
-                        : "Partial comparability"}
-                    </span>
+                    <span className="stamp stamp-sig">NASA POWER</span>
                   </div>
                 </div>
-
-                <div className="twin-vectors">
-                  {(
-                    [
-                      ["Temp", twin.vector.temperature],
-                      ["NDVI", twin.vector.vegetation],
-                      ["Rain", twin.vector.rainfall],
-                      ["SST / Water", twin.vector.water],
-                    ] as const
-                  ).map(([label, item]) => (
-                    <div key={label} className="twin-vec-cell">
-                      <span className="twin-vec-label">{label}</span>
-                      <span
-                        className="twin-vec-val"
-                        style={{
-                          color:
-                            item.direction === "up"
-                              ? "var(--trend-up)"
-                              : item.direction === "down"
-                                ? "var(--trend-down)"
-                                : "var(--trend-flat)",
-                        }}
-                      >
-                        {formatSignedNumber(item.slope)}
-                      </span>
+                <p className="twin-note">
+                  Every cell in this cluster shares statistically similar 1981–present
+                  temperature and precipitation climatology. Twins are computed
+                  from the same store as the rest of this dossier — no external
+                  satellite catalog is substituted.
+                </p>
+              </div>
+              {opposites.length > 0 && (
+                <>
+                  <div className="twin-head">
+                    <div>
+                      <div className="twin-name">
+                        Opposite-direction neighbours (measured)
+                      </div>
+                      <div className="twin-sub">
+                        Nearest 15° POWER cells trending against each other —
+                        from the engine&apos;s opposite-trend detector, not a catalog.
+                      </div>
+                    </div>
+                  </div>
+                  {opposites.map((o, i) => (
+                    <div key={`${o.parameter}-${i}`} className="twin-row">
+                      <div className="twin-head">
+                        <div>
+                          <div className="twin-name">
+                            {o.parameter === "precipitation" ? "Rainfall" : o.parameter}
+                          </div>
+                          <div className="twin-sub">strength: {o.strength}</div>
+                        </div>
+                      </div>
+                      <div className="twin-vectors">
+                        {[o.cell_a, o.cell_b].map((cell, j) => (
+                          <div key={j} className="twin-vec-cell">
+                            <span className="twin-vec-label">
+                              {formatCoords(cell.lat, cell.lon, 1)}
+                            </span>
+                            <span className="twin-vec-val">
+                              {formatSignedNumber(cell.slope_per_decade)}
+                              {o.parameter === "precipitation"
+                                ? " mm/mo/dec"
+                                : " °C/dec"}
+                              {cell.significant ? " ✓" : ""}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      {o.note && <p className="twin-note">{o.note}</p>}
                     </div>
                   ))}
-                </div>
-
-                <p className="twin-note">
-                  <strong>Shared:</strong> {twin.sharedTraits.join(", ")} ·{" "}
-                  <strong>Differs:</strong> {twin.differences.join(", ")}
-                </p>
-                <p className="twin-comp-note">{twin.comparabilityNote}</p>
-              </div>
-            ))}
-          </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <p className="evidence-source-note">
+              The Earth Twin Finder clusters NASA POWER grid cells, so it needs
+              the live backend. With the backend offline there is no measured
+              twin candidate to show, and no reference catalog is substituted.
+            </p>
+          )}
           <p className="evidence-source-note">
-            {backendTwin?.cluster_id != null
-              ? `Backend K-Means climate twin: cluster ${backendTwin.cluster_id} of ${backendTwin.k} (${(backendTwin.features || []).join(", ")}). `
-              : ""}
-            Only this place&apos;s fingerprint is{" "}
-            {analysis.isLive ? "live" : "a demonstration"}; cross-continent
-            candidates come from the frontend&apos;s illustrative reference
-            catalog and are hypotheses, not backend measurements.
+            Twins: k-means on standardised 1981–present cell temperature and
+            precipitation means (NASA POWER). Opposites: neighbouring 15° cells
+            with opposite Theil–Sen rainfall slopes. Neither list is a causal claim.
           </p>
         </div>
         <EvidenceFooter region={region} analysis={analysis} card={card} />
@@ -612,17 +664,37 @@ export function CardRenderer({
     const [[south, west], [north, east]] = region.bounds;
     const rows = 6;
     const cols = 10;
-    const cells: { key: string; color: string; title: string }[] = [];
+    const gridCells = grid?.cells ?? [];
+    const meta = gridParam ? PARAM_META[gridParam] : null;
+    const unit = meta ? `${meta.unit}/decade` : variable.perDecadeUnit;
 
+    // Every tile's colour is the REAL slope of the nearest measured
+    // 15° NASA POWER analysis cell — no invented values.
+    const nearestCell = (lat: number, lng: number) => {
+      let best = null as (typeof gridCells)[number] | null;
+      let bestD = Infinity;
+      for (const cell of gridCells) {
+        const d = (cell.lat - lat) ** 2 + (cell.lon - lng) ** 2;
+        if (d < bestD) {
+          bestD = d;
+          best = cell;
+        }
+      }
+      return best;
+    };
+
+    const cells: { key: string; color: string; title: string }[] = [];
     for (let r = rows - 1; r >= 0; r -= 1) {
       for (let c = 0; c < cols; c += 1) {
         const lat = south + ((r + 0.5) / rows) * (north - south);
         const lng = west + ((c + 0.5) / cols) * (east - west);
-        const s = slopeAtPoint(lat, lng, region);
+        const cell = nearestCell(lat, lng);
         cells.push({
           key: `${r}-${c}`,
-          color: colorForSlope(s),
-          title: `${formatSignedNumber(s)} ${variable.perDecadeUnit}`,
+          color: cell ? colorForSlope(cell.slope_per_decade) : "var(--trend-flat)",
+          title: cell
+            ? `cell ${formatCoords(cell.lat, cell.lon, 0)}: ${formatSignedNumber(cell.slope_per_decade)} ${unit} (p = ${cell.p_value.toFixed(3)}${cell.significant ? ", significant" : ""})`
+            : "Backend offline — no measured slope available",
         });
       }
     }
@@ -631,13 +703,19 @@ export function CardRenderer({
       <article className="card">
         <div className="card-head">
           <span className="card-head-label">Where is it changing?</span>
-          <span className="card-head-meta">slope of trend</span>
+          <span className="card-head-meta">
+            {gridStatus === "ready"
+              ? `measured · ${grid?.n_cells ?? 0} POWER cells · 15° grid`
+              : gridStatus === "loading"
+                ? "loading measured slopes…"
+                : "backend offline"}
+          </span>
         </div>
         <div className="card-body">
           <div
             className="slope-grid"
             role="img"
-            aria-label={`10 by 6 spatial slope grid across ${region.name}`}
+            aria-label={`10 by 6 schematic grid across ${region.name}; each tile coloured by the nearest measured POWER cell slope`}
           >
             {cells.map((cell) => (
               <div
@@ -674,6 +752,21 @@ export function CardRenderer({
               <span>Increasing</span>
             </span>
           </div>
+          <p className="evidence-source-note">
+            {gridStatus === "ready" ? (
+              <>
+                Each tile shows the slope of the <strong>nearest measured 15° NASA POWER
+                analysis cell</strong> (Theil–Sen, {grid?.time_range?.[0]}–
+                {grid?.time_range?.[1]}). Tile positions are schematic; the colours
+                and values are real backend measurements, never generated locally.
+              </>
+            ) : (
+              <>
+                Backend offline — no measured slopes to show. Connect the backend;
+                this card never substitutes synthetic inventions for data.
+              </>
+            )}
+          </p>
         </div>
         <EvidenceFooter region={region} analysis={analysis} card={card} />
       </article>

@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+﻿import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { InvestigationProvider } from "./lib/context";
 import { LandingPage } from "./pages/LandingPage";
 import { RegionChatPage } from "./pages/RegionChatPage";

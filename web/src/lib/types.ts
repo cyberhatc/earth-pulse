@@ -144,24 +144,9 @@ export type AnomalyEvent = {
 
 export type AnomalyReport = {
   events: AnomalyEvent[];
-  hotspot: [number, number];
+  /** Measured analysis cell when live; null when no coordinate is known (never fabricated). */
+  hotspot: [number, number] | null;
   baselineByMonth: number[];
   summary: string;
   cautionNote: string;
-};
-
-export type EarthTwinMatch = {
-  slug: string;
-  name: string;
-  continent: string;
-  climate: string;
-  similarity: number;
-  comparableDatasets: boolean;
-  comparabilityNote: string;
-  sharedTraits: string[];
-  differences: string[];
-  vector: Record<
-    "temperature" | "vegetation" | "rainfall" | "water",
-    { slope: number; unit: string; direction: "up" | "down" | "flat" }
-  >;
 };

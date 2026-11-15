@@ -273,4 +273,4 @@ python3 scripts/build_rag_kb.py --sync-space   # build data/rag/kb.json (BM25 KB
 uvicorn api.main:app --port 8000
 ```
 
-With `EP_RAG_BACKEND=hf-router`, answers carry `sources: [{id, title, source}]` (rendered as a muted "Sources" line in the chat UI); local BM25 retrieval + HF serverless inference — no servers, $0 hosting. If the RAG backend is down, chat falls back to Ollama, then to templated prose — never a hard failure. Design, deploy runbook, token setup and rollback: `docs/rag.md`.
+With `EP_RAG_BACKEND=hf-router`, answers carry `sources: [{id, title, source}]` (rendered as a muted "Sources" line in the chat UI); local BM25 retrieval + HF serverless inference — no servers. **Note:** this account currently gets HTTP 402 from HF for serverless calls — it needs pre-paid credits or PRO. A fully free alternative is live at **https://devildead-earth-pulse-ai.static.hf.space/** (on-device WebGPU, linked from the chat UI via "On-device AI ↗"). If the RAG backend is down, chat falls back to Ollama, then to templated prose — never a hard failure. Design, deploy runbook, token setup and rollback: `docs/rag.md`.

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Earth Pulse — On-Device AI</title>
+  <meta name="description" content="On-device, facts-locked climate-trend assistant for the Earth Pulse NASA explorer. Runs entirely in your browser — WebGPU, no servers, no data leaves the page." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='88'>🌍</text></svg>" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">◍</span>
+      <div>
+        <h1>Earth Pulse <span class="accent">On-Device AI</span></h1>
+        <p class="tagline">facts-locked · retrieval-augmented · runs in your browser</p>
+      </div>
+    </div>
+    <div class="engine">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="device-status">checking device…</span>
+      <span class="kb" id="kb-status">loading KB…</span>
+    </div>
+  </header>
+
+  <main>
+    <div id="context-chips" class="chips" aria-label="Current context"></div>
+
+    <section class="chat-log" id="chat-log" aria-label="Conversation"></section>
+
+    <div class="composer">
+      <div class="model-row">
+        <button id="load-model-btn" type="button" class="btn btn-primary">Load the on-device model (~400 MB one-time)</button>
+        <div class="progress" id="model-progress" hidden>
+          <div class="progress-track"><div class="progress-bar" id="model-progress-bar"></div></div>
+          <span class="progress-label" id="model-progress-label"></span>
+        </div>
+      </div>
+      <div class="suggestions" id="suggestions">
+        <button type="button" data-q="Summarise this place.">Summarise this place</button>
+        <button type="button" data-q="Is the trend statistically significant?">Is the trend significant?</button>
+        <button type="button" data-q="What does the forecast say?">What does the forecast say?</button>
+        <button type="button" data-q="What are the limitations of this data?">Limitations?</button>
+      </div>
+      <div class="input-row">
+        <textarea id="chat-input" rows="2" placeholder="Ask about the trend, the forecast, the data…" aria-label="Ask a question" disabled></textarea>
+        <button id="send-btn" type="button" class="btn btn-send" disabled>Send ↑</button>
+      </div>
+      <p class="hint">On-device answers use only the numbers passed in the URL + the bundled knowledge base. They may cite [S1]… sources. Verify before publishing — this is a 0.5B model running in your browser, not a server-grade one.</p>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <span>Earth Pulse · open data (NASA POWER 1981–present) · methodology: Theil–Sen + Mann–Kendall</span>
+    <a href="https://github.com/spaceapps" rel="noopener noreferrer" target="_blank">open-source explorer</a>
+  </footer>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
