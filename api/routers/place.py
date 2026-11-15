@@ -30,7 +30,10 @@ def place(lat: float = Query(..., ge=-90, le=90),
     cell, glat, glon = svc.nearest(store, lat, lon)
 
     # ---- per-parameter availability at this cell (land/ocean mask honesty) ----
-    finite_counts = {p: int(np.isfinite(store[p][:, cell]).sum()) for p in svc.TS_PARAMS}
+    finite_counts = {
+        p: (int(np.isfinite(store[p][:, cell]).sum()) if p in store else 0)
+        for p in svc.TS_PARAMS
+    }
     usable = [p for p, n in finite_counts.items() if n >= 12]
     dropped = [p for p, n in finite_counts.items() if n < 12]
     ocean_mask = store.get("ocean_mask")
@@ -63,8 +66,22 @@ def place(lat: float = Query(..., ge=-90, le=90),
     try:
         from pipeline.build_features import prepare_cell_matrix
         from models.backtest import backtest_cell
-        _, Xbt = prepare_cell_matrix(store, cell, list(fc["timeseries"].keys()))
-        bt = backtest_cell(Xbt, list(fc["timeseries"].keys()), seq_len=24, test_months=12, horizon=12)
+        import json as _json
+        from models.infer import _artifact_for, _artifact_config
+        model_vars, _ = _artifact_config(_artifact_for(store))
+        lam = 1e-2
+        try:
+            meta_path = _artifact_for(store).parent / "forecaster_meta.json"
+            if meta_path.exists():
+                lam = float(_json.loads(meta_path.read_text()).get("lam", 1e-2))
+        except Exception:
+            pass
+        # Backtest the EXACT artifact configuration (all trained variables),
+        # then report only the exposed ones.
+        _, Xbt = prepare_cell_matrix(store, cell, model_vars)
+        bt_all = backtest_cell(Xbt, model_vars, seq_len=24, test_months=12, horizon=12, lam=lam)
+        asked = list(fc["timeseries"].keys())
+        bt = {"per_parameter": {p: bt_all["per_parameter"][p] for p in asked if p in bt_all["per_parameter"]}}
         pv = list(bt["per_parameter"].values())
         mae = sum(d["mae"] for d in pv) / len(pv)
         rmse = sum(d["rmse"] for d in pv) / len(pv)
@@ -82,7 +99,7 @@ def place(lat: float = Query(..., ge=-90, le=90),
                 }
                 for p, d in bt["per_parameter"].items()
             },
-            "note": "ridge vs prefix, horizon 12; top-level metrics average all parameters",
+            "note": "ridge vs prefix, horizon 12, artifact ridge lambda; top-level metrics average all parameters",
         }
     except Exception as e:
         backtest_out = None
@@ -103,7 +120,8 @@ def place(lat: float = Query(..., ge=-90, le=90),
         for y in sorted(set(years_ahead))
     ]
 
-    anomalies = anomalies_for_cell(store, cell, ["temperature", "precipitation", "ndvi"], window=61, threshold=3.5)
+    anomaly_params = [p for p in ("temperature", "precipitation", "ndvi") if p in store]
+    anomalies = anomalies_for_cell(store, cell, anomaly_params, window=61, threshold=3.5)
     for a in anomalies:
         a["z"] = r3(a["z"])
     # Optional Isolation Forest for multivariate tabular anomalies (configs/model.yaml)
