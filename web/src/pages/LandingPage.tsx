@@ -303,7 +303,7 @@ export function LandingPage() {
 
       <main>
         <section className="section hero" id="top" aria-labelledby="hero-title">
-          <div className="section-inner" style={{display:'grid', gridTemplateColumns:'inherit', gap:'inherit', alignItems:'inherit', maxWidth:1240}}>
+          <div className="section-inner hero-inner">
           <div className="hero-bg-glow" aria-hidden="true" />
           <div className="hero-bg-orbit" aria-hidden="true" />
           <div className="hero-copy">
