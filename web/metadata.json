@@ -1,0 +1,6 @@
+{
+  "name": "Earth System Trend Detective",
+  "description": "Investigate 20-year Earth satellite climate trends through plain-language findings, time-series charts, and interactive spatial maps.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
