@@ -1,17 +1,36 @@
-﻿/* Compatibility mappings for current Earth Pulse theme variables */
+﻿/* Compatibility mappings for current Earth Pulse theme variables and layout tokens */
 .landing {
-  --text: var(--ink);
-  --text-muted: var(--ink-soft);
-  --border: var(--line);
-  --surface: var(--surface-card);
-  --surface-2: var(--surface-sunk);
-  --bg: var(--surface);
-  --on-accent: var(--btn-ink);
-  --accent-strong: var(--accent-hover);
-  --shadow: 0 10px 30px rgba(0,0,0,0.12);
-  font-family: var(--font-ui);
+  --text: var(--ink, #171614);
+  --text-muted: var(--ink-soft, #4e4a43);
+  --border: var(--line, #d6cebe);
+  --surface: var(--surface-card, #fcfbf7);
+  --surface-2: var(--surface-sunk, #ede7da);
+  --bg: #f7f3ea;
+  --on-accent: var(--btn-ink, #fcfbf7);
+  --accent: var(--accent, #0e5a63);
+  --accent-strong: var(--accent-hover, #0a454c);
+  --shadow: 0 10px 30px rgba(23, 22, 20, 0.14);
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px;
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px;
+  --font-sans: var(--font-ui, "Plus Jakarta Sans", system-ui, sans-serif);
+  --font-mono: var(--font-mono, "IBM Plex Mono", ui-monospace, monospace);
+  font-family: var(--font-ui, "Plus Jakarta Sans", system-ui, sans-serif);
+  color: var(--text);
+  background: var(--bg);
 }
-.landing h1, .landing h2, .landing h3 { font-family: var(--font-display, var(--font-ui)); }
+:root[data-theme="dark"] .landing {
+  --bg: #111210;
+  --shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+}
+.landing h1, .landing h2, .landing h3 { font-family: var(--font-display, "Cormorant Garamond", Georgia, serif); color: var(--ink, #171614); }
+.landing p, .landing li, .landing span, .landing a, .landing button { color: inherit; }
+.landing .icon-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-width: 36px; height: 36px; padding: 0 10px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+}
 /* Landing page â€” premium editorial Earth-observation upgrade (aligned with existing tokens) */
 :root { --nav-h: 64px; }
 .landing { min-height: 100%; background: var(--bg); color: var(--text); overflow-x: clip; }
