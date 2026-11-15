@@ -2423,6 +2423,26 @@ button {
   opacity: 0.55;
 }
 
+.chat-ondevice-link {
+  margin-left: auto;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.18rem 0.65rem;
+  opacity: 0.9;
+  transition: opacity 0.15s ease;
+}
+
+.chat-ondevice-link:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+
 .chat-sources {
   display: block;
   margin-top: 6px;

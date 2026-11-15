@@ -78,21 +78,21 @@ export const PARAM_META: Record<string, ParamMeta> = {
     shortLabel: "NDVI",
     unit: "index",
     domain: "vegetation",
-    dataset: "MODIS MOD13Q1 / AppEEARS",
+    dataset: "Not provided by NASA POWER (NaN in live store)",
   },
   sst: {
     label: "Sea-surface temperature",
     shortLabel: "SST",
     unit: "°C",
     domain: "water",
-    dataset: "MODIS Aqua SST",
+    dataset: "Not provided by NASA POWER (NaN in live store)",
   },
   sea_level: {
     label: "Sea level",
     shortLabel: "Sea level",
     unit: "mm",
     domain: "water",
-    dataset: "PO.DAAC sea level",
+    dataset: "Not provided by NASA POWER (NaN in live store)",
   },
   humidity: {
     label: "Relative humidity",
@@ -386,7 +386,10 @@ export function deriveLiveAnalysis(
   };
   const dates = payload.past.dates;
   const period = periodFromDates(dates, region.period);
-  const anomalyReport = detectAnomalies(region, series, dates);
+  const anomalyReport = detectAnomalies(region, series, dates, [
+    payload.location.grid_lat,
+    payload.location.grid_lon,
+  ]);
   const fingerprint = buildLiveFingerprint(region, payload);
   const evidence = buildLiveEvidence(region, stats, param, payload, point);
   const synthetic = payload.data_coverage.synthetic_demo;

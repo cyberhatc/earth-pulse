@@ -8,7 +8,6 @@ import {
   formatP,
   formatSlope,
   generateSeries,
-  slopeAtPoint,
 } from "./trend";
 import { generateReply } from "./chat";
 import { nextTheme, resolveInitialTheme } from "./theme";
@@ -17,7 +16,6 @@ import {
   buildInvestigationMarkdown,
   computeFingerprint,
   detectAnomalies,
-  findEarthTwins,
   generateLocalStory,
 } from "./intelligence";
 
@@ -46,7 +44,7 @@ test("region catalog includes the 3 coupled land-ocean regions with exact boundi
     [30.0, 110.0],
     [42.0, 125.0],
   ]);
-  assert.equal(getVariable(ncp.variable).shortName, "LST");
+  assert.equal(getVariable(ncp.variable).shortName, "Temp");
 
   const cali = getRegion("california-coast");
   assert.ok(cali);
@@ -89,21 +87,9 @@ test("computeStats identifies upward trends in Western Ghats/North China Plain a
   assert.match(formatSlope(caliStats), /^-\d+\.\d{2,3} index\/decade$/);
 });
 
-test("california coast spatial gradient expresses north-south dipole", () => {
-  const cali = getRegion("california-coast")!;
-  const northSlope = slopeAtPoint(41.0, -121.0, cali);
-  const southSlope = slopeAtPoint(33.0, -118.0, cali);
-  assert.ok(northSlope > southSlope);
-});
-
-test("formatP, slopeAtPoint, colorForSlope, and formatCoords produce expected outputs", () => {
+test("formatP, colorForSlope, and formatCoords produce expected outputs", () => {
   assert.equal(formatP(0.0002), "p < 0.001");
   assert.equal(formatP(0.0421), "p = 0.042");
-
-  const ghats = getRegion("western-ghats")!;
-  const s1 = slopeAtPoint(14.0, 74.0, ghats);
-  const s2 = slopeAtPoint(14.0, 74.0, ghats);
-  assert.equal(s1, s2);
 
   assert.equal(colorForSlope(0.02), "rgba(154,163,160,0.55)");
   assert.match(colorForSlope(0.5), /^rgba\(180,67,24,/);
@@ -135,12 +121,12 @@ test("theme helpers resolve stored preference and toggle deterministically", () 
   assert.equal(nextTheme("dark"), "light");
 });
 
-test("computeFingerprint returns 4 coupled land-ocean dimensions", () => {
+test("computeFingerprint returns 4 honestly-labelled demonstration dimensions", () => {
   const ncp = getRegion("north-china-plain")!;
   const fp = computeFingerprint(ncp);
   assert.equal(fp.dimensions.length, 4);
-  assert.ok(fp.significantCount >= 2);
-  assert.ok(fp.coupledInsight.includes("Bohai"));
+  assert.ok(fp.coupledInsight.toLowerCase().includes("demonstration"));
+  assert.ok(fp.dimensions.every((d) => d.dataset.includes("demonstration")));
   assert.ok(fp.investigationLead.length > 15);
 });
 
@@ -148,7 +134,7 @@ test("buildEvidenceRecord includes all provenance fields and bbox note", () => {
   const ghats = getRegion("western-ghats")!;
   const stats = computeStats(ghats, generateSeries(ghats));
   const ev = buildEvidenceRecord(ghats, stats, "finding");
-  assert.ok(ev.dataset.includes("GPM"));
+  assert.ok(ev.dataset.toLowerCase().includes("demonstration"));
   assert.ok(ev.source.length > 0);
   assert.ok(ev.observationPeriod.includes("2000–2024"));
   assert.ok(ev.spatialResolution.length > 0);
@@ -165,14 +151,7 @@ test("detectAnomalies finds seasonal departures and includes caution note", () =
   assert.equal(report.events.length, 3);
   assert.equal(report.baselineByMonth.length, 12);
   assert.ok(report.cautionNote.includes("not automatically a disaster"));
-});
-
-test("findEarthTwins ranks cross-continent matches and notes comparability", () => {
-  const ghats = getRegion("western-ghats")!;
-  const twins = findEarthTwins(ghats);
-  assert.equal(twins.length, 3);
-  assert.ok(twins[0].similarity >= twins[1].similarity);
-  assert.ok(twins[0].comparabilityNote.length > 10);
+  assert.equal(report.hotspot, null);
 });
 
 test("generateLocalStory supports English, Hindi, and Kannada across audiences", () => {

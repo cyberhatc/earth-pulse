@@ -1,7 +1,10 @@
 import { getVariable, hashSlug, seeded } from "./data";
 import type { Region, TrendStats } from "./types";
 
-// REPLACE WITH REAL SATELLITE TIME-SERIES FETCH (MODIS / GPM / LANDSAT) LATER
+// DEMONSTRATION series — synthetic, deterministic, used ONLY when the backend
+// is unreachable. The UI labels this mode "Local demonstration series"; it is
+// never presented as a NASA observation. Live mode replaces it with the
+// backend's NASA POWER store.
 export function generateSeries(region: Region): number[] {
   const months = (region.period[1] - region.period[0] + 1) * 12;
   const perMonthTrend =
@@ -128,30 +131,6 @@ export function formatSlope(stats: Pick<TrendStats, "slope" | "slopeUnit">): str
 
 export function formatP(p: number): string {
   return p < 0.001 ? "p < 0.001" : `p = ${p.toFixed(3)}`;
-}
-
-export function slopeAtPoint(lat: number, lng: number, region: Region): number {
-  const h = Math.sin(lat * 12.9898 + lng * 78.233) * 43758.5453;
-  const noise = (h - Math.floor(h)) * 2 - 1;
-
-  if (region.slug === "california-coast") {
-    // True North-South dipole around 37°N
-    const dipole = ((lat - 37.0) / 5.0) * 0.9;
-    return dipole + noise * 0.25;
-  }
-
-  if (region.slug === "western-ghats") {
-    const ridgeBoost = lng >= 73.0 && lng <= 76.2 ? 0.55 : 0.15;
-    return 0.4 + ridgeBoost + noise * 0.35;
-  }
-
-  if (region.slug === "north-china-plain") {
-    const urbanInland = lng < 118.5 ? 0.5 : 0.15;
-    return 0.35 + urbanInland + noise * 0.3;
-  }
-
-  const base = region.trendShape === "up" ? 0.35 : -1.2;
-  return base + noise * 0.45;
 }
 
 export function colorForSlope(slope: number): string {

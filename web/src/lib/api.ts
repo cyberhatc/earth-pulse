@@ -142,12 +142,14 @@ export type BackendHealth = {
   rag?: {
     backend: string;
     enabled: boolean;
-    space_url: string | null;
+    model?: string | null;
+    space_url?: string | null;
     timeout_s?: number;
     top_k?: number;
     kb_path?: string;
     kb_chunks?: number;
     kb_error?: string;
+    token_configured?: boolean;
     note?: string;
   };
 };
@@ -222,6 +224,34 @@ async function request<T>(
   } finally {
     clearTimeout(timer);
   }
+}
+
+export type GridCellTrend = {
+  lat: number;
+  lon: number;
+  slope_per_decade: number;
+  p_value: number;
+  significant: boolean;
+  direction: string;
+};
+
+export type BackendGridTrends = {
+  variable: string;
+  n_cells: number;
+  synthetic_demo: boolean;
+  time_range: [string, string] | null;
+  cells: GridCellTrend[];
+};
+
+export function fetchGridTrends(
+  variable: string,
+  signal?: AbortSignal,
+): Promise<BackendGridTrends> {
+  return request<BackendGridTrends>(
+    `/trends/grid?variable=${encodeURIComponent(variable)}`,
+    { signal },
+    30000,
+  );
 }
 
 export function fetchHealth(signal?: AbortSignal): Promise<BackendHealth> {

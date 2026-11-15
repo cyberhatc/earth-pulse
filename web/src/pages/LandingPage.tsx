@@ -165,7 +165,7 @@ export function LandingPage() {
             </div>
 
             <p className="sources-line">
-              NASA POWER · MODIS Terra &amp; Aqua · GPM IMERG v07 · JRC Surface Water · OpenStreetMap
+              NASA POWER (1981–present) · NASA GIBS · OpenStreetMap
             </p>
           </div>
         </section>

@@ -3,13 +3,13 @@ import type { Region, Variable, VariableKey } from "./types";
 export const VARIABLES: Record<VariableKey, Variable> = {
   lst: {
     key: "lst",
-    name: "Land Surface Temperature",
-    shortName: "LST",
+    name: "Air Temperature (2 m)",
+    shortName: "Temp",
     unit: "°C",
     perDecadeUnit: "°C/decade",
     description:
-      "How warm the ground itself is, measured from space by thermal-infrared sensors. Different from air temperature — urban basins, plains, and coastal hills diverge sharply under heatwaves.",
-    mission: "MODIS / Terra & Aqua",
+      "Air temperature 2 m above the surface from NASA POWER (satellite + model agroclimatology). Tracks basins, plains, and coastal hills across heatwaves.",
+    mission: "NASA POWER / T2M",
   },
   sea_ice: {
     key: "sea_ice",
@@ -18,8 +18,8 @@ export const VARIABLES: Record<VariableKey, Variable> = {
     unit: "million km²",
     perDecadeUnit: "million km²/decade",
     description:
-      "The area of ocean covered by at least 15% ice. Used alongside coastal sea-surface temperature records to benchmark marine thermal forcing.",
-    mission: "NSIDC / DMSP SSMIS",
+      "Demonstrates a polar/marine thermal indicator. Not provided by NASA POWER — shown as a clearly-labelled demo variable only.",
+    mission: "Not provided by NASA POWER",
   },
   ndvi: {
     key: "ndvi",
@@ -28,8 +28,8 @@ export const VARIABLES: Record<VariableKey, Variable> = {
     unit: "index",
     perDecadeUnit: "index/decade",
     description:
-      "A satellite measure of canopy greenness and moisture health, from 0 (bare ground) to 1 (dense forest). Reveals north–south coastal vegetation dipoles and agricultural shifts.",
-    mission: "MODIS / Terra",
+      "Canopy greenness from 0 (bare) to 1 (dense forest). Not provided by NASA POWER (intentionally NaN in the live store) — shown as a clearly-labelled demo variable only.",
+    mission: "Not provided by NASA POWER",
   },
   water_extent: {
     key: "water_extent",
@@ -38,8 +38,8 @@ export const VARIABLES: Record<VariableKey, Variable> = {
     unit: "km²",
     perDecadeUnit: "km²/decade",
     description:
-      "Area covered by rivers, reservoirs, estuaries, and inland basins. Tracks extraction pressure and hydro-climatic shifts.",
-    mission: "Landsat / Sentinel-2",
+      "Rivers, reservoirs, estuaries, and inland basins. Not provided by NASA POWER (intentionally NaN in the live store) — shown as a clearly-labelled demo variable only.",
+    mission: "Not provided by NASA POWER",
   },
   precipitation: {
     key: "precipitation",
@@ -48,8 +48,8 @@ export const VARIABLES: Record<VariableKey, Variable> = {
     unit: "mm/month",
     perDecadeUnit: "mm/month/decade",
     description:
-      "Average monthly rainfall from microwave and infrared satellite observations. Along steep coastal escarpments, ocean warming amplifies convective bursts.",
-    mission: "GPM / IMERG",
+      "Average monthly precipitation from NASA POWER PRECTOTCORR (satellite + model). Along steep coastal escarpments, warming seas amplify convective bursts.",
+    mission: "NASA POWER / PRECTOTCORR",
   },
 };
 

@@ -5,8 +5,13 @@ deltas, anomalies, coverage) re-worded by a small local Ollama model. The RAG
 change adds **retrieval**, keeps the **facts-locked** design, and runs on
 **Hugging Face** via its serverless inference router — $0 hosting, no servers.
 
-**Live status:** not wired to the running backend until `EP_RAG_BACKEND` is set
-in `nasa/.env` (see "Enabling it"). Until then chat behaves exactly as before.
+**Live status (Nov 2026):** the backend still defaults to Ollama (no behaviour
+change). What IS live: **https://devildead-earth-pulse-ai.static.hf.space/** —
+a fully free **Static Space** that runs the same KB + a guard subset +
+Qwen2.5-0.5B-Instruct entirely in the browser (WebGPU/WASM), wired to the chat
+UI via the "On-device AI ↗" button. Serverless generation (`EP_RAG_BACKEND=hf-router`)
+is code-complete but HF returns **402** for this account — it needs either
+pre-paid credits or a PRO subscription (which also unlocks Docker Spaces).
 
 ## Architecture
 
@@ -63,7 +68,15 @@ Deterministic; rerun whenever docs or the analysis JSON change. Retrieval is
 BM25 (pure Python, `api/services/rag_core.py`) — no embedding model, no extra
 dependencies, fast. Curated store-derived chunks carry a small score boost.
 
-## Enabling it (serverless — the recommended free path)
+## Enabling it (serverless — blocked on HF billing for this account)
+
+Verified on 2026-11-15: the scoped token has the permission but HF answers
+**HTTP 402** — *"Purchase pre-paid credits to continue using Inference Providers.
+Alternatively, subscribe to PRO to get monthly included credits."* All routing
+modes were tested (`provider` body field, `:featherless-ai` model suffix,
+`:fastest`) — same 402. Zero `is_free` providers and `$0`-priced routes all
+require credits on the account. So: buy credits (a few dollars) or PRO
+(~$9/mo), or use the free on-device Space (below).
 
 1. Give the HF token in `nasa/.env` the inference permission (it can't call the
    router today): huggingface.co → **Settings → Access Tokens** → edit the
@@ -91,6 +104,20 @@ Honest caveat: provider availability and exact free allowances change; if a
 model isn't served for your account, the router answers 404/403 and chat
 silently falls back to Ollama. `/health → rag.model` + the server logs tell you
 which model actually answered.
+
+## Enabling it (on-device — live, $0)
+
+**https://devildead-earth-pulse-ai.static.hf.space/** — public Static Space
+(SDK: static), Apache-2.0. Runs BM25 retrieval (JS port of `rag_core.py`,
+verified for exact parity against the Python retriever) + Qwen2.5-0.5B-Instruct
+(q4, WebGPU/WASM) + a JS subset of the guards, all client-side. The chat UI
+opens it with the current region's facts (`?region=…&variable=…&slope=…`) via
+the "On-device AI ↗" button in the chat panel. First visit downloads ~400 MB
+of model weights (cached afterwards). Source lives in `nasa/static-space/`;
+update by editing there, then pushing to the Space repo (`main`).
+
+Payload of truth: the on-device answer can never exceed what the URL carried
+in — verification is one click away (the app's Evidence card).
 
 ## Enabling it (HF Space — optional, needs PRO)
 
