@@ -141,18 +141,19 @@ The frontend is a single-page React application (client-side routing) with a lan
 
 ```mermaid
 flowchart TD
-    A[Visitor opens Earth Pulse] --> B[Landing page / entry experience]
-    B --> C{Choose investigation path}
-    C -->|Browse regions| D[/regions — region selection/]
-    C -->|Open a region| E[/region/:slug — region hub/]
-    E --> F[Region chat / investigation view\n/region/:slug/chat]
-    E --> G[Region map view\n/region/:slug/map]
-    E --> H[Region notebook / evidence view\n/region/:slug/notebook]
-    F --> I[Frontend requests backend facts\n(e.g. /api/place, /api/chat)]
+    A["Visitor opens Earth Pulse"] --> B["Landing page / entry experience"]
+    B --> C{"Choose investigation path"}
+    C -->|"Browse regions"| D["/regions — region selection"]
+    C -->|"Open a region"| E["/region/:slug — region hub"]
+    E --> F["Region chat / investigation view<br/>/region/:slug/chat"]
+    E --> G["Region map view<br/>/region/:slug/map"]
+    E --> H["Region notebook / evidence view<br/>/region/:slug/notebook"]
+    F --> I["Frontend requests backend facts<br/>(e.g. /api/place, /api/chat)"]
     G --> I
     H --> I
-    I --> J[Backend assembles evidence:\ncoverage, trends, forecast,\nanomalies, opposite trends, imagery context]
-    J --> K[User interprets results with\nuncertainty & provenance labels]
+    I --> J["Backend assembles evidence:<br/>coverage, trends, forecast,<br/>anomalies, opposite trends, imagery context"]
+    J --> K["User interprets results with<br/>uncertainty & provenance labels"]
+
 ```
 
 **Notes:** route structure is defined in `web/src/App.tsx`. The legacy README and `HANDBOOK.md` also describe map-click/panel workflows; the current routed UI should be treated as the source of truth for navigation. Where a specific interaction is not verified in the running deployment, describe it as implementation-dependent.
@@ -280,32 +281,33 @@ Earth Pulse’s language features are designed so that **AI explains the evidenc
 
 ```mermaid
 flowchart LR
-    subgraph Evidence[Computed evidence layer]
-        S[Store + analysis + models]
-        S --> F[Facts payload\ntrends, coverage, forecast deltas,\nanomalies, opposite pairs, twins]
+    subgraph Evidence["Computed evidence layer"]
+        S["Store + analysis + models"]
+        S --> F["Facts payload<br/>trends, coverage, forecast deltas,<br/>anomalies, opposite pairs, twins"]
     end
 
-    subgraph Retrieval[Optional retrieval layer]
-        KB[BM25 knowledge base\n(docs + curated notes + store-derived facts)]
-        Q[User question + context] --> R[Retrieve passages]
+    subgraph Retrieval["Optional retrieval layer"]
+        KB["BM25 knowledge base<br/>(docs + curated notes + store-derived facts)"]
+        Q["User question + context"] --> R["Retrieve passages"]
         KB --> R
     end
 
-    subgraph Generation[Narration layer]
-        F --> P[Prompt with facts + constraints]
+    subgraph Generation["Narration layer"]
+        F --> P["Prompt with facts + constraints"]
         R --> P
-        P --> M{Backend}
-        M -->|HF router / HF Space| H[LLM draft]
-        M -->|Local Ollama| O[LLM draft]
-        M -->|Unavailable/fallback| T[Templated prose]
-        H --> G[Post-generation guards]
+        P --> M{"Backend"}
+        M -->|"HF router / HF Space"| H["LLM draft"]
+        M -->|"Local Ollama"| O["LLM draft"]
+        M -->|"Unavailable/fallback"| T["Templated prose"]
+        H --> G["Post-generation guards"]
         O --> G
-        G -->|pass| A[Answer + optional sources]
-        G -->|reject\n(certainty/stat/number issues)| TG[Templated-guard prose]
+        G -->|"pass"| A["Answer + optional sources"]
+        G -->|"reject<br/>(certainty/stat/number issues)"| TG["Templated-guard prose"]
     end
 
     T --> A
     TG --> A
+
 ```
 
 **Key properties (repo-evidenced):**
@@ -320,41 +322,41 @@ See: [docs/rag.md](docs/rag.md), [docs/api-contract.md](docs/api-contract.md).
 
 ```mermaid
 flowchart TB
-    subgraph Sources[Data sources]
-        DS1[NASA POWER / Earthdata products\n(GIBS, LP DAAC, GES DISC, PO.DAAC, NSIDC, FIRMS, etc.)]
-        DS2[Partner/supplementary sources\n(Copernicus, NOAA, USGS, etc. as applicable)]
-        DS3[Deterministic synthetic demo generator]
+    subgraph Sources["Data sources"]
+        DS1["NASA POWER / Earthdata products<br/>(GIBS, LP DAAC, GES DISC, PO.DAAC, NSIDC, FIRMS, etc.)"]
+        DS2["Partner/supplementary sources<br/>(Copernicus, NOAA, USGS, etc. as applicable)"]
+        DS3["Deterministic synthetic demo generator"]
     end
 
-    subgraph Pipeline[pipeline/ — ingestion & preparation]
-        P1[Fetch/discover/auth/cache\n(power, gridded, gibs, firms, high-res point, ...)]
-        P2[Clean, mask, features, export store]
+    subgraph Pipeline["pipeline/ — ingestion &amp; preparation"]
+        P1["Fetch/discover/auth/cache<br/>(power, gridded, gibs, firms, high-res point, ...)"]
+        P2["Clean, mask, features, export store"]
     end
 
-    subgraph Storage[data/ — stores & artifacts]
-        D1[(Sample .npz / real stores\nprocessed analysis JSON\ncache / artifacts as configured)]
+    subgraph Storage["data/ — stores &amp; artifacts"]
+        D1[("Sample .npz / real stores<br/>processed analysis JSON<br/>cache / artifacts as configured")]
     end
 
-    subgraph Analysis[engine/ + models/ — compute evidence]
-        E1[Trends: Theil–Sen + Mann–Kendall]
-        E2[Opposite Trend Detector]
-        E3[Climate twins K-Means]
-        M1[Forecasting + uncertainty bands]
-        M2[Anomaly detection]
-        M3[Projected maps / optional scenario conditioning]
+    subgraph Analysis["engine/ + models/ — compute evidence"]
+        E1["Trends: Theil–Sen + Mann–Kendall"]
+        E2["Opposite Trend Detector"]
+        E3["Climate twins K-Means"]
+        M1["Forecasting + uncertainty bands"]
+        M2["Anomaly detection"]
+        M3["Projected maps / optional scenario conditioning"]
     end
 
-    subgraph API[api/ — FastAPI]
-        A1[Unified endpoints\n/place, /point, /trends, /forecast,\n/anomalies, /imagery, /chat, /explain, /health, ...]
-        A2[Services: store, on-demand, explainer, RAG]
+    subgraph API["api/ — FastAPI"]
+        A1["Unified endpoints<br/>/place, /point, /trends, /forecast,<br/>/anomalies, /imagery, /chat, /explain, /health, ..."]
+        A2["Services: store, on-demand, explainer, RAG"]
     end
 
-    subgraph Web[web/ — React + Vite + TypeScript]
-        W1[Landing + region/investigation views\nmaps, charts, evidence panels]
+    subgraph Web["web/ — React + Vite + TypeScript"]
+        W1["Landing + region/investigation views<br/>maps, charts, evidence panels"]
     end
 
-    subgraph User[User investigation]
-        U1[Inspect evidence, uncertainty,\ncoverage, and explanations]
+    subgraph User["User investigation"]
+        U1["Inspect evidence, uncertainty,<br/>coverage, and explanations"]
     end
 
     DS1 --> P1
@@ -375,7 +377,8 @@ flowchart TB
     M3 --> A1
     A2 --> A1
     A1 --> W1 --> U1
-    U1 -->|queries/clicks/search| W1
+    U1 -->|"queries/clicks/search"| W1
+
 ```
 
 For a component-level narrative, see [docs/architecture.md](docs/architecture.md).
