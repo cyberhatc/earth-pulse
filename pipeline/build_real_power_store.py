@@ -51,7 +51,7 @@ PARAM_MAP = {
 }
 
 
-def fetch_cell(lat: float, lon: float) -> dict:
+def fetch_cell(lat: float, lon: float, ttl_seconds: float = CACHE_TTL) -> dict:
     key = f"power-full:{lat:.1f},{lon:.1f}"
 
     def _produce():
@@ -62,7 +62,7 @@ def fetch_cell(lat: float, lon: float) -> dict:
             return {"available": False, "note": res["error"]}
         return {"available": True, **res}
 
-    return cached_json(key, ttl_seconds=CACHE_TTL, producer=_produce)
+    return cached_json(key, ttl_seconds=ttl_seconds, producer=_produce)
 
 
 def probe() -> None:
@@ -80,13 +80,16 @@ def main() -> int:
     ap.add_argument("--out", default="data/processed/earth_pulse_power_real.npz")
     ap.add_argument("--probe", action="store_true")
     ap.add_argument("--pause", type=float, default=0.25)
+    ap.add_argument("--refresh", action="store_true",
+                    help="bypass the 30-day cache and refetch every cell from NASA POWER")
     args = ap.parse_args()
     if args.probe:
         probe()
         return 0
 
     # canonical date axis from one successful probe
-    probe_res = fetch_cell(0.0, 0.0)
+    refresh_ttl = 0 if args.refresh else CACHE_TTL
+    probe_res = fetch_cell(0.0, 0.0, ttl_seconds=refresh_ttl)
     if not probe_res.get("available"):
         print("[real-store] FATAL: POWER unreachable — cannot build a real store. Aborting.")
         return 2
@@ -105,7 +108,7 @@ def main() -> int:
     failures = 0
     t0 = time.time()
     for j, (lat, lon) in enumerate(grid):
-        cell = fetch_cell(lat, lon)
+        cell = fetch_cell(lat, lon, ttl_seconds=refresh_ttl)
         if not cell.get("available"):
             failures += 1
             print(f"[real-store] cell {j+1}/{G} ({lat:.0f},{lon:.0f}) FAILED: {cell.get('note', '?')}")

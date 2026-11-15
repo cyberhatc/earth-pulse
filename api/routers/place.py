@@ -7,7 +7,7 @@ from fastapi import APIRouter, Query, HTTPException
 from api.deps import get_store, get_analysis, ANALYSIS_PATH
 from api.services import store as svc
 from api.services import ondemand, explainer
-from models.infer import forecast_place, artifact_available
+from models.infer import forecast_place
 from models.anomaly import anomalies_for_cell
 
 router = APIRouter()
@@ -69,8 +69,21 @@ def place(lat: float = Query(..., ge=-90, le=90),
         mae = sum(d["mae"] for d in pv) / len(pv)
         rmse = sum(d["rmse"] for d in pv) / len(pv)
         picp = sum(d["picp_p10_p90"] for d in pv) / len(pv)
-        backtest_out = {"mae": round(mae, 3), "rmse": round(rmse, 3),
-                        "picp_p10_p90": round(picp, 3), "note": "ridge vs prefix, horizon 12"}
+        backtest_out = {
+            "mae": round(mae, 3),
+            "rmse": round(rmse, 3),
+            "picp_p10_p90": round(picp, 3),
+            "per_parameter": {
+                p: {
+                    "mae": round(float(d["mae"]), 3),
+                    "rmse": round(float(d["rmse"]), 3),
+                    "picp_p10_p90": round(float(d["picp_p10_p90"]), 3),
+                    "bias": round(float(d.get("bias", 0)), 3),
+                }
+                for p, d in bt["per_parameter"].items()
+            },
+            "note": "ridge vs prefix, horizon 12; top-level metrics average all parameters",
+        }
     except Exception as e:
         backtest_out = None
         raise e
@@ -93,7 +106,6 @@ def place(lat: float = Query(..., ge=-90, le=90),
     anomalies = anomalies_for_cell(store, cell, ["temperature", "precipitation", "ndvi"], window=61, threshold=3.5)
     for a in anomalies:
         a["z"] = r3(a["z"])
-    anomalies = anomalies[-20:]
     # Optional Isolation Forest for multivariate tabular anomalies (configs/model.yaml)
     try:
         from sklearn.ensemble import IsolationForest
@@ -119,6 +131,9 @@ def place(lat: float = Query(..., ge=-90, le=90),
                                       'severity': 'high', 'kind': 'high'})
     except Exception:
         pass
+
+    anomaly_count = len(anomalies)
+    anomalies = anomalies[-20:]
 
 
     opposite = svc.opposite_near(analysis, cell, limit=4)
@@ -166,7 +181,16 @@ def place(lat: float = Query(..., ge=-90, le=90),
     facts = {
         "lat": lat, "lon": lon, "grid_lat": glat, "grid_lon": glon,
         "time_range": time_range, "trends": trends, "forecast_deltas": deltas,
-        "anomalies_count": len(anomalies), "opposite_count": len(opposite), "synthetic": synthetic,
+        "forecast_model": fc.get("model"),
+        "forecast_window": [fc["dates"][0], fc["dates"][-1]] if fc.get("dates") else [],
+        "horizon_months": horizon_months,
+        "anomalies_count": anomaly_count,
+        "anomaly_samples": anomalies[-5:],
+        "opposite_count": len(opposite),
+        "opposite_parameters": sorted({o.get("parameter") for o in opposite if o.get("parameter")}),
+        "parameters_used": usable,
+        "parameters_unavailable": dropped,
+        "synthetic": synthetic,
     }
     explanation = explainer.explain(facts)
 
@@ -185,7 +209,8 @@ def place(lat: float = Query(..., ge=-90, le=90),
             "horizon_months": horizon_months,
             "issued": issued,
             "model": fc["model"],
-            "trained_artifact": artifact_available(),
+            "trained_artifact": bool(fc.get("artifact")),
+            "artifact": fc.get("artifact"),
             "dates": fc["dates"],
             "timeseries": fc_timeseries,
             "backtest": backtest_out,

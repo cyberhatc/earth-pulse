@@ -221,8 +221,9 @@ def build_point_store(lat: float, lon: float, out_path: Path | None = None) -> P
     power = fetch_power_series(lat, lon)
     # NDVI: prefer Sentinel-2 (no login, 10 m, global) for recent years;
     # fall back to AppEEARS MODIS (250 m, 2000+, needs terms accepted) if available.
-    import pipeline.fetch_ndvi_sentinel as fetch_ndvi_sentinel
+    # rasterio is optional: a missing dependency must downgrade NDVI, not fail /point.
     try:
+        import pipeline.fetch_ndvi_sentinel as fetch_ndvi_sentinel
         ndvi_res = fetch_ndvi_sentinel.fetch_sentinel2_ndvi_series(lat, lon, 2022, 2024)
     except Exception as exc:
         ndvi_res = {"available": False, "note": f"sentinel2_failed: {exc}"}

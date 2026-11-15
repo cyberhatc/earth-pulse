@@ -44,6 +44,38 @@ def store_available() -> bool:
     return SAMPLE_PATH.exists()
 
 
+def store_info() -> dict:
+    """Authoritative, cheap description of the active store (metadata only)."""
+    info: dict = {
+        "path": str(SAMPLE_PATH),
+        "name": SAMPLE_PATH.name,
+        "exists": SAMPLE_PATH.exists(),
+    }
+    if not SAMPLE_PATH.exists():
+        return info
+    try:
+        with np.load(SAMPLE_PATH, allow_pickle=False) as z:
+            raw = z["meta_json"] if "meta_json" in z.files else None
+            if raw is None:
+                return info
+            text = str(raw.item()) if getattr(raw, "size", 1) == 1 else str(raw)
+            meta = json.loads(text or "{}")
+        info.update(
+            {
+                "synthetic": bool(meta.get("synthetic", True)),
+                "real_data": bool(
+                    meta.get("real_data", not bool(meta.get("synthetic", True)))
+                ),
+                "provenance": meta.get("provenance"),
+                "time_range": meta.get("time_range"),
+                "n_months": meta.get("n_months"),
+            }
+        )
+    except Exception as exc:  # a corrupt store should not take down /health
+        info["error"] = str(exc)
+    return info
+
+
 def clear_caches() -> None:
     get_store.cache_clear()
     get_analysis.cache_clear()

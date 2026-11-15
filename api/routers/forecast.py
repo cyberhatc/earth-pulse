@@ -5,7 +5,7 @@ from fastapi import APIRouter, Query, HTTPException
 
 from api.deps import get_store
 from api.services import store as svc
-from models.infer import forecast_place, artifact_available
+from models.infer import forecast_place
 
 router = APIRouter()
 
@@ -24,6 +24,7 @@ def forecast(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=
         "grid_lat": glat,
         "grid_lon": glon,
         **fc,
-        "trained_artifact": artifact_available(),
+        "trained_artifact": bool(fc.get("artifact")),
+        "artifact": fc.get("artifact"),
         "note": "p10–p90 band = 80% interval under model residual σ inflated by √h. Probabilistic outlook, not a certainty.",
     }

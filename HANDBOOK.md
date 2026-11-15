@@ -187,11 +187,12 @@ PICP of 96–100% means the uncertainty bands contain the actual value 96–100%
 
 ## 8. LLM / Explainer
 
-- **Current backend:** Templated (always works, no network, no keys).
-- **Planned:** Gemini free tier (`GEMINI_API_KEY`) and HF Inference API (`HF_TOKEN`).
-- **Contract:** The LLM is forbidden to alter numbers — it only words them. Input is facts-only (numbers, coverage, uncertainty).
-- **Endpoint:** `POST /explain` accepts `{ "facts": {...} }` → returns `{ text, generator, confidence }`.
-- **Status:** Gemini backend is plumbed in `docker-compose.yml` but not yet wired in `explainer.py`.
+- **Current backend:** Local **Ollama** model (default `qwen2.5:1.5b` at `http://localhost:11434`) for conversational `/chat`; deterministic templated prose for `/place` by default.
+- **Fallbacks:** If Ollama is down, `/chat` returns `generator: "templated"` instead of failing. Post-generation guards run on every LLM answer: they reject certainty claims derived from a p-value, p-values reframed as probabilities/confidence, p10–p90 bands described as 10–90% chances, non-significant trends called significant, and any number not present in the backend facts (the model may re-word facts but never compute). All substitutions use deterministic `templated-guard` prose and report `guard_reason` / `guard_numbers`.
+- **Contract:** The LLM is forbidden to alter numbers — it only words them. It receives a compact summary of backend facts (trends, forecast net changes, anomalies, coverage) and never computes a statistic.
+- **Endpoints:** `POST /explain` accepts `{ "facts": {...} }` → `{ text, generator, confidence }`; `POST /chat` accepts `{ lat, lon, messages, ... }` → `{ text, generator, model, confidence, card_kind, llm_available, guard_reason, guard_numbers, facts }`.
+- **Config:** `OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `EP_LLM_BACKEND=templated` (disable), `EP_EXPLAIN_LLM=1` (use Ollama for `/place` narration too).
+- **Status:** Working locally; `/health` reports the live LLM backend and installed models.
 
 ---
 
@@ -248,7 +249,7 @@ PICP of 96–100% means the uncertainty bands contain the actual value 96–100%
 3. **Frontend renders**: coverage badge → charts (past + forecast band) → imagery → time-lapse video → opposite cards → explainer → next-move (point mode).
 4. **Accuracy maintained** through: robust statistics, probabilistic bands, backtest validation (PICP 96-100%), physical bounds clipping, honest masking.
 5. **ML model** trained on real/synthetic data, validated via rolling-origin backtest.
-6. **LLM** (planned) words numbers into plain English without altering them.
+6. **LLM** words backend facts into plain English without altering them; unavailable LLMs fall back to deterministic templates.
 7. **Image generation** creates illustrative "what-if" scenarios, never presented as observations.
 
 ---
@@ -258,6 +259,10 @@ PICP of 96–100% means the uncertainty bands contain the actual value 96–100%
 ```bash
 # Python deps
 pip install numpy scipy fastapi uvicorn httpx pydantic pytest
+
+# Local LLM (optional but enabled by default in the API)
+ollama serve
+ollama pull qwen2.5:1.5b                 # or set OLLAMA_MODEL to any installed model
 
 # Build + test
 make sample-data engine train test   # synthetic store -> analysis -> artifact -> tests
@@ -291,9 +296,9 @@ cd web && npm run dev -- --host 0.0.0.0
 | `pipeline/` | fetch_power, fetch_gibs, fetch_gridded, fetch_firms, fetch_highres_point, fetch_ndvi_sentinel, clean, build_features, land_ocean, cache, auth, discover, export_store, run_pipeline, build_real_power_store | Data ingestion, cleaning, masking, caching, store export |
 | `engine/` | run_engine, trends, opposite, climate_twins | Robust trends, opposite detector, clustering |
 | `models/` | forecast, infer, train, anomaly, backtest, project_maps, scenario_image, scenario_cards, point_forecast, dataset, download_models | ML forecast, anomaly, backtest, maps, AI scenarios, point analysis |
-| `api/` | main, deps, schemas, routers/* (place, point, imagery, trends, forecast, anomalies, explain, health, tierb, scenario), services/* (store, ondemand, explainer) | FastAPI backend |
+| `api/` | main, deps, schemas, routers/* (place, point, imagery, trends, forecast, anomalies, explain, chat, health, tierb, scenario), services/* (store, ondemand, explainer) | FastAPI backend |
 | `web/` | src/pages/Home, src/components/* (MapView, PlacePanel, Charts, ImageryGallery, TimeLapse, ...), src/lib/* (api, i18n, format), src/types/payload | React frontend |
-| `tests/` | test_pipeline, test_trends, test_models, test_opposite, test_scenario, test_payload_schema, test_api | pytest suite |
+| `tests/` | test_pipeline, test_trends, test_models, test_opposite, test_scenario, test_payload_schema, test_api, test_explainer_guards | pytest suite (51 tests) |
 | `docs/` | architecture, data-sources, api-contract, ml, ui-ux, deploy, limitations, real-data-ingestion, scenario-images, power-real-store, highres-belgaum, colab-scenario, parallel-prompts, submission-checklist | Documentation |
 | `scripts/` | build_belgaum, verify_offline | Build & verification scripts |
 | `notebooks/` | 01_explore_power_gibs, 02_train_forecast, 03_backtest, 04_scenario_images | Jupyter notebooks |
@@ -314,9 +319,9 @@ cd web && npm run dev -- --host 0.0.0.0
 | Climate twins | ✅ K-Means k=8 |
 | Time-lapse video (GIF) | ✅ ~1km resolution, cached |
 | AI scenario images | ✅ SD 1.5, 3 PNGs generated |
-| LLM explainer | ⚠️ Templated only (Gemini planned) |
+| LLM explainer | ✅ Local Ollama `qwen2.5:1.5b` (`/chat`) + templated fallback + certainty/number fact-check guards |
 | Multilingual | ⚠️ EN/HI/KN keys present, partial |
-| Real POWER store | ⚠️ Build in progress (background) |
+| Real POWER store | ✅ Built (`data/processed/earth_pulse_power_real.npz`); real-trained forecaster `forecaster_power_real.npz` selected automatically |
 | Network sharing | ✅ localhost.run tunnel active |
 
 ---

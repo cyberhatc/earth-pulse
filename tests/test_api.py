@@ -40,6 +40,9 @@ def test_health_ok(client: TestClient):
     assert body["status"] == "ok"
     assert body["schema_version"] == "1.0.0"
     assert body["sample_store"] is True
+    assert body["store"]["exists"] is True
+    assert "synthetic" in body["store"]
+    assert body["store"]["path"].endswith(".npz")
 
 
 def test_place_has_schema_version(client: TestClient):

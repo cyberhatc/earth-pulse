@@ -37,8 +37,9 @@ per-parameter coverage instead of hiding the differences.
 - Default horizon is **60 months**; uncertainty bands inflate with √h
   (residual σ·√h). Error bars grow, skill drops — the p10–p90 ribbon is a
   *probabilistic outlook*, not a guarantee.
-- The bands are calibrated on the data they were trained on (backtest PicP), and
-  in the demo that data is **synthetic**, so PicP says nothing about real-world
+- The bands are calibrated on the data they were trained on (backtest PICP). The
+  real-POWER store has a genuine rolling-origin backtest, but it still covers one
+  region/horizon; the synthetic demo's PICP says nothing about real-world
   coverage.
 - Regime shifts (volcanic eruptions, ENSO flips, abrupt land-use change) are
   outside the training distribution; the model cannot anticipate them.
@@ -65,16 +66,24 @@ per-parameter coverage instead of hiding the differences.
 - No land/ocean/coast mask: SST and sea level are shown for inland cells
   (symbolic). No elevation, land cover or irrigation variables per cell.
 
-## 9. Explainer is templated by default
-- Genius of the LLM is optional and delayed: current backends are **templated
-  (offline)** and **HF Inference** (`HF_TOKEN`). The **Gemini** backend is
-  planned and **not yet wired** (`api/services/explainer.py`; key already
-  plumbed through `docker-compose.yml`).
-- The LLM only re-words numbers; it never computes them.
+## 9. Narration: local LLM is optional, guarded, and small
+- `POST /chat` uses a **local Ollama** model (default `qwen2.5:1.5b`) when it is
+  running. `/place` explanations stay **templated** by default; set
+  `EP_EXPLAIN_LLM=1` to use Ollama there too (slower). If Ollama is unreachable,
+  both endpoints return deterministic templated prose instead of failing.
+- **HF Inference** (`HF_TOKEN`) is an optional alternate backend. The **Gemini**
+  backend is planned and **not yet wired** (`api/services/explainer.py`; key
+  already plumbed through `docker-compose.yml`).
+- The LLM only re-words backend facts; it never computes a statistic. A 1.5B
+  local model can still misread statistics, so post-generation guards reject
+  certainty claims, p-values framed as probabilities/confidence, p10–p90 bands
+  described as 10–90% chances, non-significant trends called significant, and
+  any number absent from the facts. Rejected drafts are replaced with
+  `templated-guard` prose and report `guard_reason` / `guard_numbers`.
 
 ## 10. Deployment/operational limits
-- API is read-mostly (`GET` + `POST /explain`), in-process rate limiting; no auth — built for
-  demo scale, not hostile public traffic.
+- API is read-mostly (`GET` plus `POST /explain` and `POST /chat`), in-process
+  rate limiting; no auth — built for demo scale, not hostile public traffic.
 - Free tiers sleep (Render) or force cold rebuilds (HF Spaces); first request may
   be slow.
 - The web map pulls OSM/GIBS tiles from the network; low-bandwidth mode strips

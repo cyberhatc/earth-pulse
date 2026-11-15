@@ -81,7 +81,7 @@ Suggested variables: sea surface temperature, vegetation greenness (NDVI), preci
 | Forecasting | LSTM or temporal transformer | Predict the next few years |
 | Anomaly detection | Autoencoder or Isolation Forest | Flag unusual events automatically |
 | Clustering | K-Means or HDBSCAN | Find climate twins |
-| Explainer | Language model API | Turn numbers into a short story |
+| Explainer | Local Ollama LLM (default `qwen2.5:1.5b`) + templated fallback | Turn pre-computed facts into plain English without inventing numbers |
 
 ## 6. Architecture
 
@@ -169,8 +169,8 @@ This repository now contains a **working offline-first implementation** of the E
 
 - **`pipeline/`** — sample store generator (`--sample`), NASA POWER point fetcher, GIBS tile builder, FIRMS fires (optional key), MERRA-2/MODIS/GPM OPeNDAP fetch path, CMR discovery, cleaning + feature engineering.
 - **`engine/`** — Theil–Sen + Mann–Kendall trends for all grid cells, **Opposite Trend Detector** (NDVI/precipitation), K-Means **climate twins** → `data/processed/analysis.json`.
-- **`models/`** — multivariate ridge-rollout forecaster with p10–p90 bands (trained artifact `models/artifacts/forecaster.npz`), transparent linear-trend fallback, rolling robust-z anomalies, rolling-origin backtest, dependency-free **SVG projected maps**, optional (disabled-by-default) AI scenario module.
-- **`api/`** — FastAPI serving **unified `GET /place?lat&lon` payload** (trends, forecast, anomalies, opposite trends, GIBS past imagery, projected SVG maps, explainer), `/imagery/projected`, `/tier-b`, `/health`. Dockerfile for HF Spaces/Render free tier.
+- **`models/`** — multivariate ridge-rollout forecaster with p10–p90 bands (real-POWER artifact `data/processed/forecaster_power_real.npz`, synthetic demo artifact `models/artifacts/forecaster.npz`; the loader picks the one trained on the same store distribution), transparent linear-trend fallback, rolling robust-z anomalies, rolling-origin backtest, dependency-free **SVG projected maps**, optional (disabled-by-default) AI scenario module.
+- **`api/`** — FastAPI serving **unified `GET /place?lat&lon` payload** (trends, forecast, anomalies, opposite trends, GIBS past imagery, projected SVG maps, explainer), `/imagery/projected`, `/tier-b`, `/health` (including local-LLM status), and **`POST /chat`** (facts-locked Ollama conversation). Dockerfile for HF Spaces/Render free tier.
 - **`web/`** — React + Vite + TypeScript + **MapLibre GL** frontend (click anywhere → charts with uncertainty ribbon, imagery gallery, case-file cards, coverage badge, EN/HI/KN, low-bandwidth mode, localStorage watchlist). `cd web && npm install && npm run dev`.
 - **`docs/`** — architecture, data sources (with the honest 40-year coverage check), API contract, ML/accuracy notes, UI/UX spec, free deployment guide, parallel-session prompts.
 - **`notebooks/`, `tests/`, CI** — 01 explore NASA POWER/GIBS · 02 train · 03 backtest; pytest suite; GitHub Actions CI + Pages deploy.
@@ -199,8 +199,8 @@ Everything below was **run and verified on this tree on Nov 9, 2026**; see `docs
 |---|---|
 | `pipeline/` | deterministic synthetic store generator (`--sample` → `data/samples/earth_pulse_sample.npz`, 498 months 1985-01→2026-06, 240-cell 15° grid), NASA POWER fetch, GIBS tiles, FIRMS/OPeNDAP/CMR (opt-in) |
 | `engine/` | Theil–Sen + Mann–Kendall per cell → `data/processed/analysis.json` (407 KB), Opposite Trend Detector (120+120 candidate pairs), K-Means climate twins |
-| `models/` | ridge-rollout forecaster → `models/artifacts/forecaster.npz` (113,760 pooled samples × 192 lag features, trained in seconds), p10–p90 bands, backtest, projected SVG maps |
-| `api/` | FastAPI `GET /health`, `/place`, `/imagery/past|projected`, `/trends/cell|/opposite`, `/twins`, `/forecast`, `/anomalies`, `/tier-b`, `POST /explain` — schema_version `1.0.0` |
+| `models/` | ridge-rollout forecaster; real-POWER artifact `forecaster_power_real.npz` (126,480 pooled samples), synthetic demo artifact `forecaster.npz`, p10–p90 bands, backtest, projected SVG maps; store-matched artifact selection |
+| `api/` | FastAPI `GET /health` (LLM status), `/place`, `/imagery/past|projected`, `/trends/cell|/opposite`, `/twins`, `/forecast`, `/anomalies`, `/tier-b`, `POST /explain`, **`POST /chat`** (local Ollama) — schema_version `1.0.0` |
 | `web/` | React + Vite + TS + MapLibre; `npm run build` = 51 modules / 1.0 MB JS (286 KB gzip) |
 | `docs/` | architecture, api-contract, data-sources, deploy, ml, ui-ux, **limitations (new)**, **submission-checklist (new)** |
 
@@ -208,7 +208,7 @@ Everything below was **run and verified on this tree on Nov 9, 2026**; see `docs
 
 - `docker compose config` → parses; services `api`, `web`. ✅
 - `docker compose build api` → image **`nasa-api:latest`** built: python-3.12-slim + numpy/scipy/fastapi/uvicorn, sample + engine + **train** executed at build time (artifact baked in). First attempt hit a transient PyPI metadata error for scipy; retry succeeded. ✅
-- `uvicorn api.main:app --port 8000` → `/health` `{"status":"ok","schema_version":"1.0.0","sample_store":true,"analysis":true}`; `/place?lat=12.97&lon=77.59` → full payload (ridge_rollout forecast, 4 opposite-trend pairs, templated explainer, climate_twin); `/imagery/projected?parameter=temperature&year=2030` → SVG; `/tier-b` → **fetched 596 months of real NASA POWER data, cached**. ✅
+- `uvicorn api.main:app --port 8000` → `/health` `{"status":"ok","schema_version":"1.0.0","sample_store":true,"store":{"synthetic":false,"provenance":"nasa_power_monthly_1981_present"},"analysis":true}`; `/place?lat=12.97&lon=77.59` → full payload (ridge_rollout forecast, 4 opposite-trend pairs, templated explainer, climate_twin); `/imagery/projected?parameter=temperature&year=2030` → SVG; `/tier-b` → **fetched 596 months of real NASA POWER data, cached**. ✅
 - `cd web && npm install && VITE_API_BASE=http://localhost:8000 npm run build` → ✅ (API base confirmed embedded in `dist/assets/*.js`); `npm run preview -- --port 4173` → HTML + JS + CSS + favicon all HTTP 200. ✅
 
 **Quickstart (all offline-capable)**
@@ -221,7 +221,7 @@ cd web && npm install && npm run build && npm run preview   # http://localhost:4
 docker compose up --build            # same stack in containers (image verified above)
 ```
 
-**Limitations** — the demo store is synthetic (15°×15° grid, trends baked in); forecast skill decays with horizon; Gemini explainer backend is planned and not yet wired (`/docs-payload` likewise future). specifics: `docs/limitations.md`.
+**Limitations** — the demo store is synthetic (15°×15° grid, trends baked in); the default real-POWER store has no NDVI/SST/sea-level, so those parameters are omitted rather than faked; forecast skill decays with horizon and the local 1.5B LLM is small (post-generation guards reject certainty claims, p-value misreadings, p10–p90 band misreadings, false significance claims, and any number absent from the facts, then fall back to deterministic prose); Gemini/HF explainer backends remain optional and are not required (`/docs-payload` likewise future). Specifics: `docs/limitations.md`.
 
 ## 15. Land/ocean mask + AI scenario cards (v0.2.0)
 
@@ -261,3 +261,15 @@ uvicorn api.main:app --port 8000
 See `docs/highres-belgaum.md` for the resolution ladder (POWER 40-yr point series,
 MODIS 250 m NDVI, Sentinel-2 10 m imagery), the AI scenario-card image
 generation pipeline, and the frontend 🛰 Hi-Res / 📍 Belgaum controls.
+
+## 18. RAG chatbot — retrieval-augmented, facts-locked narration (v0.4.0)
+
+`POST /chat` now has an optional retrieval layer and a Hugging Face Space backend, keeping the facts-locked design (the LLM never computes a number; guards reject certainty claims, p-value misuse, band misuse, non-significant-as-significant, and invented numbers — on every backend):
+
+```bash
+python3 scripts/build_rag_kb.py --sync-space   # builds data/rag/kb.json (BM25 KB: docs + NASA POWER/method notes + store-derived coverage) and syncs hf-space/
+# after creating a Space at huggingface.co/spaces (Docker SDK, free CPU):
+EP_RAG_BACKEND=hf HF_RAG_SPACE_URL=https://<you>-earth-pulse-rag.hf.space uvicorn api.main:app --port 8000
+```
+
+With `EP_RAG_BACKEND=hf`, answers carry `sources: [{id, title, source}]` (rendered as a muted "Sources" line in the chat UI); with the Space down, chat falls back to Ollama, then to templated prose — never a hard failure. Design, deploy runbook, token setup and rollback: `docs/rag.md`.

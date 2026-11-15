@@ -77,3 +77,31 @@ class ExplainResponse(BaseModel):
     text: str
     generator: str
     confidence: str
+
+
+class ChatTurn(BaseModel):
+    role: str = "user"
+    content: str
+
+
+class ChatRequest(BaseModel):
+    lat: float = Field(..., ge=-90, le=90)
+    lon: float = Field(..., ge=-180, le=180)
+    messages: list[ChatTurn] = Field(default_factory=list)
+    horizon_months: int = Field(60, ge=3, le=240)
+    region_name: str | None = None
+    variable: str | None = None
+    language: str = "en"
+
+
+class ChatResponse(BaseModel):
+    text: str
+    generator: str
+    model: str | None = None
+    confidence: str
+    card_kind: str
+    llm_available: bool
+    guard_reason: str | None = None
+    guard_numbers: list[float] = Field(default_factory=list)
+    sources: list[dict] = Field(default_factory=list)
+    facts: dict = Field(default_factory=dict)

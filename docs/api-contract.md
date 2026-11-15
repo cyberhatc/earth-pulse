@@ -5,8 +5,32 @@ All parameters are query-string. All responses are JSON unless noted. `schema_ve
 
 ## `GET /health`
 ```json
-{ "status": "ok", "schema_version": "1.0.0", "sample_store": true }
+{
+  "status": "ok",
+  "schema_version": "1.0.0",
+  "sample_store": true,
+  "store": {
+    "path": "data/processed/earth_pulse_power_real.npz",
+    "name": "earth_pulse_power_real.npz",
+    "exists": true,
+    "synthetic": false,
+    "real_data": true,
+    "provenance": "nasa_power_monthly_1981_present",
+    "time_range": ["1981-01", "2026-11"],
+    "n_months": 551
+  },
+  "analysis": true,
+  "analysis_path": "data/processed/analysis_power_real.json",
+  "llm": {
+    "backend": "ollama",
+    "available": true,
+    "model": "qwen2.5:1.5b",
+    "base_url": "http://localhost:11434",
+    "installed_models": ["qwen2.5:1.5b"]
+  }
+}
 ```
+`store.synthetic` is the authoritative real-vs-demo flag; the legacy `sample_store` field only means “a store file exists.” `llm.backend` is `ollama` when a local model answers, `templated` when no LLM is reachable or `EP_LLM_BACKEND` disables it.
 
 ## `GET /place?lat={float}&lon={float}&horizon_months={int=60}`
 The unified on-click payload. Example (abridged; arrays truncated with …):
@@ -81,7 +105,43 @@ The unified on-click payload. Example (abridged; arrays truncated with …):
 }
 ```
 
-> `generator` values actually produced by `api/services/explainer.py`: `templated` (default, offline) and `hf_inference` (when `HF_TOKEN` is set and the endpoint responds). A `gemini` backend is reserved/planned and is **not yet wired**.
+> `generator` values actually produced by `api/services/explainer.py`: `templated` (default for `/place`), `ollama` (local LLM), `hf-rag` (when `EP_RAG_BACKEND=hf` and the Hugging Face RAG Space answers — retrieval over the bundled knowledge base + a small instruct model), `hf_inference` (when `HF_TOKEN` is set and the endpoint responds), and `templated-guard` (the LLM failed a post-generation fact check, so deterministic prose was substituted). A `gemini` backend is reserved/planned and is **not yet wired**. The forecast block includes `artifact` (e.g. `forecaster_power_real.npz`) so callers can see which trained model produced it. See `docs/rag.md` for the RAG design and runbook.
+
+## `POST /chat`
+Conversational, facts-locked narration backed by the Hugging Face RAG Space (when `EP_RAG_BACKEND=hf`), a local Ollama model (default), or deterministic templated prose (fallback). The server assembles the facts (trends, forecast deltas, anomalies, opposite pairs, climate twin, coverage) from the same store and engine as `/place`; the model only re-words them and never computes or changes a number. With `EP_RAG_BACKEND=hf`, retrieval runs over a bundled BM25 knowledge base (repo docs + NASA POWER / method notes + store-derived coverage facts) and answers carry `sources: [{id, title, source}]`. Every draft passes the same post-generation guards regardless of backend.
+
+Request:
+```json
+{
+  "lat": 15.8497,
+  "lon": 74.4977,
+  "region_name": "Western Ghats + Arabian Sea",
+  "variable": "Precipitation",
+  "horizon_months": 60,
+  "language": "en",
+  "messages": [
+    { "role": "user", "content": "What does the 5-year forecast say, and how uncertain is it?" }
+  ]
+}
+```
+
+Response:
+```json
+{
+  "text": "The 5-year forecast indicates a net increase in temperature of +0.165 °C over 60 months …",
+  "generator": "ollama",
+  "model": "qwen2.5:1.5b",
+  "confidence": "medium",
+  "card_kind": "forecast",
+  "llm_available": true,
+  "guard_reason": null,
+  "guard_numbers": [],
+  "sources": [{ "id": "S1", "title": "Earth Pulse methodology", "source": "docs/rag-corpus/earth-pulse-method.md" }],
+  "facts": { "trends": {}, "forecast_deltas": {}, "parameters_unavailable": [] }
+}
+```
+`guard_reason` and `guard_numbers` are always present; the latter is empty unless a numeric guard rejected a draft.
+Forecast deltas are **net change across the full horizon**, not per-decade rates. If Ollama is unreachable the endpoint returns deterministic `templated` prose instead of failing. Post-generation guards protect the facts: answers that convert a p-value into a certainty/probability claim, call a non-significant trend significant, or contain a number absent from the facts are rejected and replaced with `templated-guard` prose. `guard_reason` is one of `certainty_claim`, `p_value_misuse`, `band_misuse`, `significance_misread`, or `unverified_numbers`; `guard_numbers` lists any rejected numerical tokens (empty otherwise).
 
 ## Other endpoints
 | Endpoint | Returns |
@@ -92,6 +152,7 @@ The unified on-click payload. Example (abridged; arrays truncated with …):
 | `GET /forecast?lat&lon&horizon_months=60` | Just the `forecast` block |
 | `GET /anomalies?lat&lon` | Rolling robust-z anomalies per parameter |
 | `POST /explain` | `{ "facts": {…} }` → `{ text, generator, confidence }` (numbers unchanged) |
+| `POST /chat` | Facts-locked conversation via HF RAG Space or local Ollama; falls back to templated prose. Replies may carry `sources` (RAG citations) |
 | `GET /imagery/past?lat&lon` | GIBS URLs for several layers/dates + a Landsat EarthExplorer link |
 | `GET /imagery/projected?parameter=temperature&year=2030` | **SVG** heat-map (Theil–Sen extrapolation), labeled model-projected |
 | `GET /docs-payload` | **Planned — not yet served by the API.** Frontend dev fallback: embedded fixture `web/src/lib/fallbackPayload.json` (mirrors this contract) and the live `/openapi.json` |

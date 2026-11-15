@@ -17,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from api.schemas import SCHEMA_VERSION
-from api.routers import place, imagery, trends, forecast, anomalies, explain, health, tierb, scenario, point
+from api.routers import place, imagery, trends, forecast, anomalies, explain, health, tierb, scenario, point, chat
 
 app = FastAPI(
     title="Earth Pulse API",
@@ -26,7 +26,7 @@ app = FastAPI(
                 "Bundled with a deterministic SYNTHETIC sample store; swap in real NASA products for production use.",
 )
 
-_origins = os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://localhost:4173,https://example.github.io")
+_origins = os.environ.get("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173,http://localhost:4173,https://example.github.io")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in _origins.split(",")] if _origins != "*" else ["*"],
@@ -61,7 +61,7 @@ async def _rate_limit(request, call_next):
 
 for r in (health.router, place.router, imagery.router, trends.router,
           forecast.router, anomalies.router, explain.router, tierb.router, scenario.router,
-          point.router):
+          point.router, chat.router):
     app.include_router(r)
 
 
@@ -78,5 +78,6 @@ def root():
         "docs": "/docs",
         "health": "/health",
         "place": "/place?lat=12.97&lon=77.59",
+        "chat": "POST /chat",
         "projected_svg": "/imagery/projected?parameter=temperature&year=2030",
     }

@@ -33,3 +33,5 @@ dist/
 .vscode/
 *.log
 *.err
+data/forecasts/
+data/forecasts_full/
