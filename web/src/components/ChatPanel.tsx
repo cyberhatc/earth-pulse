@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { SUGGESTIONS, generateReply } from "../lib/chat";
 import { sendChat, type ChatTurn } from "../lib/api";

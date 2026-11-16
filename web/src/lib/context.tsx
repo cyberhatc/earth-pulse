@@ -1,5 +1,3 @@
-"use client";
-
 import {
   createContext,
   useCallback,
@@ -25,6 +23,7 @@ import {
 import type { CanvasCard, ChatMessage, Region } from "./types";
 
 const STORAGE_KEY = "etd.investigation.v1";
+const MAX_PERSISTED_MESSAGES = 50;
 
 type PersistedState = {
   region: Region | null;
@@ -100,7 +99,7 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
             setCards(parsed.cards);
           }
           if (Array.isArray(parsed.messages)) {
-            setMessages(parsed.messages);
+            setMessages(parsed.messages.slice(-MAX_PERSISTED_MESSAGES));
           }
         }
       }
@@ -118,7 +117,7 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
         region,
         point,
         cards,
-        messages,
+        messages: messages.slice(-MAX_PERSISTED_MESSAGES),
       };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch {
@@ -135,6 +134,7 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
         setHealthError(null);
       })
       .catch((err: Error) => {
+        if (controller.signal.aborted) return;
         setHealth(null);
         setHealthError(err.message);
       });
@@ -244,32 +244,55 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
     setMessages([]);
   }, []);
 
+  const value = useMemo<InvestigationContextValue>(
+    () => ({
+      hydrated,
+      region,
+      point,
+      pendingPrompt,
+      cards,
+      messages,
+      live: {
+        payload: livePayload,
+        status: liveStatus,
+        error: liveError,
+        analysis: liveAnalysis,
+      },
+      health,
+      healthError,
+      refreshLive,
+      setRegion,
+      setPoint,
+      setPendingPrompt,
+      addCard,
+      addMessage,
+      resetRegion,
+    }),
+    [
+      hydrated,
+      region,
+      point,
+      pendingPrompt,
+      cards,
+      messages,
+      livePayload,
+      liveStatus,
+      liveError,
+      liveAnalysis,
+      health,
+      healthError,
+      refreshLive,
+      setRegion,
+      setPoint,
+      setPendingPrompt,
+      addCard,
+      addMessage,
+      resetRegion,
+    ],
+  );
+
   return (
-    <InvestigationContext.Provider
-      value={{
-        hydrated,
-        region,
-        point,
-        pendingPrompt,
-        cards,
-        messages,
-        live: {
-          payload: livePayload,
-          status: liveStatus,
-          error: liveError,
-          analysis: liveAnalysis,
-        },
-        health,
-        healthError,
-        refreshLive,
-        setRegion,
-        setPoint,
-        setPendingPrompt,
-        addCard,
-        addMessage,
-        resetRegion,
-      }}
-    >
+    <InvestigationContext.Provider value={value}>
       {children}
     </InvestigationContext.Provider>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type Lenis from "lenis";
 import { LandingNav } from "../components/landing/LandingNav";
 import { ArrivalSection } from "../components/landing/sections/ArrivalSection";
 import { ObservationSection } from "../components/landing/sections/ObservationSection";
@@ -43,17 +44,19 @@ function useIsMobile() {
 
 export function LandingPage() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const lenisRef = useRef<Lenis | null>(null);
   const reducedMotion = usePrefersReducedMotion();
   const isMobile = useIsMobile();
   const [videoFailed, setVideoFailed] = useState(false);
 
   useLandingScroll({
-    root: rootRef.current,
+    root: rootRef,
     reducedMotion,
     enabled: true,
+    lenisRef,
   });
 
-  useAnimeMicro({ enabled: !reducedMotion, root: rootRef.current });
+  useAnimeMicro({ enabled: !reducedMotion, root: rootRef });
 
   const videoSrc = isMobile ? MOBILE_VIDEO : DESKTOP_VIDEO;
   useEffect(() => {
@@ -72,7 +75,7 @@ export function LandingPage() {
       const el = document.querySelector(hash);
       if (!el) return;
       e.preventDefault();
-      const lenis = (root as any).__lenis;
+      const lenis = lenisRef.current;
       if (lenis && !reducedMotion) {
         lenis.scrollTo(el as HTMLElement, { offset: -80 });
       } else {
@@ -85,7 +88,7 @@ export function LandingPage() {
     };
     root.addEventListener("click", onClick);
     return () => root.removeEventListener("click", onClick);
-  }, [reducedMotion]);
+  }, [reducedMotion, lenisRef]);
 
   const showVideo = !reducedMotion && !videoFailed;
 
@@ -112,7 +115,7 @@ export function LandingPage() {
 
       <div className="landing-content">
         <LandingNav />
-        <main id="main-content">
+        <main>
           <ArrivalSection />
           <ObservationSection />
           <AboutSection />

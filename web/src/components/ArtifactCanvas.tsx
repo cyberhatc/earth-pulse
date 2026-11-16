@@ -1,5 +1,3 @@
-"use client";
-
 import { useInvestigation } from "../lib/context";
 import { CardRenderer } from "./cards";
 

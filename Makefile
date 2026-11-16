@@ -1,4 +1,4 @@
-.PHONY: help venv install sample-data engine test api web web-install build clean real-store real-analysis backtest conform validate-trend
+.PHONY: help venv install sample-data engine test api web web-install build clean real-store real-analysis backtest conform validate-trend load-test contract-test
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -56,6 +56,13 @@ web: web-install ## Build & preview the frontend (http://localhost:4173)
 
 build: ## Build the frontend for production (outputs web/dist)
 	cd web && npm install && npm run build
+
+load-test: ## Benchmark the API (server must already run on :8000; see docs/performance.md — start server with EP_RATE_LIMIT_PER_MIN=0)
+	python3 scripts/load_test.py --url http://127.0.0.1:8000 --path /health --n 500 --concurrency 10
+	python3 scripts/load_test.py --url http://127.0.0.1:8000 --path "/place?lat=12.97&lon=77.59&horizon_months=60" --n 50 --concurrency 1
+
+contract-test: ## API contract-snapshot tests (key-presence pins for 12 endpoints)
+	python3 -m pytest tests/test_contract_snapshots.py -q
 
 clean: ## Remove caches and build output
 	rm -rf web/dist web/node_modules .pytest_cache **/__pycache__

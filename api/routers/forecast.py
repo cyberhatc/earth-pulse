@@ -31,6 +31,8 @@ def forecast(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=
         "cell_index": cell,
         "grid_lat": glat,
         "grid_lon": glon,
+        "horizon_months": horizon_months,
+        "issued": fc["dates"][0] if fc.get("dates") else None,
         **fc,
         "trained_artifact": bool(fc.get("artifact")),
         "artifact": fc.get("artifact"),

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, type RefObject } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -6,9 +6,10 @@ import Lenis from "lenis";
 gsap.registerPlugin(ScrollTrigger);
 
 type Options = {
-  root: HTMLElement | null;
+  root: RefObject<HTMLElement | null>;
   reducedMotion: boolean;
   enabled: boolean;
+  lenisRef?: RefObject<Lenis | null>;
 };
 
 /**
@@ -16,13 +17,15 @@ type Options = {
  * GSAP/ScrollTrigger owns scroll-linked DOM transitions/reveals.
  * No 3D/scene choreography.
  */
-export function useLandingScroll({ root, reducedMotion, enabled }: Options) {
+export function useLandingScroll({ root: rootRef, reducedMotion, enabled, lenisRef }: Options) {
   useEffect(() => {
+    const root = rootRef.current;
     if (!enabled || !root) return;
 
     const ctx = gsap.context(() => {
       let lenis: Lenis | null = null;
       let tickerCb: ((time: number) => void) | null = null;
+      if (lenisRef) lenisRef.current = null;
 
       if (!reducedMotion) {
         lenis = new Lenis({
@@ -54,9 +57,7 @@ export function useLandingScroll({ root, reducedMotion, enabled }: Options) {
         gsap.ticker.lagSmoothing(0);
 
         ScrollTrigger.addEventListener("refresh", () => lenis?.resize());
-        (root as any).__lenis = lenis;
-      } else {
-        (root as any).__lenis = null;
+        if (lenisRef) lenisRef.current = lenis;
       }
 
       // DOM reveals (GSAP-owned)
@@ -117,9 +118,7 @@ export function useLandingScroll({ root, reducedMotion, enabled }: Options) {
             lenis.destroy();
           } catch {}
         }
-        try {
-          delete (root as any).__lenis;
-        } catch {}
+        if (lenisRef) lenisRef.current = null;
       };
     }, root);
 
@@ -130,5 +129,5 @@ export function useLandingScroll({ root, reducedMotion, enabled }: Options) {
         if (trig && root.contains(trig)) t.kill();
       });
     };
-  }, [root, reducedMotion, enabled]);
+  }, [rootRef, reducedMotion, enabled, lenisRef]);
 }

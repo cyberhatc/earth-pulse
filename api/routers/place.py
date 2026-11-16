@@ -1,6 +1,8 @@
 """GET /place — the unified on-click payload."""
 from __future__ import annotations
 
+import threading
+
 import numpy as np
 from fastapi import APIRouter, Query, HTTPException
 
@@ -13,6 +15,63 @@ from models.anomaly import anomalies_for_cell
 from api.schemas import PlacePayload
 
 router = APIRouter()
+
+# The per-cell backtest is diagnostic metadata for the payload, not the forecast.
+# It costs ~2-4 s of ridge refits, so cache it per (cell, artifact config); a lock
+# keeps concurrent first requests for the same cell from duplicating the work.
+_MODEL_CFG = None
+
+
+def _model_config() -> dict:
+    """Lazy, cached read of configs/model.yaml (was parsed on every request)."""
+    global _MODEL_CFG
+    if _MODEL_CFG is None:
+        try:
+            import yaml
+            from pathlib import Path as _Path
+            _MODEL_CFG = yaml.safe_load(
+                _Path(__file__).resolve().parents[2].joinpath("configs", "model.yaml").read_text(encoding="utf-8")
+            ) or {}
+        except Exception:
+            _MODEL_CFG = {}
+    return _MODEL_CFG
+
+
+_BACKTEST_CACHE: dict[tuple, dict] = {}
+_BACKTEST_LOCK = threading.Lock()
+_BACKTEST_CACHE_MAX = 512
+
+
+def _cell_backtest(cell: int) -> dict:
+    """Rolling-origin backtest of the exact trained-artifact configuration at a cell."""
+    import json as _json
+    from pipeline.build_features import prepare_cell_matrix
+    from models.backtest import backtest_cell
+    from models.infer import _artifact_for, _artifact_config
+
+    store = get_store()
+    model_vars, artifact_seq_len = _artifact_config(_artifact_for(store))
+    lam = 1e-2
+    try:
+        meta_path = _artifact_for(store).parent / "forecaster_meta.json"
+        if meta_path.exists():
+            lam = float(_json.loads(meta_path.read_text(encoding="utf-8")).get("lam", 1e-2))
+    except Exception:
+        pass
+    key = (int(cell), tuple(model_vars), int(artifact_seq_len or 24), float(lam))
+    with _BACKTEST_LOCK:
+        cached = _BACKTEST_CACHE.get(key)
+        if cached is not None:
+            return cached
+        # Backtest the EXACT artifact configuration (all trained variables);
+        # the caller reports only the exposed ones.
+        _, Xbt = prepare_cell_matrix(store, cell, model_vars)
+        result = backtest_cell(Xbt, model_vars, seq_len=artifact_seq_len or 24,
+                               test_months=12, horizon=12, lam=lam)
+        if _BACKTEST_CACHE_MAX and len(_BACKTEST_CACHE) >= _BACKTEST_CACHE_MAX:
+            _BACKTEST_CACHE.clear()
+        _BACKTEST_CACHE[key] = result
+        return result
 
 
 def r3(x: float) -> float:
@@ -67,22 +126,7 @@ def place(lat: float = Query(..., ge=-90, le=90),
     fc = forecast_place(store, cell, horizon_months, variables=usable)
     # rolling-origin backtest on nearest cell (populates payload.backtest as documented)
     try:
-        from pipeline.build_features import prepare_cell_matrix
-        from models.backtest import backtest_cell
-        import json as _json
-        from models.infer import _artifact_for, _artifact_config
-        model_vars, artifact_seq_len = _artifact_config(_artifact_for(store))
-        lam = 1e-2
-        try:
-            meta_path = _artifact_for(store).parent / "forecaster_meta.json"
-            if meta_path.exists():
-                lam = float(_json.loads(meta_path.read_text(encoding="utf-8")).get("lam", 1e-2))
-        except Exception:
-            pass
-        # Backtest the EXACT artifact configuration (all trained variables),
-        # then report only the exposed ones.
-        _, Xbt = prepare_cell_matrix(store, cell, model_vars)
-        bt_all = backtest_cell(Xbt, model_vars, seq_len=artifact_seq_len or 24, test_months=12, horizon=12, lam=lam)
+        bt_all = _cell_backtest(cell)
         if "per_parameter" not in bt_all:  # series too short — degrade, never 500
             raise ValueError(bt_all.get("error", "backtest unavailable"))
         asked = list(fc["timeseries"].keys())
@@ -131,10 +175,8 @@ def place(lat: float = Query(..., ge=-90, le=90),
         a["z"] = r3(a["z"])
     # Optional Isolation Forest for multivariate tabular anomalies (configs/model.yaml)
     try:
+        cfg = _model_config()
         from sklearn.ensemble import IsolationForest
-        import yaml
-        from pathlib import Path as _Path
-        cfg = yaml.safe_load(_Path(__file__).resolve().parents[2].joinpath("configs", "model.yaml").read_text(encoding="utf-8")) or {}
         if_cfg = (cfg.get('anomaly', {}) or {}).get('isolation_forest', {})
         if if_cfg.get('enabled'):
             # build matrix of past timeseries for usable params

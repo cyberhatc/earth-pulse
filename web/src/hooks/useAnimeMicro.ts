@@ -1,17 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, type RefObject } from "react";
 import anime from "animejs";
 
 type Options = {
   enabled: boolean;
-  root: HTMLElement | null;
+  root: RefObject<HTMLElement | null>;
 };
 
 /**
  * Anime.js v3 — isolated UI micro-interactions only.
  * Targets elements/properties NOT controlled by GSAP/ScrollTrigger/Lenis/R3F.
  */
-export function useAnimeMicro({ enabled, root }: Options) {
+export function useAnimeMicro({ enabled, root: rootRef }: Options) {
   useEffect(() => {
+    const root = rootRef.current;
     if (!enabled || !root) return;
 
     const instances: anime.AnimeInstance[] = [];
@@ -108,5 +109,5 @@ export function useAnimeMicro({ enabled, root }: Options) {
       marks.forEach((m) => anime.remove(m));
       accents.forEach((a) => anime.remove(a));
     };
-  }, [enabled, root]);
+  }, [enabled, rootRef]);
 }

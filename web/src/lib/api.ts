@@ -1,4 +1,4 @@
-// Client for the Earth Pulse / NASA backend (FastAPI on :8000).
+// Client for the Earth Pulse / NASA backend (FastAPI).
 //
 // Dev: Vite proxies /api -> http://localhost:8000 (see vite.config.ts).
 // Prod: set VITE_API_BASE to the deployed API origin, e.g.
@@ -171,8 +171,6 @@ export type ChatReply = {
 
 const RAW_BASE = (import.meta.env.VITE_API_BASE as string | undefined)?.trim();
 export const API_BASE = (RAW_BASE || "/api").replace(/\/$/, "");
-export const API_ORIGIN =
-  RAW_BASE && /^https?:\/\//.test(RAW_BASE) ? RAW_BASE.replace(/\/$/, "") : "";
 
 export class ApiError extends Error {
   status?: number;
@@ -188,12 +186,23 @@ async function request<T>(
   init?: RequestInit,
   timeoutMs = 20000,
 ): Promise<T> {
+  // One linked controller: aborts on timeout AND when the caller's signal aborts.
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, timeoutMs);
+  const upstream = init?.signal ?? undefined;
+  const onUpstreamAbort = () => controller.abort();
+  if (upstream) {
+    if (upstream.aborted) controller.abort();
+    else upstream.addEventListener("abort", onUpstreamAbort, { once: true });
+  }
   try {
     const res = await fetch(`${API_BASE}${path}`, {
       ...init,
-      signal: init?.signal ?? controller.signal,
+      signal: controller.signal,
       headers: {
         Accept: "application/json",
         ...(init?.body ? { "Content-Type": "application/json" } : {}),
@@ -210,19 +219,31 @@ async function request<T>(
       }
       throw new ApiError(`API ${res.status}: ${detail}`, res.status);
     }
+    const contentType = res.headers.get("content-type") ?? "";
+    if (!contentType.toLowerCase().includes("application/json")) {
+      throw new ApiError(
+        `Expected JSON from ${API_BASE}${path} but got "${contentType || "unknown content-type"}". Is VITE_API_BASE pointing at the Earth Pulse API?`,
+      );
+    }
     return (await res.json()) as T;
   } catch (err) {
     if (err instanceof ApiError) throw err;
-    if ((err as Error).name === "AbortError") {
-      throw new ApiError(
-        "Backend request timed out. Is FastAPI running on :8000?",
-      );
+    const name = (err as Error).name;
+    if (name === "AbortError" || name === "TimeoutError") {
+      if (timedOut) {
+        throw new ApiError(
+          `Earth Pulse API request to ${path} timed out after ${timeoutMs}ms. Is the backend up?`,
+        );
+      }
+      // Caller aborted — preserve cancellation semantics.
+      throw err;
     }
     throw new ApiError(
       `Cannot reach the Earth Pulse backend at ${API_BASE}. Start it with: uvicorn api.main:app --port 8000`,
     );
   } finally {
     clearTimeout(timer);
+    if (upstream) upstream.removeEventListener("abort", onUpstreamAbort);
   }
 }
 

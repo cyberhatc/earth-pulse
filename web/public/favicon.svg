@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Earth Pulse">
+  <circle cx="32" cy="32" r="29" fill="#0b3d2e"/>
+  <ellipse cx="32" cy="32" rx="29" ry="11" fill="none" stroke="#7fd6a2" stroke-width="3" opacity="0.85"/>
+  <circle cx="32" cy="32" r="6.5" fill="#7fd6a2"/>
+  <polyline points="10,36 20,36 24,28 29,44 34,33 38,36 54,36"
+            fill="none" stroke="#e8f5ec" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

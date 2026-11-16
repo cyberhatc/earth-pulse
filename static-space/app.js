@@ -250,15 +250,24 @@ $('#suggestions').addEventListener('click', (e) => {
   if (btn && !btn.disabled) void handleSend(btn.dataset.q);
 });
 
-// Context chips + synthetic warning
+// Context chips + synthetic warning (DOM APIs only — URL params are untrusted)
 if (hasContext) {
-  $('#context-chips').innerHTML = [
+  const container = $('#context-chips');
+  const chipTexts = [
     facts.region_name,
     `${facts.variable}`,
     `${facts.slope} ${facts.unit}/decade`,
     `p=${facts.pvalue}`,
     String(facts.sig) === 'true' ? 'significant' : 'not significant',
-  ].map((t) => `<span class="chip">${t}</span>`).join('');
+  ];
+  container.replaceChildren(
+    ...chipTexts.map((t) => {
+      const span = document.createElement('span');
+      span.className = 'chip';
+      span.textContent = String(t);
+      return span;
+    }),
+  );
   if (facts.synthetic) {
     const warn = document.createElement('div');
     warn.className = 'warn-chip';
@@ -266,7 +275,10 @@ if (hasContext) {
     $('#context-chips').after(warn);
   }
 } else {
-  $('#context-chips').innerHTML = '<span class="chip chip-muted">No region context — general KB mode</span>';
+  const span = document.createElement('span');
+  span.className = 'chip chip-muted';
+  span.textContent = 'No region context — general KB mode';
+  $('#context-chips').replaceChildren(span);
 }
 
 void ensureKB();

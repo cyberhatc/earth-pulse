@@ -1,14 +1,9 @@
 {
-  "buildCommand": "cd web && npm install && npm run build",
+  "buildCommand": "cd web && npm ci --no-audit --no-fund && npm run build",
   "outputDirectory": "web/dist",
   "installCommand": "echo 'dependencies installed in build step'",
   "framework": null,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "build": {
-    "env": {
-      "VITE_API_BASE": "https://oxide-interpreted-phys-come.trycloudflare.com"
-    }
-  }
+  ]
 }

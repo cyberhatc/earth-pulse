@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 import type * as LeafletTypes from "leaflet";
 import type { Region } from "../lib/types";

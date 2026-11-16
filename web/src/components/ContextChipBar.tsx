@@ -1,5 +1,3 @@
-"use client";
-
 import { Link } from "react-router-dom";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";

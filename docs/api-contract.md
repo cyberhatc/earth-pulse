@@ -1,43 +1,53 @@
 # API contract — `GET /place` and friends
 
 Base URL: `http://localhost:8000` (local) or your deployed API origin.
-All parameters are query-string. All responses are JSON unless noted. `schema_version` is `1.0.0`.
+All parameters are query-string. All responses are JSON unless noted. `schema_version` is `1.1.0` (since 2026-11-16; additive-only — see the addendum at the end of this file).
 
 ## `GET /health`
 ```json
 {
   "status": "ok",
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
+  "api_version": "0.4.1",
+  "uptime_seconds": 12.3,
   "sample_store": true,
   "store": {
-    "path": "data/processed/earth_pulse_power_real.npz",
-    "name": "earth_pulse_power_real.npz",
+    "path": "data/processed/earth_pulse_real.npz",
+    "name": "earth_pulse_real.npz",
     "exists": true,
     "synthetic": false,
     "real_data": true,
-    "provenance": "nasa_power_monthly_1981_present",
-    "time_range": ["1981-01", "2026-11"],
-    "n_months": 551
+    "provenance": "gistemp_gpcp_ersst_v5_1981_2026",
+    "time_range": ["1981-01", "2026-10"],
+    "n_months": 550
+  },
+  "manifest_hash": "a1b2c3d4e5f60708",
+  "models": {
+    "artifact": "forecaster_climatology_trend.json",
+    "conformal_calibrated": true,
+    "calibration_date": "2026-11-16",
+    "band_methods": ["conformal", "sqrt_h"]
   },
   "analysis": true,
-  "analysis_path": "data/processed/analysis_power_real.json",
+  "analysis_path": "data/processed/analysis_real.json",
   "llm": {
     "backend": "ollama",
     "available": true,
     "model": "qwen2.5:1.5b",
     "base_url": "http://localhost:11434",
     "installed_models": ["qwen2.5:1.5b"]
-  }
+  },
+  "rag": { "backend": "hf-router", "enabled": true }
 }
 ```
-`store.synthetic` is the authoritative real-vs-demo flag; the legacy `sample_store` field only means “a store file exists.” `llm.backend` is `ollama` when a local model answers, `templated` when no LLM is reachable or `EP_LLM_BACKEND` disables it.
+`store.synthetic` is the authoritative real-vs-demo flag; the legacy `sample_store` field only means “a store file exists.” `llm.backend` is `ollama` when a local model answers, `templated` when no LLM is reachable or `EP_LLM_BACKEND` disables it. `manifest_hash` is sha256[:16] of `data/processed/manifest.json` (null when the bundle has no real-store manifest). `models.conformal_calibrated` reflects `data/processed/conformal.json` matching the active store; `band_methods` lists what `/place` may serve (`conformal` when fingerprints match, always `sqrt_h`).
 
 ## `GET /place?lat={float}&lon={float}&horizon_months={int=60}`
 The unified on-click payload. Example (abridged; arrays truncated with …):
 
 ```json
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "location": { "lat": 12.97, "lon": 77.59, "cell_index": 134, "grid_lat": 15.0, "grid_lon": 75.0, "name": null },
   "data_coverage": {
     "synthetic_demo": true,
