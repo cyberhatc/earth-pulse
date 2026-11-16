@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+_START_TIME = __import__("time").time()
 # Prefer the real FULL NASA POWER store (all extractable parameters) when
 # present, else the 5-parameter real store, else the bundled synthetic sample.
 _default_store = REPO_ROOT / "data" / "processed" / "earth_pulse_power_full.npz"
@@ -38,7 +39,7 @@ def get_analysis() -> dict:
             f"Precomputed analysis not found at {ANALYSIS_PATH}. "
             "Run: python3 engine/run_engine.py (or `make engine`)."
         )
-    return json.loads(ANALYSIS_PATH.read_text())
+    return json.loads(ANALYSIS_PATH.read_text(encoding="utf-8"))
 
 
 def analysis_available() -> bool:
@@ -84,3 +85,42 @@ def store_info() -> dict:
 def clear_caches() -> None:
     get_store.cache_clear()
     get_analysis.cache_clear()
+
+
+def uptime_seconds() -> float:
+    return round(__import__("time").time() - _START_TIME, 1)
+
+
+def manifest_hash() -> str | None:
+    """sha256[:16] of data/processed/manifest.json (when the real store was built)."""
+    import hashlib
+    fp = REPO_ROOT / "data" / "processed" / "manifest.json"
+    if not fp.exists():
+        return None
+    return hashlib.sha256(fp.read_bytes()).hexdigest()[:16]
+
+
+def models_info() -> dict:
+    """Which forecaster artifact would serve + whether conformal calibration is wired."""
+    info: dict = {"artifact": None, "conformal_calibrated": False,
+                  "calibration_date": None, "band_methods": ["sqrt_h"]}
+    try:
+        meta_fp = REPO_ROOT / "models" / "artifacts" / "forecaster_meta.json"
+        if meta_fp.exists():
+            meta = json.loads(meta_fp.read_text(encoding="utf-8"))
+            info["artifact"] = meta.get("artifact")
+        conformal_fp = REPO_ROOT / "data" / "processed" / "conformal.json"
+        if conformal_fp.exists():
+            c = json.loads(conformal_fp.read_text(encoding="utf-8"))
+            info["conformal_calibrated"] = bool(c.get("levels"))
+            info["calibration_date"] = c.get("calibrated_at")
+            info["calibration_model"] = c.get("model")
+            info["band_methods"] = ["conformal", "sqrt_h"]
+    except Exception:
+        pass
+    return info
+
+
+def normalise_lon(lon: float) -> float:
+    """Wrap longitude into [-180, 180) — matches the store's grid_lon convention."""
+    return ((lon + 180.0) % 360.0) - 180.0

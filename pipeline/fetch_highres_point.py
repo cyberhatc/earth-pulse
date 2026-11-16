@@ -44,7 +44,11 @@ def _safe_float(v) -> float:
         f = float(v)
     except (TypeError, ValueError):
         return float("nan")
-    return f if np.isfinite(f) else float("nan")
+    if not np.isfinite(f):
+        return float("nan")
+    if f <= -900.0:  # NASA POWER missing-data sentinel (-999.0)
+        return float("nan")
+    return f
 
 
 def fetch_power_series(lat: float, lon: float, start: int = 1981, end: int = 2026) -> dict:

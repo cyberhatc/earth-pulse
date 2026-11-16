@@ -38,7 +38,7 @@ def test_health_ok(client: TestClient):
     assert r.status_code == 200, r.text
     body = r.json()
     assert body["status"] == "ok"
-    assert body["schema_version"] == "1.0.0"
+    assert body["schema_version"] == "1.1.0"
     assert body["sample_store"] is True
     assert body["store"]["exists"] is True
     assert "synthetic" in body["store"]
@@ -49,7 +49,7 @@ def test_place_has_schema_version(client: TestClient):
     r = client.get("/place", params={"lat": 12.97, "lon": 77.59})
     assert r.status_code == 200, r.text
     body = r.json()
-    assert body["schema_version"] == "1.0.0"
+    assert body["schema_version"] == "1.1.0"
     assert body["location"]["cell_index"] >= 0
     assert set(body) >= {"location", "data_coverage", "past", "trends", "forecast",
                          "opposite_trends", "explanation"}

@@ -42,9 +42,13 @@ def fetch_power_point(lat: float, lon: float, start: int = 1981, end: int = 2026
                 if month < 1 or month > 12:
                     continue  # POWER encodes the ANNUAL aggregate as month 13 — not a month
                 try:
-                    out[p][f"{year:04d}-{month:02d}"] = float(value)
+                    v = float(value)
                 except (ValueError, TypeError):
                     continue
+                # NASA POWER encodes missing data as -999.0 — never let the sentinel into the store
+                if v <= -900.0:
+                    continue
+                out[p][f"{year:04d}-{month:02d}"] = v
         return {"lat": lat, "lon": lon, "parameters": out, "source": url}
     except urllib.error.URLError as exc:
         return {"error": f"power_unreachable: {exc.reason if hasattr(exc, 'reason') else exc}", "url": url}

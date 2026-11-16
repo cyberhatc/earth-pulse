@@ -14,14 +14,14 @@ ANALYSIS = ROOT / "data" / "processed" / "analysis.json"
 def _analysis():
     if not ANALYSIS.exists():
         pytest.skip("data/processed/analysis.json not built — run `make engine`")
-    return json.loads(ANALYSIS.read_text())
+    return json.loads(ANALYSIS.read_text(encoding="utf-8"))
 
 
 def test_analysis_has_required_blocks():
     a = _analysis()
     for key in ("schema_version", "trends", "opposite_trends", "climate_twins", "cells", "time_range"):
         assert key in a, f"missing {key}"
-    assert a["schema_version"] == "1.0.0"
+    assert a["schema_version"] in ("1.0.0", "1.1.0")
 
 
 def test_trends_cover_all_cells():
@@ -64,7 +64,7 @@ def test_engine_is_probably_synthetic():
 def test_analysis_json_is_strict_json():
     if not ANALYSIS.exists():
         pytest.skip("analysis.json missing")
-    raw = ANALYSIS.read_text()
+    raw = ANALYSIS.read_text(encoding="utf-8")
     assert "NaN" not in raw and "Infinity" not in raw, "analysis.json must not contain NaN/Infinity tokens"
     json.loads(raw)  # strict parse must succeed
 

@@ -163,3 +163,8 @@ If a subsystem fails (e.g., no model artifact yet) the API still answers with `p
 
 ## Versioning
 `schema_version` bumps on breaking changes; additions only otherwise. Frontend pins `^1.0`.
+
+## Schema 1.1.0 additions (2026-11-16)
+- `analysis.json` (schema 1.1.0): each per-cell trend record adds `ci_low`, `ci_high`, `p_value_uncorrected`, `p_value_seasonal`, `p_value_fdr`, `tau`, `lag1_autocorr`, `autocorr_corrected`, `significant_raw`, `significant_fdr`, `method`, `n` (annual), `n_monthly`, `period_start`, `period_end`, `baseline`. Top level adds `fdr_summary` (fraction of significant cells per variable, raw vs FDR) and `trend_baseline`.
+- `/place` `forecast` block adds `band_method` (`conformal` | `sqrt_h`) and `calibration` = `{ nominal_p10_p90, empirical_coverage_p10_p90 (per variable, calibration folds), calibration_date, calibration_model }` when conformal widths are available for the active store (fingerprinted; otherwise `sqrt_h`).
+- Statistics: deseasonalised anomalies (1991-2020 baseline), annual means (>=10 of 12 months), Sen slope + TFPW-corrected Mann-Kendall headline, seasonal MK on monthly anomalies alongside. FDR (Benjamini-Hochberg, q=0.05) across all grid cells per variable.

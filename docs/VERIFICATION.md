@@ -1,6 +1,9 @@
 # Earth Pulse — Implementation Verification Report
 
 > Based on actual code inspection and execution, not memory. Generated 2026-11-14.
+> **Correction 2026-11-16:** test counts above are stale — `pytest tests/ -q` on 2026-11-16 → **80 passed** (after the encoding/RAG fixes + 10 new Phase-2 tests + 4 conformal tests). The v0.1 claims like "make sample-data engine train test exits green" now hold for the corrected tree. See README §19 and `reports/` for the honest Phase 3/4 numbers. The backend engineering audit (SPA path traversal, -999 sentinel, `/place` 500, encoding) found real bugs — see the 2026-11-16 status log in `docs/parallel-prompts.md`.
+
+> Based on actual code inspection and execution, not memory. Generated 2026-11-14.
 
 ## Legend
 - ✅ **Done and verified** — code exists, runs, tests pass

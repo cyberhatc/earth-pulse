@@ -27,11 +27,18 @@ def picp(lower, upper, actual) -> float:
 
 def backtest_cell(X_full: np.ndarray, variables: list[str], seq_len: int = 24,
                   test_months: int = 24, horizon: int = 24, lam: float = 1e-2) -> dict:
-    """X_full: (T, F) for ONE cell. Trains ridge on prefix, evaluates next `horizon`."""
+    """X_full: (T, F) for ONE cell. Trains ridge on prefix, evaluates next `horizon`.
+
+    `test_months` is accepted for API consistency but the evaluation window is
+    `horizon` (single rolling origin at the end of the series).
+    """
     T, F = X_full.shape
     train_end = T - horizon
     if train_end <= seq_len + 12:
-        return {"error": "series too short for backtest", "n": T}
+        return {"error": "series too short for backtest", "n": T,
+                "per_parameter": {v: {"mae": float("nan"), "rmse": float("nan"),
+                                      "picp_p10_p90": float("nan"), "bias": float("nan")}
+                                  for v in variables}}
     Xs_tr, ys_tr = make_windows(X_full[:train_end], seq_len)
     model = RidgeRollout(lam=lam).fit(Xs_tr, ys_tr)
     init = X_full[train_end - seq_len: train_end]

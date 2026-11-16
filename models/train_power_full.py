@@ -89,7 +89,7 @@ def main() -> int:
         "note": ("Ridge rollout trained on ALL usable NASA POWER parameters (auto-detected, "
                  ">=90% finite). Lambda selected on internal 2011-2015 validation split."),
     }
-    (out.parent / "forecaster_meta.json").write_text(json.dumps(meta, indent=2))
+    (out.parent / "forecaster_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     print(f"[train-full] wrote -> {out} (+ forecaster_meta.json) in {time.time()-t0:.1f}s")
     return 0
 

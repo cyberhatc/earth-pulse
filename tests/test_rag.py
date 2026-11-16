@@ -44,6 +44,9 @@ def test_retrieval_prefers_relevant_doc(kb):
 
 
 def test_retrieval_finds_data_store_chunk(kb):
+    analysis = REPO_ROOT / "data" / "processed" / "analysis.json"
+    if not analysis.exists():
+        pytest.skip("analysis.json not built — run `make engine` first")
     index = rag_core.build_index(kb)
     hits = index.retrieve("provenance of the active store and what is unavailable", 5)
     assert any(h["source"].startswith("analysis:") or "power-real-store" in h["source"]

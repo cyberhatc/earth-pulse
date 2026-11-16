@@ -44,7 +44,7 @@ def _file_env() -> dict[str, str]:
     """Parse the repo .env once (the app never loads dotenv itself)."""
     values: dict[str, str] = {}
     try:
-        for raw in (REPO_ROOT / ".env").read_text().splitlines():
+        for raw in (REPO_ROOT / ".env").read_text(encoding="utf-8").splitlines():
             line = raw.strip()
             if not line or line.startswith("#") or "=" not in line:
                 continue

@@ -37,7 +37,7 @@ def tokenize(text: str) -> list[str]:
 
 def load_kb(path: str | Path) -> dict:
     kb_path = Path(path)
-    data = json.loads(kb_path.read_text())
+    data = json.loads(kb_path.read_text(encoding="utf-8"))
     chunks = data.get("chunks") or []
     if not chunks:
         raise ValueError(f"RAG knowledge base at {kb_path} has no chunks")

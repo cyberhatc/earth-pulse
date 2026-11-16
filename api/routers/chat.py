@@ -14,8 +14,8 @@ from __future__ import annotations
 import numpy as np
 from fastapi import APIRouter, HTTPException
 
-from api.deps import get_store, get_analysis
-from api.schemas import ChatRequest
+from api.deps import get_store, get_analysis, normalise_lon
+from api.schemas import ChatRequest, ChatResponse, SCHEMA_VERSION
 from api.services import store as svc
 from api.services import explainer
 from models.infer import forecast_place
@@ -113,8 +113,9 @@ def _build_facts(req: ChatRequest) -> dict:
     }
 
 
-@router.post("/chat")
+@router.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
+    req.lon = normalise_lon(req.lon)
     try:
         facts = _build_facts(req)
     except Exception as exc:
@@ -123,6 +124,7 @@ def chat(req: ChatRequest):
     messages = [m.model_dump() for m in req.messages]
     result = explainer.chat(messages, facts, language=req.language)
     return {
+        "schema_version": SCHEMA_VERSION,
         "text": result["text"],
         "generator": result["generator"],
         "model": result.get("model"),

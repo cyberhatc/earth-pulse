@@ -40,6 +40,16 @@ opposite_trend:
   min_abs_slope: 0.0       # report all sign-opposites; UI filters by significance
   require_both_significant_for_strong: true
   neighbor_radius_grid_steps: 1
+  # v2 (2026-11-16): FDR gate + per-variable minimum effect size (units per decade)
+  v2:
+    min_effect_size:
+      temperature: 0.05     # degC anomaly / decade
+      precipitation: 0.5    # mm/month / decade
+      ndvi: 0.002
+      sst: 0.05
+      default: 0.0
+    null_realisations: 200
+    hypotheses_file: data/knowledge/case_hypotheses.yaml
 
 climate_twins:
   algorithm: kmeans        # kmeans | hdbscan (hdbscan optional dependency)

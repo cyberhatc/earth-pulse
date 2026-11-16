@@ -152,7 +152,7 @@ def _analysis_chunks() -> list[dict]:
     if not analysis_path.exists():
         return chunks
     try:
-        analysis = json.loads(analysis_path.read_text())
+        analysis = json.loads(analysis_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
         return chunks
 
@@ -268,7 +268,7 @@ def build_kb() -> dict:
         path = REPO_ROOT / rel
         if not path.exists():
             continue
-        text = path.read_text(errors="ignore")
+        text = path.read_text(encoding="utf-8", errors="ignore")
         added = chunk_markdown(text, rel)
         chunks.extend(added)
         if added:

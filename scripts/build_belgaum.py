@@ -49,7 +49,7 @@ def main() -> int:
     build_point_store(LAT, LON, out_npz)
     payload = analyse_point(out_npz)
     out_json = out_npz.with_suffix(".json")
-    out_json.write_text(json.dumps(payload, indent=2, default=str))
+    out_json.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
     print(f"[belgaum] wrote {out_json}")
     print("[belgaum] next_move:", payload.get("next_move"))
     return 0

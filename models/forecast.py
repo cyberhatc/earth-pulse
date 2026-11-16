@@ -131,8 +131,14 @@ def ridge_bands(mean: np.ndarray, resid_std: np.ndarray, step_index: int) -> tup
     return mean - scale, mean + scale
 
 
-def linear_trend_seasonal_forecast(series: np.ndarray, dates: list[str], horizon: int) -> dict:
-    """Transparent baseline: Theil–Sen trend + monthly climatology of residuals."""
+def linear_trend_seasonal_forecast(series: np.ndarray, dates: list[str], horizon: int,
+                                   conformal_widths: list[float] | dict[int, float] | None = None) -> dict:
+    """Transparent baseline: Theil–Sen trend + monthly climatology of residuals.
+
+    `conformal_widths`: optional calibrated half-widths per horizon step (p10-p90).
+    When provided, these REPLACE the 1.645*sigma*sqrt(h) band (the honesty path);
+    when absent, the sqrt(h) approximation is used (still honest, coarser).
+    """
     y = fill_missing_linear(series)
     slope, intercept = theil_sen_slope(y)          # per month
     n = len(y)
@@ -151,7 +157,16 @@ def linear_trend_seasonal_forecast(series: np.ndarray, dates: list[str], horizon
             y_ += 1
         months_future.append(m_ - 1)
     mean = slope * x_future + intercept + clim[np.array(months_future)]
-    spread = 1.645 * sigma * np.sqrt(np.arange(1, horizon + 1))
+    if conformal_widths is not None:
+        if isinstance(conformal_widths, dict):
+            widths = [conformal_widths.get(h, list(conformal_widths.values())[-1] if conformal_widths else sigma) for h in range(1, horizon + 1)]
+        else:
+            widths = [float(conformal_widths[h]) if h < len(conformal_widths) else float(conformal_widths[-1]) for h in range(horizon)]
+        spread = np.array(widths, dtype=np.float64)
+        band_method = "conformal"
+    else:
+        spread = 1.645 * sigma * np.sqrt(np.arange(1, horizon + 1))
+        band_method = "sqrt_h"
     return {
         "mean": mean.tolist(),
         "lower": (mean - spread).tolist(),
@@ -159,6 +174,7 @@ def linear_trend_seasonal_forecast(series: np.ndarray, dates: list[str], horizon
         "model": "linear_trend_seasonal",
         "slope_per_month": float(slope),
         "resid_sigma": sigma,
+        "band_method": band_method,
     }
 
 

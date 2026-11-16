@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """End-to-end offline verification: sample -> engine -> forecast -> payload keys.
 
 Exit 0 on success, non-zero with a message on failure. Safe to run in CI.
@@ -38,7 +38,7 @@ def main() -> int:
     assert all(series["lower"][i] <= series["mean"][i] <= series["upper"][i] for i in range(12)), "band ordering violated"
 
     analysis_path = ROOT / "data" / "processed" / "analysis.json"
-    analysis = json.loads(analysis_path.read_text())
+    analysis = json.loads(analysis_path.read_text(encoding="utf-8"))
     for key in ("trends", "opposite_trends", "climate_twins", "cells"):
         assert key in analysis, f"analysis.json missing {key}"
     assert len(analysis["cells"]) == 240

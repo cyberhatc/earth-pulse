@@ -3,13 +3,15 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Query
 
+from api.deps import normalise_lon
 from api.services import ondemand
 
 router = APIRouter()
 
 
 @router.get("/tier-b")
-def tier_b(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180, le=180)):
+def tier_b(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-360, le=360)):
+    lon = normalise_lon(lon)
     return {
         "point": {"lat": lat, "lon": lon},
         "note": "Opt-in live probes; results are cached. Failures are reported, never fabricated.",

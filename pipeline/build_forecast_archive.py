@@ -289,7 +289,7 @@ def main() -> int:
     }
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "verification.json").write_text(json.dumps(verification, indent=2))
+    (out_dir / "verification.json").write_text(json.dumps(verification, indent=2), encoding="utf-8")
     print(f"[archive] verification written -> {out_dir / 'verification.json'}")
     for p, r in verification["parameters"].items():
         print(f"[archive]   {p:16s} MAE={r['mae']:.3f} RMSE={r['rmse']:.3f} "
@@ -374,7 +374,7 @@ def main() -> int:
         "files": files,
         "note": "One NPZ per parameter per horizon. Load with numpy.load; arrays are (H, G).",
     }
-    (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, default=str))
+    (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, default=str), encoding="utf-8")
     print(f"[archive] manifest written -> {out_dir / 'manifest.json'} · total elapsed {time.time() - t0:.1f}s")
     return 0
 

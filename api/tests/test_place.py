@@ -20,7 +20,7 @@ def test_health(client):
     assert r.status_code == 200
     body = r.json()
     assert body["status"] == "ok"
-    assert body["schema_version"] == "1.0.0"
+    assert body["schema_version"] == "1.1.0"
 
 
 def test_place_payload(client):

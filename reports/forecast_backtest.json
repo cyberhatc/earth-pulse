@@ -1,0 +1,6799 @@
+{
+  "generated_at": "2026-11-16T14:40:46+0530",
+  "store": "data/processed/earth_pulse_real.npz",
+  "synthetic": false,
+  "grid": "2.5deg global (sampled)",
+  "cell_sampling": "24 cells stratified by lat band x land/ocean (seed 42)",
+  "cell_indices": [
+    703,
+    142,
+    8666,
+    8944,
+    9778,
+    1395,
+    1152,
+    9373,
+    8032,
+    7573,
+    8174,
+    3797,
+    2905,
+    7247,
+    2301,
+    8115,
+    4514,
+    5122,
+    5118,
+    5404,
+    4592,
+    6067,
+    4049,
+    6000
+  ],
+  "origins": [
+    "2005-01",
+    "2007-01",
+    "2009-01",
+    "2011-01",
+    "2013-01",
+    "2015-01",
+    "2017-01",
+    "2019-01",
+    "2021-01"
+  ],
+  "origin_protocol": "train on prefix only; origins every 24 months from 2005; horizon 60 months",
+  "models": [
+    "persistence",
+    "seasonal_naive",
+    "climatology_trend",
+    "direct_ridge"
+  ],
+  "variables": [
+    "temperature",
+    "precipitation",
+    "sst"
+  ],
+  "metrics": {
+    "per_horizon": {
+      "1": {
+        "persistence": {
+          "mae": 16.9517,
+          "rmse": 44.4539,
+          "mase": 1.5943,
+          "bias": -3.5491,
+          "n": 480
+        },
+        "seasonal_naive": {
+          "mae": 10.4705,
+          "rmse": 25.2682,
+          "mase": 0.961,
+          "bias": -1.1173,
+          "n": 480
+        },
+        "climatology_trend": {
+          "mae": 10.4538,
+          "rmse": 25.0684,
+          "mase": 0.8593,
+          "bias": -2.0756,
+          "n": 480
+        },
+        "direct_ridge": {
+          "mae": 11.6586,
+          "rmse": 27.191,
+          "mase": 0.8762,
+          "bias": -2.1252,
+          "n": 480
+        }
+      },
+      "3": {
+        "persistence": {
+          "mae": 17.3353,
+          "rmse": 41.6343,
+          "mase": 1.6284,
+          "bias": 0.3944,
+          "n": 480
+        },
+        "seasonal_naive": {
+          "mae": 10.6048,
+          "rmse": 24.6751,
+          "mase": 0.9302,
+          "bias": 2.1799,
+          "n": 480
+        },
+        "climatology_trend": {
+          "mae": 10.1448,
+          "rmse": 24.1079,
+          "mase": 0.8318,
+          "bias": 1.2216,
+          "n": 480
+        },
+        "direct_ridge": {
+          "mae": 10.7931,
+          "rmse": 23.8689,
+          "mase": 0.9075,
+          "bias": -0.3023,
+          "n": 480
+        }
+      },
+      "6": {
+        "persistence": {
+          "mae": 28.2374,
+          "rmse": 67.0292,
+          "mase": 1.8651,
+          "bias": 14.8049,
+          "n": 480
+        },
+        "seasonal_naive": {
+          "mae": 7.7152,
+          "rmse": 17.2057,
+          "mase": 0.7913,
+          "bias": 1.6336,
+          "n": 480
+        },
+        "climatology_trend": {
+          "mae": 7.4016,
+          "rmse": 17.0259,
+          "mase": 0.7044,
+          "bias": 0.6753,
+          "n": 480
+        },
+        "direct_ridge": {
+          "mae": 8.7072,
+          "rmse": 18.9734,
+          "mase": 0.8145,
+          "bias": 0.7411,
+          "n": 480
+        }
+      },
+      "12": {
+        "persistence": {
+          "mae": 14.3165,
+          "rmse": 35.7562,
+          "mase": 1.0552,
+          "bias": 2.1066,
+          "n": 480
+        },
+        "seasonal_naive": {
+          "mae": 10.4668,
+          "rmse": 26.1745,
+          "mase": 0.9406,
+          "bias": 2.7882,
+          "n": 480
+        },
+        "climatology_trend": {
+          "mae": 10.1722,
+          "rmse": 25.7697,
+          "mase": 0.8525,
+          "bias": 1.8298,
+          "n": 480
+        },
+        "direct_ridge": {
+          "mae": 10.8224,
+          "rmse": 26.3774,
+          "mase": 0.9691,
+          "bias": 1.8303,
+          "n": 480
+        }
+      },
+      "24": {
+        "persistence": {
+          "mae": 14.1189,
+          "rmse": 36.5175,
+          "mase": 1.1832,
+          "bias": -0.4276,
+          "n": 480
+        },
+        "seasonal_naive": {
+          "mae": 11.0993,
+          "rmse": 27.2459,
+          "mase": 0.9729,
+          "bias": 0.2539,
+          "n": 480
+        },
+        "climatology_trend": {
+          "mae": 11.2746,
+          "rmse": 27.1837,
+          "mase": 0.8806,
+          "bias": -0.7619,
+          "n": 480
+        },
+        "direct_ridge": {
+          "mae": 11.8869,
+          "rmse": 28.6292,
+          "mase": 1.063,
+          "bias": 0.0943,
+          "n": 480
+        }
+      },
+      "36": {
+        "persistence": {
+          "mae": 13.6481,
+          "rmse": 32.9736,
+          "mase": 1.0642,
+          "bias": 1.9773,
+          "n": 480
+        },
+        "seasonal_naive": {
+          "mae": 10.684,
+          "rmse": 26.938,
+          "mase": 0.9749,
+          "bias": 2.6589,
+          "n": 480
+        },
+        "climatology_trend": {
+          "mae": 10.404,
+          "rmse": 26.5129,
+          "mase": 0.8803,
+          "bias": 1.5855,
+          "n": 480
+        },
+        "direct_ridge": {
+          "mae": 11.1816,
+          "rmse": 28.1099,
+          "mase": 1.0021,
+          "bias": 2.4518,
+          "n": 480
+        }
+      },
+      "48": {
+        "persistence": {
+          "mae": 15.757,
+          "rmse": 40.2155,
+          "mase": 1.1029,
+          "bias": 0.0379,
+          "n": 480
+        },
+        "seasonal_naive": {
+          "mae": 10.2906,
+          "rmse": 25.6662,
+          "mase": 0.9664,
+          "bias": 0.7195,
+          "n": 480
+        },
+        "climatology_trend": {
+          "mae": 10.3901,
+          "rmse": 25.7757,
+          "mase": 0.8723,
+          "bias": -0.4115,
+          "n": 480
+        },
+        "direct_ridge": {
+          "mae": 12.3942,
+          "rmse": 30.1488,
+          "mase": 1.0204,
+          "bias": -0.3082,
+          "n": 480
+        }
+      },
+      "60": {
+        "persistence": {
+          "mae": 12.9456,
+          "rmse": 31.5218,
+          "mase": 1.1821,
+          "bias": 1.5813,
+          "n": 480
+        },
+        "seasonal_naive": {
+          "mae": 10.5432,
+          "rmse": 26.2755,
+          "mase": 1.0193,
+          "bias": 2.2629,
+          "n": 480
+        },
+        "climatology_trend": {
+          "mae": 10.2687,
+          "rmse": 25.8445,
+          "mase": 0.9149,
+          "bias": 1.0744,
+          "n": 480
+        },
+        "direct_ridge": {
+          "mae": 11.1918,
+          "rmse": 27.0537,
+          "mase": 1.0913,
+          "bias": 1.8386,
+          "n": 480
+        }
+      }
+    },
+    "per_variable_mae_h12": {
+      "temperature": {
+        "1": {
+          "persistence": {
+            "mae": 1.0964,
+            "mase": 0.7957
+          },
+          "seasonal_naive": {
+            "mae": 0.9989,
+            "mase": 0.9612
+          },
+          "climatology_trend": {
+            "mae": 0.8666,
+            "mase": 0.7774
+          },
+          "direct_ridge": {
+            "mae": 1.0005,
+            "mase": 0.7649
+          }
+        },
+        "2": {
+          "persistence": {
+            "mae": 1.377,
+            "mase": 0.984
+          },
+          "seasonal_naive": {
+            "mae": 1.1011,
+            "mase": 0.9403
+          },
+          "climatology_trend": {
+            "mae": 1.0084,
+            "mase": 0.7884
+          },
+          "direct_ridge": {
+            "mae": 0.9778,
+            "mase": 0.7611
+          }
+        },
+        "3": {
+          "persistence": {
+            "mae": 1.3849,
+            "mase": 1.0232
+          },
+          "seasonal_naive": {
+            "mae": 1.1731,
+            "mase": 0.9625
+          },
+          "climatology_trend": {
+            "mae": 1.0948,
+            "mase": 0.8192
+          },
+          "direct_ridge": {
+            "mae": 1.2648,
+            "mase": 0.9076
+          }
+        },
+        "4": {
+          "persistence": {
+            "mae": 1.2938,
+            "mase": 0.9746
+          },
+          "seasonal_naive": {
+            "mae": 1.1128,
+            "mase": 0.9468
+          },
+          "climatology_trend": {
+            "mae": 1.0669,
+            "mase": 0.8609
+          },
+          "direct_ridge": {
+            "mae": 1.1835,
+            "mase": 0.8999
+          }
+        },
+        "5": {
+          "persistence": {
+            "mae": 1.2113,
+            "mase": 0.934
+          },
+          "seasonal_naive": {
+            "mae": 1.0097,
+            "mase": 0.921
+          },
+          "climatology_trend": {
+            "mae": 0.9205,
+            "mase": 0.7349
+          },
+          "direct_ridge": {
+            "mae": 1.02,
+            "mase": 0.7906
+          }
+        },
+        "6": {
+          "persistence": {
+            "mae": 1.2698,
+            "mase": 0.9434
+          },
+          "seasonal_naive": {
+            "mae": 0.8147,
+            "mase": 0.8501
+          },
+          "climatology_trend": {
+            "mae": 0.7361,
+            "mase": 0.6877
+          },
+          "direct_ridge": {
+            "mae": 0.8423,
+            "mase": 0.7408
+          }
+        },
+        "7": {
+          "persistence": {
+            "mae": 1.3626,
+            "mase": 1.0269
+          },
+          "seasonal_naive": {
+            "mae": 0.9626,
+            "mase": 0.9021
+          },
+          "climatology_trend": {
+            "mae": 0.8629,
+            "mase": 0.7374
+          },
+          "direct_ridge": {
+            "mae": 1.0232,
+            "mase": 0.8088
+          }
+        },
+        "8": {
+          "persistence": {
+            "mae": 1.4258,
+            "mase": 1.0464
+          },
+          "seasonal_naive": {
+            "mae": 0.8745,
+            "mase": 0.8548
+          },
+          "climatology_trend": {
+            "mae": 0.7692,
+            "mase": 0.6803
+          },
+          "direct_ridge": {
+            "mae": 0.8726,
+            "mase": 0.7486
+          }
+        },
+        "9": {
+          "persistence": {
+            "mae": 1.3546,
+            "mase": 1.0111
+          },
+          "seasonal_naive": {
+            "mae": 0.9666,
+            "mase": 0.9478
+          },
+          "climatology_trend": {
+            "mae": 0.826,
+            "mase": 0.7179
+          },
+          "direct_ridge": {
+            "mae": 0.9841,
+            "mase": 0.8201
+          }
+        },
+        "10": {
+          "persistence": {
+            "mae": 1.3406,
+            "mase": 0.998
+          },
+          "seasonal_naive": {
+            "mae": 0.9611,
+            "mase": 0.8619
+          },
+          "climatology_trend": {
+            "mae": 0.782,
+            "mase": 0.6679
+          },
+          "direct_ridge": {
+            "mae": 1.0882,
+            "mase": 0.8475
+          }
+        },
+        "11": {
+          "persistence": {
+            "mae": 1.2559,
+            "mase": 0.9564
+          },
+          "seasonal_naive": {
+            "mae": 1.1584,
+            "mase": 1.0019
+          },
+          "climatology_trend": {
+            "mae": 0.9717,
+            "mase": 0.7675
+          },
+          "direct_ridge": {
+            "mae": 1.1084,
+            "mase": 0.8763
+          }
+        },
+        "12": {
+          "persistence": {
+            "mae": 1.331,
+            "mase": 0.9908
+          },
+          "seasonal_naive": {
+            "mae": 1.0751,
+            "mase": 0.9659
+          },
+          "climatology_trend": {
+            "mae": 0.9626,
+            "mase": 0.7859
+          },
+          "direct_ridge": {
+            "mae": 1.0965,
+            "mase": 0.8776
+          }
+        },
+        "13": {
+          "persistence": {
+            "mae": 1.6149,
+            "mase": 1.2073
+          },
+          "seasonal_naive": {
+            "mae": 1.2095,
+            "mase": 1.0434
+          },
+          "climatology_trend": {
+            "mae": 1.1574,
+            "mase": 0.9231
+          },
+          "direct_ridge": {
+            "mae": 1.3379,
+            "mase": 1.0192
+          }
+        },
+        "14": {
+          "persistence": {
+            "mae": 1.4874,
+            "mase": 1.1906
+          },
+          "seasonal_naive": {
+            "mae": 1.2839,
+            "mase": 1.1198
+          },
+          "climatology_trend": {
+            "mae": 1.184,
+            "mase": 0.9824
+          },
+          "direct_ridge": {
+            "mae": 1.2594,
+            "mase": 1.0363
+          }
+        },
+        "15": {
+          "persistence": {
+            "mae": 1.4667,
+            "mase": 1.1952
+          },
+          "seasonal_naive": {
+            "mae": 1.2465,
+            "mase": 1.1177
+          },
+          "climatology_trend": {
+            "mae": 1.1079,
+            "mase": 0.928
+          },
+          "direct_ridge": {
+            "mae": 1.2461,
+            "mase": 1.0332
+          }
+        },
+        "16": {
+          "persistence": {
+            "mae": 1.4892,
+            "mase": 1.1539
+          },
+          "seasonal_naive": {
+            "mae": 1.1092,
+            "mase": 1.0188
+          },
+          "climatology_trend": {
+            "mae": 0.9685,
+            "mase": 0.8649
+          },
+          "direct_ridge": {
+            "mae": 1.1128,
+            "mase": 0.9545
+          }
+        },
+        "17": {
+          "persistence": {
+            "mae": 1.2875,
+            "mase": 1.0513
+          },
+          "seasonal_naive": {
+            "mae": 0.9619,
+            "mase": 0.9225
+          },
+          "climatology_trend": {
+            "mae": 0.8859,
+            "mase": 0.8334
+          },
+          "direct_ridge": {
+            "mae": 1.015,
+            "mase": 0.9131
+          }
+        },
+        "18": {
+          "persistence": {
+            "mae": 1.3331,
+            "mase": 1.0128
+          },
+          "seasonal_naive": {
+            "mae": 0.8819,
+            "mase": 0.8496
+          },
+          "climatology_trend": {
+            "mae": 0.7829,
+            "mase": 0.6987
+          },
+          "direct_ridge": {
+            "mae": 0.8778,
+            "mase": 0.8046
+          }
+        },
+        "19": {
+          "persistence": {
+            "mae": 1.3966,
+            "mase": 1.0653
+          },
+          "seasonal_naive": {
+            "mae": 0.8704,
+            "mase": 0.8499
+          },
+          "climatology_trend": {
+            "mae": 0.7578,
+            "mase": 0.6217
+          },
+          "direct_ridge": {
+            "mae": 0.8798,
+            "mase": 0.7718
+          }
+        },
+        "20": {
+          "persistence": {
+            "mae": 1.3691,
+            "mase": 1.0392
+          },
+          "seasonal_naive": {
+            "mae": 0.9553,
+            "mase": 0.8759
+          },
+          "climatology_trend": {
+            "mae": 0.7755,
+            "mase": 0.6716
+          },
+          "direct_ridge": {
+            "mae": 1.0123,
+            "mase": 0.8522
+          }
+        },
+        "21": {
+          "persistence": {
+            "mae": 1.346,
+            "mase": 1.0303
+          },
+          "seasonal_naive": {
+            "mae": 0.9625,
+            "mase": 0.9223
+          },
+          "climatology_trend": {
+            "mae": 0.7594,
+            "mase": 0.6818
+          },
+          "direct_ridge": {
+            "mae": 0.9671,
+            "mase": 0.8399
+          }
+        },
+        "22": {
+          "persistence": {
+            "mae": 1.4047,
+            "mase": 1.0443
+          },
+          "seasonal_naive": {
+            "mae": 1.0978,
+            "mase": 1.0159
+          },
+          "climatology_trend": {
+            "mae": 0.8532,
+            "mase": 0.7112
+          },
+          "direct_ridge": {
+            "mae": 1.0307,
+            "mase": 0.8823
+          }
+        },
+        "23": {
+          "persistence": {
+            "mae": 1.3219,
+            "mase": 0.9923
+          },
+          "seasonal_naive": {
+            "mae": 1.1734,
+            "mase": 1.0071
+          },
+          "climatology_trend": {
+            "mae": 0.9906,
+            "mase": 0.7689
+          },
+          "direct_ridge": {
+            "mae": 1.0754,
+            "mase": 0.8676
+          }
+        },
+        "24": {
+          "persistence": {
+            "mae": 1.3192,
+            "mase": 1.0705
+          },
+          "seasonal_naive": {
+            "mae": 1.1208,
+            "mase": 0.9801
+          },
+          "climatology_trend": {
+            "mae": 0.9964,
+            "mase": 0.7839
+          },
+          "direct_ridge": {
+            "mae": 1.1125,
+            "mase": 0.9002
+          }
+        },
+        "25": {
+          "persistence": {
+            "mae": 1.4825,
+            "mase": 1.1878
+          },
+          "seasonal_naive": {
+            "mae": 1.0502,
+            "mase": 0.9933
+          },
+          "climatology_trend": {
+            "mae": 0.9528,
+            "mase": 0.8455
+          },
+          "direct_ridge": {
+            "mae": 1.1346,
+            "mase": 0.9826
+          }
+        },
+        "26": {
+          "persistence": {
+            "mae": 1.5584,
+            "mase": 1.1233
+          },
+          "seasonal_naive": {
+            "mae": 1.1025,
+            "mase": 0.9709
+          },
+          "climatology_trend": {
+            "mae": 1.0225,
+            "mase": 0.8061
+          },
+          "direct_ridge": {
+            "mae": 1.0846,
+            "mase": 0.8875
+          }
+        },
+        "27": {
+          "persistence": {
+            "mae": 1.6373,
+            "mase": 1.1783
+          },
+          "seasonal_naive": {
+            "mae": 1.1719,
+            "mase": 0.9807
+          },
+          "climatology_trend": {
+            "mae": 1.075,
+            "mase": 0.836
+          },
+          "direct_ridge": {
+            "mae": 1.3353,
+            "mase": 1.0119
+          }
+        },
+        "28": {
+          "persistence": {
+            "mae": 1.5068,
+            "mase": 1.1165
+          },
+          "seasonal_naive": {
+            "mae": 1.1125,
+            "mase": 0.9482
+          },
+          "climatology_trend": {
+            "mae": 1.0941,
+            "mase": 0.8854
+          },
+          "direct_ridge": {
+            "mae": 1.2327,
+            "mase": 1.0008
+          }
+        },
+        "29": {
+          "persistence": {
+            "mae": 1.3559,
+            "mase": 1.0173
+          },
+          "seasonal_naive": {
+            "mae": 0.9782,
+            "mase": 0.9332
+          },
+          "climatology_trend": {
+            "mae": 0.9174,
+            "mase": 0.7498
+          },
+          "direct_ridge": {
+            "mae": 1.0283,
+            "mase": 0.8608
+          }
+        },
+        "30": {
+          "persistence": {
+            "mae": 1.3321,
+            "mase": 1.0844
+          },
+          "seasonal_naive": {
+            "mae": 0.8146,
+            "mase": 0.8861
+          },
+          "climatology_trend": {
+            "mae": 0.7309,
+            "mase": 0.7101
+          },
+          "direct_ridge": {
+            "mae": 0.8761,
+            "mase": 0.8028
+          }
+        },
+        "31": {
+          "persistence": {
+            "mae": 1.5239,
+            "mase": 1.1948
+          },
+          "seasonal_naive": {
+            "mae": 1.0002,
+            "mase": 0.9707
+          },
+          "climatology_trend": {
+            "mae": 0.9037,
+            "mase": 0.7737
+          },
+          "direct_ridge": {
+            "mae": 1.053,
+            "mase": 0.8999
+          }
+        },
+        "32": {
+          "persistence": {
+            "mae": 1.4969,
+            "mase": 1.1568
+          },
+          "seasonal_naive": {
+            "mae": 0.9781,
+            "mase": 0.9725
+          },
+          "climatology_trend": {
+            "mae": 0.8312,
+            "mase": 0.7375
+          },
+          "direct_ridge": {
+            "mae": 0.9384,
+            "mase": 0.8316
+          }
+        },
+        "33": {
+          "persistence": {
+            "mae": 1.3646,
+            "mase": 1.0718
+          },
+          "seasonal_naive": {
+            "mae": 1.0641,
+            "mase": 1.0495
+          },
+          "climatology_trend": {
+            "mae": 0.9006,
+            "mase": 0.7884
+          },
+          "direct_ridge": {
+            "mae": 1.084,
+            "mase": 0.9115
+          }
+        },
+        "34": {
+          "persistence": {
+            "mae": 1.3836,
+            "mase": 1.0637
+          },
+          "seasonal_naive": {
+            "mae": 1.0718,
+            "mase": 0.9617
+          },
+          "climatology_trend": {
+            "mae": 0.8366,
+            "mase": 0.7178
+          },
+          "direct_ridge": {
+            "mae": 1.0488,
+            "mase": 0.8589
+          }
+        },
+        "35": {
+          "persistence": {
+            "mae": 1.4315,
+            "mase": 1.0561
+          },
+          "seasonal_naive": {
+            "mae": 1.2163,
+            "mase": 1.0768
+          },
+          "climatology_trend": {
+            "mae": 1.0179,
+            "mase": 0.8116
+          },
+          "direct_ridge": {
+            "mae": 1.0747,
+            "mase": 0.9061
+          }
+        },
+        "36": {
+          "persistence": {
+            "mae": 1.3497,
+            "mase": 1.0256
+          },
+          "seasonal_naive": {
+            "mae": 1.1669,
+            "mase": 1.0446
+          },
+          "climatology_trend": {
+            "mae": 1.05,
+            "mase": 0.8493
+          },
+          "direct_ridge": {
+            "mae": 1.1528,
+            "mase": 0.9336
+          }
+        },
+        "37": {
+          "persistence": {
+            "mae": 1.5536,
+            "mase": 1.106
+          },
+          "seasonal_naive": {
+            "mae": 1.2422,
+            "mase": 1.1027
+          },
+          "climatology_trend": {
+            "mae": 1.1535,
+            "mase": 0.8993
+          },
+          "direct_ridge": {
+            "mae": 1.2993,
+            "mase": 0.9928
+          }
+        },
+        "38": {
+          "persistence": {
+            "mae": 1.5427,
+            "mase": 1.2297
+          },
+          "seasonal_naive": {
+            "mae": 1.3865,
+            "mase": 1.2316
+          },
+          "climatology_trend": {
+            "mae": 1.2348,
+            "mase": 1.0211
+          },
+          "direct_ridge": {
+            "mae": 1.4201,
+            "mase": 1.1691
+          }
+        },
+        "39": {
+          "persistence": {
+            "mae": 1.5217,
+            "mase": 1.175
+          },
+          "seasonal_naive": {
+            "mae": 1.2508,
+            "mase": 1.1744
+          },
+          "climatology_trend": {
+            "mae": 1.0389,
+            "mase": 0.8855
+          },
+          "direct_ridge": {
+            "mae": 1.2181,
+            "mase": 1.0225
+          }
+        },
+        "40": {
+          "persistence": {
+            "mae": 1.4443,
+            "mase": 1.1157
+          },
+          "seasonal_naive": {
+            "mae": 1.1478,
+            "mase": 1.0766
+          },
+          "climatology_trend": {
+            "mae": 0.9385,
+            "mase": 0.8422
+          },
+          "direct_ridge": {
+            "mae": 1.0953,
+            "mase": 0.9667
+          }
+        },
+        "41": {
+          "persistence": {
+            "mae": 1.2709,
+            "mase": 1.0125
+          },
+          "seasonal_naive": {
+            "mae": 1.0283,
+            "mase": 1.0111
+          },
+          "climatology_trend": {
+            "mae": 0.9206,
+            "mase": 0.8482
+          },
+          "direct_ridge": {
+            "mae": 1.0321,
+            "mase": 0.94
+          }
+        },
+        "42": {
+          "persistence": {
+            "mae": 1.3565,
+            "mase": 1.0571
+          },
+          "seasonal_naive": {
+            "mae": 0.9496,
+            "mase": 0.9536
+          },
+          "climatology_trend": {
+            "mae": 0.7503,
+            "mase": 0.6767
+          },
+          "direct_ridge": {
+            "mae": 0.9506,
+            "mase": 0.8372
+          }
+        },
+        "43": {
+          "persistence": {
+            "mae": 1.4254,
+            "mase": 1.1151
+          },
+          "seasonal_naive": {
+            "mae": 0.9528,
+            "mase": 0.957
+          },
+          "climatology_trend": {
+            "mae": 0.7933,
+            "mase": 0.6547
+          },
+          "direct_ridge": {
+            "mae": 0.9181,
+            "mase": 0.7861
+          }
+        },
+        "44": {
+          "persistence": {
+            "mae": 1.4895,
+            "mase": 1.143
+          },
+          "seasonal_naive": {
+            "mae": 1.0349,
+            "mase": 0.9619
+          },
+          "climatology_trend": {
+            "mae": 0.8012,
+            "mase": 0.6901
+          },
+          "direct_ridge": {
+            "mae": 1.1051,
+            "mase": 0.8549
+          }
+        },
+        "45": {
+          "persistence": {
+            "mae": 1.3776,
+            "mase": 1.1308
+          },
+          "seasonal_naive": {
+            "mae": 1.0025,
+            "mase": 1.0068
+          },
+          "climatology_trend": {
+            "mae": 0.755,
+            "mase": 0.7106
+          },
+          "direct_ridge": {
+            "mae": 0.9646,
+            "mase": 0.8472
+          }
+        },
+        "46": {
+          "persistence": {
+            "mae": 1.4039,
+            "mase": 1.1625
+          },
+          "seasonal_naive": {
+            "mae": 1.1201,
+            "mase": 1.0627
+          },
+          "climatology_trend": {
+            "mae": 0.8306,
+            "mase": 0.7218
+          },
+          "direct_ridge": {
+            "mae": 1.0366,
+            "mase": 0.8591
+          }
+        },
+        "47": {
+          "persistence": {
+            "mae": 1.3625,
+            "mase": 1.0857
+          },
+          "seasonal_naive": {
+            "mae": 1.201,
+            "mase": 1.0351
+          },
+          "climatology_trend": {
+            "mae": 1.0223,
+            "mase": 0.7999
+          },
+          "direct_ridge": {
+            "mae": 1.0151,
+            "mase": 0.8123
+          }
+        },
+        "48": {
+          "persistence": {
+            "mae": 1.4182,
+            "mase": 1.0586
+          },
+          "seasonal_naive": {
+            "mae": 1.1664,
+            "mase": 1.0072
+          },
+          "climatology_trend": {
+            "mae": 1.0046,
+            "mase": 0.7981
+          },
+          "direct_ridge": {
+            "mae": 1.09,
+            "mase": 0.8699
+          }
+        },
+        "49": {
+          "persistence": {
+            "mae": 1.6081,
+            "mase": 1.2404
+          },
+          "seasonal_naive": {
+            "mae": 1.1972,
+            "mase": 1.0977
+          },
+          "climatology_trend": {
+            "mae": 1.0566,
+            "mase": 0.9437
+          },
+          "direct_ridge": {
+            "mae": 1.2051,
+            "mase": 1.054
+          }
+        },
+        "50": {
+          "persistence": {
+            "mae": 1.5589,
+            "mase": 1.1605
+          },
+          "seasonal_naive": {
+            "mae": 1.1114,
+            "mase": 1.0073
+          },
+          "climatology_trend": {
+            "mae": 0.9929,
+            "mase": 0.8342
+          },
+          "direct_ridge": {
+            "mae": 1.175,
+            "mase": 0.9478
+          }
+        },
+        "51": {
+          "persistence": {
+            "mae": 1.4806,
+            "mase": 1.1614
+          },
+          "seasonal_naive": {
+            "mae": 1.2235,
+            "mase": 1.0683
+          },
+          "climatology_trend": {
+            "mae": 1.0744,
+            "mase": 0.8779
+          },
+          "direct_ridge": {
+            "mae": 1.2158,
+            "mase": 0.9974
+          }
+        },
+        "52": {
+          "persistence": {
+            "mae": 1.478,
+            "mase": 1.1268
+          },
+          "seasonal_naive": {
+            "mae": 1.1507,
+            "mase": 1.0214
+          },
+          "climatology_trend": {
+            "mae": 1.0855,
+            "mase": 0.901
+          },
+          "direct_ridge": {
+            "mae": 1.2599,
+            "mase": 1.0092
+          }
+        },
+        "53": {
+          "persistence": {
+            "mae": 1.426,
+            "mase": 1.1028
+          },
+          "seasonal_naive": {
+            "mae": 0.9818,
+            "mase": 0.9764
+          },
+          "climatology_trend": {
+            "mae": 0.9128,
+            "mase": 0.7758
+          },
+          "direct_ridge": {
+            "mae": 1.0724,
+            "mase": 0.9169
+          }
+        },
+        "54": {
+          "persistence": {
+            "mae": 1.4786,
+            "mase": 1.1739
+          },
+          "seasonal_naive": {
+            "mae": 0.9157,
+            "mase": 0.9789
+          },
+          "climatology_trend": {
+            "mae": 0.8029,
+            "mase": 0.7717
+          },
+          "direct_ridge": {
+            "mae": 0.9648,
+            "mase": 0.8993
+          }
+        },
+        "55": {
+          "persistence": {
+            "mae": 1.5698,
+            "mase": 1.2562
+          },
+          "seasonal_naive": {
+            "mae": 0.9931,
+            "mase": 1.0011
+          },
+          "climatology_trend": {
+            "mae": 0.8814,
+            "mase": 0.7939
+          },
+          "direct_ridge": {
+            "mae": 1.0289,
+            "mase": 0.9216
+          }
+        },
+        "56": {
+          "persistence": {
+            "mae": 1.5755,
+            "mase": 1.2147
+          },
+          "seasonal_naive": {
+            "mae": 1.0649,
+            "mase": 1.0045
+          },
+          "climatology_trend": {
+            "mae": 0.8916,
+            "mase": 0.7941
+          },
+          "direct_ridge": {
+            "mae": 1.0291,
+            "mase": 0.9006
+          }
+        },
+        "57": {
+          "persistence": {
+            "mae": 1.5274,
+            "mase": 1.177
+          },
+          "seasonal_naive": {
+            "mae": 1.1429,
+            "mase": 1.1144
+          },
+          "climatology_trend": {
+            "mae": 0.9503,
+            "mase": 0.8204
+          },
+          "direct_ridge": {
+            "mae": 1.0987,
+            "mase": 0.9481
+          }
+        },
+        "58": {
+          "persistence": {
+            "mae": 1.3778,
+            "mase": 1.0942
+          },
+          "seasonal_naive": {
+            "mae": 1.1872,
+            "mase": 1.0535
+          },
+          "climatology_trend": {
+            "mae": 0.9234,
+            "mase": 0.7768
+          },
+          "direct_ridge": {
+            "mae": 1.0943,
+            "mase": 0.9203
+          }
+        },
+        "59": {
+          "persistence": {
+            "mae": 1.3714,
+            "mase": 1.0805
+          },
+          "seasonal_naive": {
+            "mae": 1.2652,
+            "mase": 1.1255
+          },
+          "climatology_trend": {
+            "mae": 1.0173,
+            "mase": 0.8261
+          },
+          "direct_ridge": {
+            "mae": 1.1731,
+            "mase": 0.9688
+          }
+        },
+        "60": {
+          "persistence": {
+            "mae": 1.4208,
+            "mase": 1.1147
+          },
+          "seasonal_naive": {
+            "mae": 1.2035,
+            "mase": 1.081
+          },
+          "climatology_trend": {
+            "mae": 1.0547,
+            "mase": 0.8515
+          },
+          "direct_ridge": {
+            "mae": 1.1783,
+            "mase": 0.9509
+          }
+        }
+      },
+      "precipitation": {
+        "1": {
+          "persistence": {
+            "mae": 40.8568,
+            "mase": 1.2573
+          },
+          "seasonal_naive": {
+            "mae": 24.9757,
+            "mase": 0.8189
+          },
+          "climatology_trend": {
+            "mae": 25.104,
+            "mase": 0.8231
+          },
+          "direct_ridge": {
+            "mae": 28.015,
+            "mase": 0.9162
+          }
+        },
+        "2": {
+          "persistence": {
+            "mae": 37.6126,
+            "mase": 1.2154
+          },
+          "seasonal_naive": {
+            "mae": 25.4423,
+            "mase": 0.8059
+          },
+          "climatology_trend": {
+            "mae": 25.1051,
+            "mase": 0.7832
+          },
+          "direct_ridge": {
+            "mae": 29.8447,
+            "mase": 0.9391
+          }
+        },
+        "3": {
+          "persistence": {
+            "mae": 41.4546,
+            "mase": 1.2948
+          },
+          "seasonal_naive": {
+            "mae": 25.1642,
+            "mase": 0.866
+          },
+          "climatology_trend": {
+            "mae": 24.1176,
+            "mase": 0.8153
+          },
+          "direct_ridge": {
+            "mae": 25.5591,
+            "mase": 0.8685
+          }
+        },
+        "4": {
+          "persistence": {
+            "mae": 44.8197,
+            "mase": 1.2681
+          },
+          "seasonal_naive": {
+            "mae": 21.0602,
+            "mase": 0.6887
+          },
+          "climatology_trend": {
+            "mae": 20.1216,
+            "mase": 0.627
+          },
+          "direct_ridge": {
+            "mae": 22.1376,
+            "mase": 0.7594
+          }
+        },
+        "5": {
+          "persistence": {
+            "mae": 58.9596,
+            "mase": 1.7455
+          },
+          "seasonal_naive": {
+            "mae": 19.6281,
+            "mase": 0.7225
+          },
+          "climatology_trend": {
+            "mae": 18.1507,
+            "mase": 0.6598
+          },
+          "direct_ridge": {
+            "mae": 20.8729,
+            "mase": 0.7678
+          }
+        },
+        "6": {
+          "persistence": {
+            "mae": 68.7402,
+            "mase": 2.2038
+          },
+          "seasonal_naive": {
+            "mae": 18.3119,
+            "mase": 0.7845
+          },
+          "climatology_trend": {
+            "mae": 17.6133,
+            "mase": 0.7475
+          },
+          "direct_ridge": {
+            "mae": 20.7649,
+            "mase": 0.8564
+          }
+        },
+        "7": {
+          "persistence": {
+            "mae": 70.0482,
+            "mase": 2.5445
+          },
+          "seasonal_naive": {
+            "mae": 19.2385,
+            "mase": 0.8601
+          },
+          "climatology_trend": {
+            "mae": 18.6132,
+            "mase": 0.8435
+          },
+          "direct_ridge": {
+            "mae": 21.5593,
+            "mase": 0.8969
+          }
+        },
+        "8": {
+          "persistence": {
+            "mae": 68.7828,
+            "mase": 2.7223
+          },
+          "seasonal_naive": {
+            "mae": 20.659,
+            "mase": 1.0065
+          },
+          "climatology_trend": {
+            "mae": 20.3771,
+            "mase": 1.0137
+          },
+          "direct_ridge": {
+            "mae": 24.1828,
+            "mase": 1.1335
+          }
+        },
+        "9": {
+          "persistence": {
+            "mae": 60.3107,
+            "mase": 2.0073
+          },
+          "seasonal_naive": {
+            "mae": 23.523,
+            "mase": 0.9066
+          },
+          "climatology_trend": {
+            "mae": 22.5033,
+            "mase": 0.8865
+          },
+          "direct_ridge": {
+            "mae": 24.2535,
+            "mase": 0.9257
+          }
+        },
+        "10": {
+          "persistence": {
+            "mae": 52.9302,
+            "mase": 1.6483
+          },
+          "seasonal_naive": {
+            "mae": 21.4176,
+            "mase": 0.8782
+          },
+          "climatology_trend": {
+            "mae": 20.4119,
+            "mase": 0.8294
+          },
+          "direct_ridge": {
+            "mae": 23.492,
+            "mase": 0.9528
+          }
+        },
+        "11": {
+          "persistence": {
+            "mae": 45.6863,
+            "mase": 1.3482
+          },
+          "seasonal_naive": {
+            "mae": 25.9491,
+            "mase": 0.8273
+          },
+          "climatology_trend": {
+            "mae": 26.2873,
+            "mase": 0.8225
+          },
+          "direct_ridge": {
+            "mae": 29.5062,
+            "mase": 0.9667
+          }
+        },
+        "12": {
+          "persistence": {
+            "mae": 34.2544,
+            "mase": 0.9783
+          },
+          "seasonal_naive": {
+            "mae": 24.8913,
+            "mase": 0.7128
+          },
+          "climatology_trend": {
+            "mae": 24.2894,
+            "mase": 0.7168
+          },
+          "direct_ridge": {
+            "mae": 25.7431,
+            "mase": 0.8041
+          }
+        },
+        "13": {
+          "persistence": {
+            "mae": 43.0434,
+            "mase": 1.2481
+          },
+          "seasonal_naive": {
+            "mae": 32.8621,
+            "mase": 0.922
+          },
+          "climatology_trend": {
+            "mae": 32.5039,
+            "mase": 0.932
+          },
+          "direct_ridge": {
+            "mae": 34.8883,
+            "mase": 1.0248
+          }
+        },
+        "14": {
+          "persistence": {
+            "mae": 39.1353,
+            "mase": 1.2206
+          },
+          "seasonal_naive": {
+            "mae": 28.3336,
+            "mase": 0.8438
+          },
+          "climatology_trend": {
+            "mae": 27.5654,
+            "mase": 0.8071
+          },
+          "direct_ridge": {
+            "mae": 32.0109,
+            "mase": 0.9353
+          }
+        },
+        "15": {
+          "persistence": {
+            "mae": 40.5214,
+            "mase": 1.2545
+          },
+          "seasonal_naive": {
+            "mae": 22.7666,
+            "mase": 0.8007
+          },
+          "climatology_trend": {
+            "mae": 21.6227,
+            "mase": 0.7439
+          },
+          "direct_ridge": {
+            "mae": 24.8115,
+            "mase": 0.8342
+          }
+        },
+        "16": {
+          "persistence": {
+            "mae": 52.0295,
+            "mase": 1.461
+          },
+          "seasonal_naive": {
+            "mae": 24.1543,
+            "mase": 0.8216
+          },
+          "climatology_trend": {
+            "mae": 23.5537,
+            "mase": 0.7605
+          },
+          "direct_ridge": {
+            "mae": 27.8176,
+            "mase": 0.8732
+          }
+        },
+        "17": {
+          "persistence": {
+            "mae": 58.5272,
+            "mase": 1.7122
+          },
+          "seasonal_naive": {
+            "mae": 21.446,
+            "mase": 0.7848
+          },
+          "climatology_trend": {
+            "mae": 20.0956,
+            "mase": 0.7301
+          },
+          "direct_ridge": {
+            "mae": 24.5548,
+            "mase": 0.927
+          }
+        },
+        "18": {
+          "persistence": {
+            "mae": 71.2975,
+            "mase": 2.3694
+          },
+          "seasonal_naive": {
+            "mae": 20.1122,
+            "mase": 0.8125
+          },
+          "climatology_trend": {
+            "mae": 19.2443,
+            "mase": 0.7718
+          },
+          "direct_ridge": {
+            "mae": 23.0647,
+            "mase": 0.9225
+          }
+        },
+        "19": {
+          "persistence": {
+            "mae": 73.2309,
+            "mase": 2.7404
+          },
+          "seasonal_naive": {
+            "mae": 18.6043,
+            "mase": 0.8747
+          },
+          "climatology_trend": {
+            "mae": 17.6263,
+            "mase": 0.8546
+          },
+          "direct_ridge": {
+            "mae": 21.168,
+            "mase": 0.9788
+          }
+        },
+        "20": {
+          "persistence": {
+            "mae": 74.4655,
+            "mase": 2.885
+          },
+          "seasonal_naive": {
+            "mae": 20.8409,
+            "mase": 0.9941
+          },
+          "climatology_trend": {
+            "mae": 20.5736,
+            "mase": 1.0162
+          },
+          "direct_ridge": {
+            "mae": 23.3405,
+            "mase": 1.1024
+          }
+        },
+        "21": {
+          "persistence": {
+            "mae": 59.2636,
+            "mase": 2.0242
+          },
+          "seasonal_naive": {
+            "mae": 20.6261,
+            "mase": 0.8605
+          },
+          "climatology_trend": {
+            "mae": 19.568,
+            "mase": 0.8457
+          },
+          "direct_ridge": {
+            "mae": 23.132,
+            "mase": 0.9145
+          }
+        },
+        "22": {
+          "persistence": {
+            "mae": 55.9078,
+            "mase": 1.833
+          },
+          "seasonal_naive": {
+            "mae": 23.9699,
+            "mase": 0.9511
+          },
+          "climatology_trend": {
+            "mae": 23.0631,
+            "mase": 0.9089
+          },
+          "direct_ridge": {
+            "mae": 24.2292,
+            "mase": 0.9579
+          }
+        },
+        "23": {
+          "persistence": {
+            "mae": 39.6336,
+            "mase": 1.1655
+          },
+          "seasonal_naive": {
+            "mae": 23.8637,
+            "mase": 0.7712
+          },
+          "climatology_trend": {
+            "mae": 23.6762,
+            "mase": 0.7598
+          },
+          "direct_ridge": {
+            "mae": 26.7628,
+            "mase": 0.8549
+          }
+        },
+        "24": {
+          "persistence": {
+            "mae": 33.7489,
+            "mase": 0.977
+          },
+          "seasonal_naive": {
+            "mae": 26.4287,
+            "mase": 0.7792
+          },
+          "climatology_trend": {
+            "mae": 27.026,
+            "mase": 0.814
+          },
+          "direct_ridge": {
+            "mae": 28.3881,
+            "mase": 0.9048
+          }
+        },
+        "25": {
+          "persistence": {
+            "mae": 40.0406,
+            "mase": 1.2051
+          },
+          "seasonal_naive": {
+            "mae": 26.0767,
+            "mase": 0.8444
+          },
+          "climatology_trend": {
+            "mae": 26.3626,
+            "mase": 0.8533
+          },
+          "direct_ridge": {
+            "mae": 28.9651,
+            "mase": 0.9643
+          }
+        },
+        "26": {
+          "persistence": {
+            "mae": 38.1905,
+            "mase": 1.1975
+          },
+          "seasonal_naive": {
+            "mae": 24.8158,
+            "mase": 0.7659
+          },
+          "climatology_trend": {
+            "mae": 24.2903,
+            "mase": 0.7398
+          },
+          "direct_ridge": {
+            "mae": 28.2144,
+            "mase": 0.8938
+          }
+        },
+        "27": {
+          "persistence": {
+            "mae": 39.4946,
+            "mase": 1.2573
+          },
+          "seasonal_naive": {
+            "mae": 24.7497,
+            "mase": 0.8603
+          },
+          "climatology_trend": {
+            "mae": 23.8836,
+            "mase": 0.8067
+          },
+          "direct_ridge": {
+            "mae": 25.7372,
+            "mase": 0.8681
+          }
+        },
+        "28": {
+          "persistence": {
+            "mae": 44.1813,
+            "mase": 1.2575
+          },
+          "seasonal_naive": {
+            "mae": 21.4337,
+            "mase": 0.7118
+          },
+          "climatology_trend": {
+            "mae": 20.446,
+            "mase": 0.6464
+          },
+          "direct_ridge": {
+            "mae": 25.6333,
+            "mase": 0.8151
+          }
+        },
+        "29": {
+          "persistence": {
+            "mae": 60.4643,
+            "mase": 1.7395
+          },
+          "seasonal_naive": {
+            "mae": 20.5536,
+            "mase": 0.7379
+          },
+          "climatology_trend": {
+            "mae": 19.2284,
+            "mase": 0.6803
+          },
+          "direct_ridge": {
+            "mae": 23.0235,
+            "mase": 0.8307
+          }
+        },
+        "30": {
+          "persistence": {
+            "mae": 68.3378,
+            "mase": 2.2344
+          },
+          "seasonal_naive": {
+            "mae": 17.791,
+            "mase": 0.7648
+          },
+          "climatology_trend": {
+            "mae": 17.1843,
+            "mase": 0.7387
+          },
+          "direct_ridge": {
+            "mae": 22.2425,
+            "mase": 0.9023
+          }
+        },
+        "31": {
+          "persistence": {
+            "mae": 70.6213,
+            "mase": 2.5832
+          },
+          "seasonal_naive": {
+            "mae": 19.0962,
+            "mase": 0.856
+          },
+          "climatology_trend": {
+            "mae": 18.4741,
+            "mase": 0.8548
+          },
+          "direct_ridge": {
+            "mae": 20.8534,
+            "mase": 0.9078
+          }
+        },
+        "32": {
+          "persistence": {
+            "mae": 70.7505,
+            "mase": 2.7243
+          },
+          "seasonal_naive": {
+            "mae": 20.3025,
+            "mase": 0.9152
+          },
+          "climatology_trend": {
+            "mae": 20.3491,
+            "mase": 0.9395
+          },
+          "direct_ridge": {
+            "mae": 23.4465,
+            "mase": 1.0548
+          }
+        },
+        "33": {
+          "persistence": {
+            "mae": 59.5305,
+            "mase": 1.9999
+          },
+          "seasonal_naive": {
+            "mae": 21.8516,
+            "mase": 0.8487
+          },
+          "climatology_trend": {
+            "mae": 20.7499,
+            "mase": 0.8364
+          },
+          "direct_ridge": {
+            "mae": 24.8758,
+            "mase": 1.0212
+          }
+        },
+        "34": {
+          "persistence": {
+            "mae": 51.3837,
+            "mase": 1.5683
+          },
+          "seasonal_naive": {
+            "mae": 22.3454,
+            "mase": 0.8944
+          },
+          "climatology_trend": {
+            "mae": 21.2676,
+            "mase": 0.8381
+          },
+          "direct_ridge": {
+            "mae": 24.3147,
+            "mase": 1.0035
+          }
+        },
+        "35": {
+          "persistence": {
+            "mae": 41.7252,
+            "mase": 1.2253
+          },
+          "seasonal_naive": {
+            "mae": 25.6261,
+            "mase": 0.8289
+          },
+          "climatology_trend": {
+            "mae": 26.2632,
+            "mase": 0.843
+          },
+          "direct_ridge": {
+            "mae": 28.6039,
+            "mase": 0.9597
+          }
+        },
+        "36": {
+          "persistence": {
+            "mae": 32.5785,
+            "mase": 0.9441
+          },
+          "seasonal_naive": {
+            "mae": 25.3415,
+            "mase": 0.7243
+          },
+          "climatology_trend": {
+            "mae": 24.7812,
+            "mase": 0.7289
+          },
+          "direct_ridge": {
+            "mae": 26.5827,
+            "mase": 0.7898
+          }
+        },
+        "37": {
+          "persistence": {
+            "mae": 41.5175,
+            "mase": 1.2629
+          },
+          "seasonal_naive": {
+            "mae": 31.3413,
+            "mase": 0.9005
+          },
+          "climatology_trend": {
+            "mae": 31.1431,
+            "mase": 0.916
+          },
+          "direct_ridge": {
+            "mae": 31.8162,
+            "mase": 0.9895
+          }
+        },
+        "38": {
+          "persistence": {
+            "mae": 38.7059,
+            "mase": 1.2304
+          },
+          "seasonal_naive": {
+            "mae": 29.4207,
+            "mase": 0.872
+          },
+          "climatology_trend": {
+            "mae": 28.534,
+            "mase": 0.8272
+          },
+          "direct_ridge": {
+            "mae": 32.1716,
+            "mase": 0.9753
+          }
+        },
+        "39": {
+          "persistence": {
+            "mae": 39.4727,
+            "mase": 1.2167
+          },
+          "seasonal_naive": {
+            "mae": 23.1093,
+            "mase": 0.807
+          },
+          "climatology_trend": {
+            "mae": 21.7884,
+            "mase": 0.7399
+          },
+          "direct_ridge": {
+            "mae": 22.1705,
+            "mase": 0.7321
+          }
+        },
+        "40": {
+          "persistence": {
+            "mae": 50.3109,
+            "mase": 1.4154
+          },
+          "seasonal_naive": {
+            "mae": 23.8192,
+            "mase": 0.8196
+          },
+          "climatology_trend": {
+            "mae": 22.8475,
+            "mase": 0.7463
+          },
+          "direct_ridge": {
+            "mae": 25.9701,
+            "mase": 0.8126
+          }
+        },
+        "41": {
+          "persistence": {
+            "mae": 61.4589,
+            "mase": 1.8003
+          },
+          "seasonal_naive": {
+            "mae": 21.475,
+            "mase": 0.7925
+          },
+          "climatology_trend": {
+            "mae": 20.1744,
+            "mase": 0.7469
+          },
+          "direct_ridge": {
+            "mae": 21.7699,
+            "mase": 0.8625
+          }
+        },
+        "42": {
+          "persistence": {
+            "mae": 69.3461,
+            "mase": 2.3445
+          },
+          "seasonal_naive": {
+            "mae": 19.9905,
+            "mase": 0.8115
+          },
+          "climatology_trend": {
+            "mae": 19.1662,
+            "mase": 0.7887
+          },
+          "direct_ridge": {
+            "mae": 23.5274,
+            "mase": 1.0005
+          }
+        },
+        "43": {
+          "persistence": {
+            "mae": 73.7432,
+            "mase": 2.7842
+          },
+          "seasonal_naive": {
+            "mae": 18.3554,
+            "mase": 0.8453
+          },
+          "climatology_trend": {
+            "mae": 17.5122,
+            "mase": 0.8309
+          },
+          "direct_ridge": {
+            "mae": 22.9883,
+            "mase": 1.0484
+          }
+        },
+        "44": {
+          "persistence": {
+            "mae": 72.86,
+            "mase": 2.8679
+          },
+          "seasonal_naive": {
+            "mae": 21.0432,
+            "mase": 1.0159
+          },
+          "climatology_trend": {
+            "mae": 20.7702,
+            "mase": 1.0396
+          },
+          "direct_ridge": {
+            "mae": 24.6153,
+            "mase": 1.1601
+          }
+        },
+        "45": {
+          "persistence": {
+            "mae": 58.5439,
+            "mase": 2.013
+          },
+          "seasonal_naive": {
+            "mae": 20.3839,
+            "mase": 0.8463
+          },
+          "climatology_trend": {
+            "mae": 19.2607,
+            "mase": 0.8352
+          },
+          "direct_ridge": {
+            "mae": 21.5319,
+            "mase": 0.8995
+          }
+        },
+        "46": {
+          "persistence": {
+            "mae": 58.7344,
+            "mase": 1.8578
+          },
+          "seasonal_naive": {
+            "mae": 24.0593,
+            "mase": 0.9372
+          },
+          "climatology_trend": {
+            "mae": 23.2406,
+            "mase": 0.894
+          },
+          "direct_ridge": {
+            "mae": 25.5601,
+            "mase": 1.0062
+          }
+        },
+        "47": {
+          "persistence": {
+            "mae": 43.7264,
+            "mase": 1.1968
+          },
+          "seasonal_naive": {
+            "mae": 24.0058,
+            "mase": 0.7714
+          },
+          "climatology_trend": {
+            "mae": 24.1004,
+            "mase": 0.7765
+          },
+          "direct_ridge": {
+            "mae": 29.3615,
+            "mase": 0.9942
+          }
+        },
+        "48": {
+          "persistence": {
+            "mae": 37.765,
+            "mase": 1.0245
+          },
+          "seasonal_naive": {
+            "mae": 24.3576,
+            "mase": 0.7038
+          },
+          "climatology_trend": {
+            "mae": 24.7968,
+            "mase": 0.738
+          },
+          "direct_ridge": {
+            "mae": 29.6941,
+            "mase": 0.8805
+          }
+        },
+        "49": {
+          "persistence": {
+            "mae": 41.01,
+            "mase": 1.2495
+          },
+          "seasonal_naive": {
+            "mae": 26.2155,
+            "mase": 0.842
+          },
+          "climatology_trend": {
+            "mae": 26.658,
+            "mase": 0.8524
+          },
+          "direct_ridge": {
+            "mae": 28.5993,
+            "mase": 0.932
+          }
+        },
+        "50": {
+          "persistence": {
+            "mae": 37.6925,
+            "mase": 1.2031
+          },
+          "seasonal_naive": {
+            "mae": 25.2603,
+            "mase": 0.7637
+          },
+          "climatology_trend": {
+            "mae": 24.6338,
+            "mase": 0.7349
+          },
+          "direct_ridge": {
+            "mae": 28.4049,
+            "mase": 0.9144
+          }
+        },
+        "51": {
+          "persistence": {
+            "mae": 38.6096,
+            "mase": 1.2243
+          },
+          "seasonal_naive": {
+            "mae": 24.0662,
+            "mase": 0.8514
+          },
+          "climatology_trend": {
+            "mae": 23.125,
+            "mase": 0.7933
+          },
+          "direct_ridge": {
+            "mae": 26.19,
+            "mase": 0.8817
+          }
+        },
+        "52": {
+          "persistence": {
+            "mae": 47.5566,
+            "mase": 1.3141
+          },
+          "seasonal_naive": {
+            "mae": 22.1545,
+            "mase": 0.7194
+          },
+          "climatology_trend": {
+            "mae": 20.9896,
+            "mase": 0.6421
+          },
+          "direct_ridge": {
+            "mae": 23.6879,
+            "mase": 0.7563
+          }
+        },
+        "53": {
+          "persistence": {
+            "mae": 57.2539,
+            "mase": 1.6961
+          },
+          "seasonal_naive": {
+            "mae": 21.4504,
+            "mase": 0.7688
+          },
+          "climatology_trend": {
+            "mae": 20.1026,
+            "mase": 0.7167
+          },
+          "direct_ridge": {
+            "mae": 24.7518,
+            "mase": 0.9284
+          }
+        },
+        "54": {
+          "persistence": {
+            "mae": 65.8383,
+            "mase": 2.2125
+          },
+          "seasonal_naive": {
+            "mae": 17.9743,
+            "mase": 0.7973
+          },
+          "climatology_trend": {
+            "mae": 17.5243,
+            "mase": 0.7924
+          },
+          "direct_ridge": {
+            "mae": 23.4156,
+            "mase": 1.0585
+          }
+        },
+        "55": {
+          "persistence": {
+            "mae": 68.8171,
+            "mase": 2.5703
+          },
+          "seasonal_naive": {
+            "mae": 18.4652,
+            "mase": 0.8486
+          },
+          "climatology_trend": {
+            "mae": 18.0913,
+            "mase": 0.8693
+          },
+          "direct_ridge": {
+            "mae": 22.5594,
+            "mase": 1.0168
+          }
+        },
+        "56": {
+          "persistence": {
+            "mae": 69.3357,
+            "mase": 2.7071
+          },
+          "seasonal_naive": {
+            "mae": 21.5838,
+            "mase": 0.9867
+          },
+          "climatology_trend": {
+            "mae": 21.4812,
+            "mase": 1.0265
+          },
+          "direct_ridge": {
+            "mae": 24.3227,
+            "mase": 1.1114
+          }
+        },
+        "57": {
+          "persistence": {
+            "mae": 60.5544,
+            "mase": 1.9726
+          },
+          "seasonal_naive": {
+            "mae": 20.2028,
+            "mase": 0.81
+          },
+          "climatology_trend": {
+            "mae": 19.3993,
+            "mase": 0.8134
+          },
+          "direct_ridge": {
+            "mae": 21.9564,
+            "mase": 0.9239
+          }
+        },
+        "58": {
+          "persistence": {
+            "mae": 53.215,
+            "mase": 1.6639
+          },
+          "seasonal_naive": {
+            "mae": 22.5497,
+            "mase": 0.899
+          },
+          "climatology_trend": {
+            "mae": 21.3918,
+            "mase": 0.843
+          },
+          "direct_ridge": {
+            "mae": 27.7619,
+            "mase": 1.1244
+          }
+        },
+        "59": {
+          "persistence": {
+            "mae": 46.3516,
+            "mase": 1.3307
+          },
+          "seasonal_naive": {
+            "mae": 25.9975,
+            "mase": 0.8372
+          },
+          "climatology_trend": {
+            "mae": 26.4665,
+            "mase": 0.8469
+          },
+          "direct_ridge": {
+            "mae": 29.5113,
+            "mase": 1.0326
+          }
+        },
+        "60": {
+          "persistence": {
+            "mae": 30.7083,
+            "mase": 0.9283
+          },
+          "seasonal_naive": {
+            "mae": 24.9422,
+            "mase": 0.7235
+          },
+          "climatology_trend": {
+            "mae": 24.4304,
+            "mase": 0.7399
+          },
+          "direct_ridge": {
+            "mae": 26.5606,
+            "mase": 0.855
+          }
+        }
+      },
+      "sst": {
+        "1": {
+          "persistence": {
+            "mae": 0.8521,
+            "mase": 3.8655
+          },
+          "seasonal_naive": {
+            "mae": 0.4033,
+            "mase": 1.2448
+          },
+          "climatology_trend": {
+            "mae": 0.3279,
+            "mase": 1.0952
+          },
+          "direct_ridge": {
+            "mae": 0.2621,
+            "mase": 1.0188
+          }
+        },
+        "2": {
+          "persistence": {
+            "mae": 1.15,
+            "mase": 4.7811
+          },
+          "seasonal_naive": {
+            "mae": 0.3596,
+            "mase": 1.0289
+          },
+          "climatology_trend": {
+            "mae": 0.3035,
+            "mase": 0.9144
+          },
+          "direct_ridge": {
+            "mae": 0.3019,
+            "mase": 0.9788
+          }
+        },
+        "3": {
+          "persistence": {
+            "mae": 0.9972,
+            "mase": 3.506
+          },
+          "seasonal_naive": {
+            "mae": 0.3497,
+            "mase": 0.9938
+          },
+          "climatology_trend": {
+            "mae": 0.2993,
+            "mase": 0.89
+          },
+          "direct_ridge": {
+            "mae": 0.3178,
+            "mase": 0.9854
+          }
+        },
+        "4": {
+          "persistence": {
+            "mae": 0.8611,
+            "mase": 2.4896
+          },
+          "seasonal_naive": {
+            "mae": 0.3222,
+            "mase": 0.899
+          },
+          "climatology_trend": {
+            "mae": 0.3225,
+            "mase": 0.8892
+          },
+          "direct_ridge": {
+            "mae": 0.2836,
+            "mase": 0.8606
+          }
+        },
+        "5": {
+          "persistence": {
+            "mae": 0.8086,
+            "mase": 2.3584
+          },
+          "seasonal_naive": {
+            "mae": 0.2848,
+            "mase": 0.6155
+          },
+          "climatology_trend": {
+            "mae": 0.2943,
+            "mase": 0.6185
+          },
+          "direct_ridge": {
+            "mae": 0.2923,
+            "mase": 0.7604
+          }
+        },
+        "6": {
+          "persistence": {
+            "mae": 1.1674,
+            "mase": 3.0309
+          },
+          "seasonal_naive": {
+            "mae": 0.3227,
+            "mase": 0.6875
+          },
+          "climatology_trend": {
+            "mae": 0.3093,
+            "mase": 0.6516
+          },
+          "direct_ridge": {
+            "mae": 0.3217,
+            "mase": 0.8781
+          }
+        },
+        "7": {
+          "persistence": {
+            "mae": 1.9644,
+            "mase": 5.0116
+          },
+          "seasonal_naive": {
+            "mae": 0.4178,
+            "mase": 1.2229
+          },
+          "climatology_trend": {
+            "mae": 0.4008,
+            "mase": 1.1776
+          },
+          "direct_ridge": {
+            "mae": 0.3762,
+            "mase": 1.211
+          }
+        },
+        "8": {
+          "persistence": {
+            "mae": 2.7162,
+            "mase": 7.2132
+          },
+          "seasonal_naive": {
+            "mae": 0.575,
+            "mase": 1.9439
+          },
+          "climatology_trend": {
+            "mae": 0.526,
+            "mase": 1.8369
+          },
+          "direct_ridge": {
+            "mae": 0.454,
+            "mase": 1.504
+          }
+        },
+        "9": {
+          "persistence": {
+            "mae": 2.5121,
+            "mase": 6.7515
+          },
+          "seasonal_naive": {
+            "mae": 0.5265,
+            "mase": 1.7166
+          },
+          "climatology_trend": {
+            "mae": 0.4691,
+            "mase": 1.6062
+          },
+          "direct_ridge": {
+            "mae": 0.4906,
+            "mase": 1.7264
+          }
+        },
+        "10": {
+          "persistence": {
+            "mae": 1.7389,
+            "mase": 4.5369
+          },
+          "seasonal_naive": {
+            "mae": 0.4151,
+            "mase": 1.1254
+          },
+          "climatology_trend": {
+            "mae": 0.3537,
+            "mase": 1.0206
+          },
+          "direct_ridge": {
+            "mae": 0.4123,
+            "mase": 1.3283
+          }
+        },
+        "11": {
+          "persistence": {
+            "mae": 0.8497,
+            "mase": 2.3865
+          },
+          "seasonal_naive": {
+            "mae": 0.3319,
+            "mase": 0.6829
+          },
+          "climatology_trend": {
+            "mae": 0.2627,
+            "mase": 0.5484
+          },
+          "direct_ridge": {
+            "mae": 0.3727,
+            "mase": 1.0221
+          }
+        },
+        "12": {
+          "persistence": {
+            "mae": 0.4118,
+            "mase": 1.3377
+          },
+          "seasonal_naive": {
+            "mae": 0.4012,
+            "mase": 1.3457
+          },
+          "climatology_trend": {
+            "mae": 0.3572,
+            "mase": 1.2568
+          },
+          "direct_ridge": {
+            "mae": 0.4328,
+            "mase": 1.4821
+          }
+        },
+        "13": {
+          "persistence": {
+            "mae": 0.8903,
+            "mase": 4.0385
+          },
+          "seasonal_naive": {
+            "mae": 0.3999,
+            "mase": 1.135
+          },
+          "climatology_trend": {
+            "mae": 0.3445,
+            "mase": 1.0231
+          },
+          "direct_ridge": {
+            "mae": 0.4261,
+            "mase": 1.3193
+          }
+        },
+        "14": {
+          "persistence": {
+            "mae": 1.1285,
+            "mase": 4.7891
+          },
+          "seasonal_naive": {
+            "mae": 0.399,
+            "mase": 1.0382
+          },
+          "climatology_trend": {
+            "mae": 0.3277,
+            "mase": 0.8992
+          },
+          "direct_ridge": {
+            "mae": 0.4039,
+            "mase": 1.0895
+          }
+        },
+        "15": {
+          "persistence": {
+            "mae": 1.0028,
+            "mase": 3.5036
+          },
+          "seasonal_naive": {
+            "mae": 0.4344,
+            "mase": 1.1405
+          },
+          "climatology_trend": {
+            "mae": 0.3738,
+            "mase": 1.0174
+          },
+          "direct_ridge": {
+            "mae": 0.437,
+            "mase": 1.2939
+          }
+        },
+        "16": {
+          "persistence": {
+            "mae": 0.8909,
+            "mase": 2.551
+          },
+          "seasonal_naive": {
+            "mae": 0.3841,
+            "mase": 1.0284
+          },
+          "climatology_trend": {
+            "mae": 0.372,
+            "mase": 0.9972
+          },
+          "direct_ridge": {
+            "mae": 0.4038,
+            "mase": 1.0854
+          }
+        },
+        "17": {
+          "persistence": {
+            "mae": 0.8072,
+            "mase": 2.3675
+          },
+          "seasonal_naive": {
+            "mae": 0.3669,
+            "mase": 0.7705
+          },
+          "climatology_trend": {
+            "mae": 0.3623,
+            "mase": 0.7533
+          },
+          "direct_ridge": {
+            "mae": 0.4335,
+            "mase": 1.0657
+          }
+        },
+        "18": {
+          "persistence": {
+            "mae": 1.1234,
+            "mase": 3.0465
+          },
+          "seasonal_naive": {
+            "mae": 0.3536,
+            "mase": 0.8048
+          },
+          "climatology_trend": {
+            "mae": 0.3394,
+            "mase": 0.7737
+          },
+          "direct_ridge": {
+            "mae": 0.4317,
+            "mase": 1.2236
+          }
+        },
+        "19": {
+          "persistence": {
+            "mae": 2.0121,
+            "mase": 5.2674
+          },
+          "seasonal_naive": {
+            "mae": 0.5292,
+            "mase": 1.5956
+          },
+          "climatology_trend": {
+            "mae": 0.4541,
+            "mase": 1.4485
+          },
+          "direct_ridge": {
+            "mae": 0.5176,
+            "mase": 1.6269
+          }
+        },
+        "20": {
+          "persistence": {
+            "mae": 2.8074,
+            "mase": 7.4941
+          },
+          "seasonal_naive": {
+            "mae": 0.6485,
+            "mase": 2.1734
+          },
+          "climatology_trend": {
+            "mae": 0.5539,
+            "mase": 1.9941
+          },
+          "direct_ridge": {
+            "mae": 0.5782,
+            "mase": 2.0735
+          }
+        },
+        "21": {
+          "persistence": {
+            "mae": 2.5436,
+            "mase": 6.8886
+          },
+          "seasonal_naive": {
+            "mae": 0.5639,
+            "mase": 1.8338
+          },
+          "climatology_trend": {
+            "mae": 0.4818,
+            "mase": 1.676
+          },
+          "direct_ridge": {
+            "mae": 0.5415,
+            "mase": 1.9761
+          }
+        },
+        "22": {
+          "persistence": {
+            "mae": 1.7717,
+            "mase": 4.7996
+          },
+          "seasonal_naive": {
+            "mae": 0.4965,
+            "mase": 1.5141
+          },
+          "climatology_trend": {
+            "mae": 0.4156,
+            "mase": 1.3598
+          },
+          "direct_ridge": {
+            "mae": 0.5222,
+            "mase": 1.7001
+          }
+        },
+        "23": {
+          "persistence": {
+            "mae": 0.8605,
+            "mase": 2.389
+          },
+          "seasonal_naive": {
+            "mae": 0.3417,
+            "mase": 0.7388
+          },
+          "climatology_trend": {
+            "mae": 0.2667,
+            "mase": 0.5925
+          },
+          "direct_ridge": {
+            "mae": 0.3613,
+            "mase": 0.9931
+          }
+        },
+        "24": {
+          "persistence": {
+            "mae": 0.4584,
+            "mase": 1.8212
+          },
+          "seasonal_naive": {
+            "mae": 0.3974,
+            "mase": 1.3459
+          },
+          "climatology_trend": {
+            "mae": 0.328,
+            "mase": 1.2075
+          },
+          "direct_ridge": {
+            "mae": 0.4332,
+            "mase": 1.7051
+          }
+        },
+        "25": {
+          "persistence": {
+            "mae": 0.8791,
+            "mase": 4.0331
+          },
+          "seasonal_naive": {
+            "mae": 0.4071,
+            "mase": 1.2098
+          },
+          "climatology_trend": {
+            "mae": 0.3275,
+            "mase": 1.0533
+          },
+          "direct_ridge": {
+            "mae": 0.4524,
+            "mase": 1.484
+          }
+        },
+        "26": {
+          "persistence": {
+            "mae": 1.1484,
+            "mase": 4.8459
+          },
+          "seasonal_naive": {
+            "mae": 0.3653,
+            "mase": 1.0395
+          },
+          "climatology_trend": {
+            "mae": 0.3051,
+            "mase": 0.9186
+          },
+          "direct_ridge": {
+            "mae": 0.3789,
+            "mase": 1.156
+          }
+        },
+        "27": {
+          "persistence": {
+            "mae": 1.0081,
+            "mase": 3.5873
+          },
+          "seasonal_naive": {
+            "mae": 0.3676,
+            "mase": 1.024
+          },
+          "climatology_trend": {
+            "mae": 0.3108,
+            "mase": 0.9097
+          },
+          "direct_ridge": {
+            "mae": 0.4096,
+            "mase": 1.1583
+          }
+        },
+        "28": {
+          "persistence": {
+            "mae": 0.8781,
+            "mase": 2.5493
+          },
+          "seasonal_naive": {
+            "mae": 0.3373,
+            "mase": 0.9439
+          },
+          "climatology_trend": {
+            "mae": 0.3218,
+            "mase": 0.9048
+          },
+          "direct_ridge": {
+            "mae": 0.3889,
+            "mase": 1.1364
+          }
+        },
+        "29": {
+          "persistence": {
+            "mae": 0.8261,
+            "mase": 2.3819
+          },
+          "seasonal_naive": {
+            "mae": 0.3003,
+            "mase": 0.6661
+          },
+          "climatology_trend": {
+            "mae": 0.3094,
+            "mase": 0.6696
+          },
+          "direct_ridge": {
+            "mae": 0.3931,
+            "mase": 1.0322
+          }
+        },
+        "30": {
+          "persistence": {
+            "mae": 1.2061,
+            "mase": 3.1103
+          },
+          "seasonal_naive": {
+            "mae": 0.3216,
+            "mase": 0.7007
+          },
+          "climatology_trend": {
+            "mae": 0.3229,
+            "mase": 0.6979
+          },
+          "direct_ridge": {
+            "mae": 0.409,
+            "mase": 1.1353
+          }
+        },
+        "31": {
+          "persistence": {
+            "mae": 1.9688,
+            "mase": 4.9688
+          },
+          "seasonal_naive": {
+            "mae": 0.4475,
+            "mase": 1.2867
+          },
+          "climatology_trend": {
+            "mae": 0.4203,
+            "mase": 1.2229
+          },
+          "direct_ridge": {
+            "mae": 0.4897,
+            "mase": 1.545
+          }
+        },
+        "32": {
+          "persistence": {
+            "mae": 2.7379,
+            "mase": 7.228
+          },
+          "seasonal_naive": {
+            "mae": 0.6001,
+            "mase": 1.9979
+          },
+          "climatology_trend": {
+            "mae": 0.5418,
+            "mase": 1.8782
+          },
+          "direct_ridge": {
+            "mae": 0.6072,
+            "mase": 2.151
+          }
+        },
+        "33": {
+          "persistence": {
+            "mae": 2.5144,
+            "mase": 6.731
+          },
+          "seasonal_naive": {
+            "mae": 0.5416,
+            "mase": 1.7438
+          },
+          "climatology_trend": {
+            "mae": 0.4865,
+            "mase": 1.6411
+          },
+          "direct_ridge": {
+            "mae": 0.5515,
+            "mase": 1.8726
+          }
+        },
+        "34": {
+          "persistence": {
+            "mae": 1.763,
+            "mase": 4.5793
+          },
+          "seasonal_naive": {
+            "mae": 0.427,
+            "mase": 1.1553
+          },
+          "climatology_trend": {
+            "mae": 0.3648,
+            "mase": 1.0489
+          },
+          "direct_ridge": {
+            "mae": 0.4766,
+            "mase": 1.3965
+          }
+        },
+        "35": {
+          "persistence": {
+            "mae": 0.8674,
+            "mase": 2.4143
+          },
+          "seasonal_naive": {
+            "mae": 0.343,
+            "mase": 0.7092
+          },
+          "climatology_trend": {
+            "mae": 0.2704,
+            "mase": 0.5687
+          },
+          "direct_ridge": {
+            "mae": 0.3829,
+            "mase": 1.0278
+          }
+        },
+        "36": {
+          "persistence": {
+            "mae": 0.384,
+            "mase": 1.3818
+          },
+          "seasonal_naive": {
+            "mae": 0.4029,
+            "mase": 1.3365
+          },
+          "climatology_trend": {
+            "mae": 0.3576,
+            "mase": 1.2452
+          },
+          "direct_ridge": {
+            "mae": 0.437,
+            "mase": 1.5638
+          }
+        },
+        "37": {
+          "persistence": {
+            "mae": 0.8752,
+            "mase": 4.1878
+          },
+          "seasonal_naive": {
+            "mae": 0.4046,
+            "mase": 1.092
+          },
+          "climatology_trend": {
+            "mae": 0.3387,
+            "mase": 0.9558
+          },
+          "direct_ridge": {
+            "mae": 0.4538,
+            "mase": 1.427
+          }
+        },
+        "38": {
+          "persistence": {
+            "mae": 1.1245,
+            "mase": 4.8927
+          },
+          "seasonal_naive": {
+            "mae": 0.4186,
+            "mase": 1.0858
+          },
+          "climatology_trend": {
+            "mae": 0.3433,
+            "mase": 0.9326
+          },
+          "direct_ridge": {
+            "mae": 0.4501,
+            "mase": 1.3163
+          }
+        },
+        "39": {
+          "persistence": {
+            "mae": 1.0046,
+            "mase": 3.6905
+          },
+          "seasonal_naive": {
+            "mae": 0.4365,
+            "mase": 1.0891
+          },
+          "climatology_trend": {
+            "mae": 0.3684,
+            "mase": 0.9463
+          },
+          "direct_ridge": {
+            "mae": 0.4601,
+            "mase": 1.3141
+          }
+        },
+        "40": {
+          "persistence": {
+            "mae": 0.8594,
+            "mase": 2.5994
+          },
+          "seasonal_naive": {
+            "mae": 0.3986,
+            "mase": 1.0656
+          },
+          "climatology_trend": {
+            "mae": 0.3747,
+            "mase": 1.0044
+          },
+          "direct_ridge": {
+            "mae": 0.4571,
+            "mase": 1.4188
+          }
+        },
+        "41": {
+          "persistence": {
+            "mae": 0.7611,
+            "mase": 2.3224
+          },
+          "seasonal_naive": {
+            "mae": 0.3861,
+            "mase": 0.8096
+          },
+          "climatology_trend": {
+            "mae": 0.3511,
+            "mase": 0.7266
+          },
+          "direct_ridge": {
+            "mae": 0.4572,
+            "mase": 1.2406
+          }
+        },
+        "42": {
+          "persistence": {
+            "mae": 1.1289,
+            "mase": 3.0389
+          },
+          "seasonal_naive": {
+            "mae": 0.3827,
+            "mase": 0.8666
+          },
+          "climatology_trend": {
+            "mae": 0.3446,
+            "mase": 0.7828
+          },
+          "direct_ridge": {
+            "mae": 0.4892,
+            "mase": 1.5585
+          }
+        },
+        "43": {
+          "persistence": {
+            "mae": 2.0073,
+            "mase": 5.2271
+          },
+          "seasonal_naive": {
+            "mae": 0.5458,
+            "mase": 1.5893
+          },
+          "climatology_trend": {
+            "mae": 0.4487,
+            "mase": 1.3981
+          },
+          "direct_ridge": {
+            "mae": 0.54,
+            "mase": 1.7911
+          }
+        },
+        "44": {
+          "persistence": {
+            "mae": 2.7981,
+            "mase": 7.4675
+          },
+          "seasonal_naive": {
+            "mae": 0.6634,
+            "mase": 2.1996
+          },
+          "climatology_trend": {
+            "mae": 0.5437,
+            "mase": 1.9733
+          },
+          "direct_ridge": {
+            "mae": 0.6019,
+            "mase": 2.1567
+          }
+        },
+        "45": {
+          "persistence": {
+            "mae": 2.5501,
+            "mase": 6.9203
+          },
+          "seasonal_naive": {
+            "mae": 0.5874,
+            "mase": 1.8964
+          },
+          "climatology_trend": {
+            "mae": 0.4959,
+            "mase": 1.7259
+          },
+          "direct_ridge": {
+            "mae": 0.5219,
+            "mase": 1.9019
+          }
+        },
+        "46": {
+          "persistence": {
+            "mae": 1.7896,
+            "mase": 4.8171
+          },
+          "seasonal_naive": {
+            "mae": 0.5235,
+            "mase": 1.5669
+          },
+          "climatology_trend": {
+            "mae": 0.4362,
+            "mase": 1.4006
+          },
+          "direct_ridge": {
+            "mae": 0.4467,
+            "mase": 1.5539
+          }
+        },
+        "47": {
+          "persistence": {
+            "mae": 0.8696,
+            "mase": 2.3744
+          },
+          "seasonal_naive": {
+            "mae": 0.3545,
+            "mase": 0.7705
+          },
+          "climatology_trend": {
+            "mae": 0.2801,
+            "mase": 0.622
+          },
+          "direct_ridge": {
+            "mae": 0.3344,
+            "mase": 0.9523
+          }
+        },
+        "48": {
+          "persistence": {
+            "mae": 0.4189,
+            "mase": 1.3481
+          },
+          "seasonal_naive": {
+            "mae": 0.4052,
+            "mase": 1.4101
+          },
+          "climatology_trend": {
+            "mae": 0.3477,
+            "mase": 1.2894
+          },
+          "direct_ridge": {
+            "mae": 0.4028,
+            "mase": 1.6011
+          }
+        },
+        "49": {
+          "persistence": {
+            "mae": 0.9533,
+            "mase": 4.3352
+          },
+          "seasonal_naive": {
+            "mae": 0.449,
+            "mase": 1.3059
+          },
+          "climatology_trend": {
+            "mae": 0.3831,
+            "mase": 1.1747
+          },
+          "direct_ridge": {
+            "mae": 0.4791,
+            "mase": 1.5766
+          }
+        },
+        "50": {
+          "persistence": {
+            "mae": 1.1917,
+            "mase": 5.043
+          },
+          "seasonal_naive": {
+            "mae": 0.4032,
+            "mase": 1.1612
+          },
+          "climatology_trend": {
+            "mae": 0.3385,
+            "mase": 1.0279
+          },
+          "direct_ridge": {
+            "mae": 0.437,
+            "mase": 1.4323
+          }
+        },
+        "51": {
+          "persistence": {
+            "mae": 1.0343,
+            "mase": 3.746
+          },
+          "seasonal_naive": {
+            "mae": 0.408,
+            "mase": 1.1484
+          },
+          "climatology_trend": {
+            "mae": 0.3428,
+            "mase": 1.0185
+          },
+          "direct_ridge": {
+            "mae": 0.4572,
+            "mase": 1.5303
+          }
+        },
+        "52": {
+          "persistence": {
+            "mae": 0.8879,
+            "mase": 2.6419
+          },
+          "seasonal_naive": {
+            "mae": 0.3705,
+            "mase": 1.0241
+          },
+          "climatology_trend": {
+            "mae": 0.3502,
+            "mase": 0.9741
+          },
+          "direct_ridge": {
+            "mae": 0.4427,
+            "mase": 1.3748
+          }
+        },
+        "53": {
+          "persistence": {
+            "mae": 0.8005,
+            "mase": 2.3661
+          },
+          "seasonal_naive": {
+            "mae": 0.321,
+            "mase": 0.729
+          },
+          "climatology_trend": {
+            "mae": 0.3417,
+            "mase": 0.7554
+          },
+          "direct_ridge": {
+            "mae": 0.3941,
+            "mase": 1.0539
+          }
+        },
+        "54": {
+          "persistence": {
+            "mae": 1.1585,
+            "mase": 2.9986
+          },
+          "seasonal_naive": {
+            "mae": 0.3414,
+            "mase": 0.7489
+          },
+          "climatology_trend": {
+            "mae": 0.3467,
+            "mase": 0.7542
+          },
+          "direct_ridge": {
+            "mae": 0.4183,
+            "mase": 1.2081
+          }
+        },
+        "55": {
+          "persistence": {
+            "mae": 1.9684,
+            "mase": 5.0059
+          },
+          "seasonal_naive": {
+            "mae": 0.4836,
+            "mase": 1.405
+          },
+          "climatology_trend": {
+            "mae": 0.4543,
+            "mase": 1.3418
+          },
+          "direct_ridge": {
+            "mae": 0.5542,
+            "mase": 1.765
+          }
+        },
+        "56": {
+          "persistence": {
+            "mae": 2.7107,
+            "mase": 7.2306
+          },
+          "seasonal_naive": {
+            "mae": 0.6025,
+            "mase": 2.0758
+          },
+          "climatology_trend": {
+            "mae": 0.5713,
+            "mase": 2.0152
+          },
+          "direct_ridge": {
+            "mae": 0.5408,
+            "mase": 1.9337
+          }
+        },
+        "57": {
+          "persistence": {
+            "mae": 2.5081,
+            "mase": 6.7273
+          },
+          "seasonal_naive": {
+            "mae": 0.5502,
+            "mase": 1.7864
+          },
+          "climatology_trend": {
+            "mae": 0.4869,
+            "mase": 1.665
+          },
+          "direct_ridge": {
+            "mae": 0.4935,
+            "mase": 1.729
+          }
+        },
+        "58": {
+          "persistence": {
+            "mae": 1.7764,
+            "mase": 4.6458
+          },
+          "seasonal_naive": {
+            "mae": 0.4694,
+            "mase": 1.2879
+          },
+          "climatology_trend": {
+            "mae": 0.3899,
+            "mase": 1.1466
+          },
+          "direct_ridge": {
+            "mae": 0.4873,
+            "mase": 1.5139
+          }
+        },
+        "59": {
+          "persistence": {
+            "mae": 0.8851,
+            "mase": 2.4393
+          },
+          "seasonal_naive": {
+            "mae": 0.3739,
+            "mase": 0.776
+          },
+          "climatology_trend": {
+            "mae": 0.2875,
+            "mase": 0.6149
+          },
+          "direct_ridge": {
+            "mae": 0.432,
+            "mase": 1.2029
+          }
+        },
+        "60": {
+          "persistence": {
+            "mae": 0.47,
+            "mase": 1.8244
+          },
+          "seasonal_naive": {
+            "mae": 0.4246,
+            "mase": 1.4875
+          },
+          "climatology_trend": {
+            "mae": 0.3735,
+            "mase": 1.3914
+          },
+          "direct_ridge": {
+            "mae": 0.4811,
+            "mase": 1.8449
+          }
+        }
+      }
+    },
+    "per_variable_per_horizon": {
+      "temperature": {
+        "1": {
+          "persistence": {
+            "mae": 1.0964,
+            "mase": 0.7957
+          },
+          "seasonal_naive": {
+            "mae": 0.9989,
+            "mase": 0.9612
+          },
+          "climatology_trend": {
+            "mae": 0.8666,
+            "mase": 0.7774
+          },
+          "direct_ridge": {
+            "mae": 1.0005,
+            "mase": 0.7649
+          }
+        },
+        "2": {
+          "persistence": {
+            "mae": 1.377,
+            "mase": 0.984
+          },
+          "seasonal_naive": {
+            "mae": 1.1011,
+            "mase": 0.9403
+          },
+          "climatology_trend": {
+            "mae": 1.0084,
+            "mase": 0.7884
+          },
+          "direct_ridge": {
+            "mae": 0.9778,
+            "mase": 0.7611
+          }
+        },
+        "3": {
+          "persistence": {
+            "mae": 1.3849,
+            "mase": 1.0232
+          },
+          "seasonal_naive": {
+            "mae": 1.1731,
+            "mase": 0.9625
+          },
+          "climatology_trend": {
+            "mae": 1.0948,
+            "mase": 0.8192
+          },
+          "direct_ridge": {
+            "mae": 1.2648,
+            "mase": 0.9076
+          }
+        },
+        "4": {
+          "persistence": {
+            "mae": 1.2938,
+            "mase": 0.9746
+          },
+          "seasonal_naive": {
+            "mae": 1.1128,
+            "mase": 0.9468
+          },
+          "climatology_trend": {
+            "mae": 1.0669,
+            "mase": 0.8609
+          },
+          "direct_ridge": {
+            "mae": 1.1835,
+            "mase": 0.8999
+          }
+        },
+        "5": {
+          "persistence": {
+            "mae": 1.2113,
+            "mase": 0.934
+          },
+          "seasonal_naive": {
+            "mae": 1.0097,
+            "mase": 0.921
+          },
+          "climatology_trend": {
+            "mae": 0.9205,
+            "mase": 0.7349
+          },
+          "direct_ridge": {
+            "mae": 1.02,
+            "mase": 0.7906
+          }
+        },
+        "6": {
+          "persistence": {
+            "mae": 1.2698,
+            "mase": 0.9434
+          },
+          "seasonal_naive": {
+            "mae": 0.8147,
+            "mase": 0.8501
+          },
+          "climatology_trend": {
+            "mae": 0.7361,
+            "mase": 0.6877
+          },
+          "direct_ridge": {
+            "mae": 0.8423,
+            "mase": 0.7408
+          }
+        },
+        "7": {
+          "persistence": {
+            "mae": 1.3626,
+            "mase": 1.0269
+          },
+          "seasonal_naive": {
+            "mae": 0.9626,
+            "mase": 0.9021
+          },
+          "climatology_trend": {
+            "mae": 0.8629,
+            "mase": 0.7374
+          },
+          "direct_ridge": {
+            "mae": 1.0232,
+            "mase": 0.8088
+          }
+        },
+        "8": {
+          "persistence": {
+            "mae": 1.4258,
+            "mase": 1.0464
+          },
+          "seasonal_naive": {
+            "mae": 0.8745,
+            "mase": 0.8548
+          },
+          "climatology_trend": {
+            "mae": 0.7692,
+            "mase": 0.6803
+          },
+          "direct_ridge": {
+            "mae": 0.8726,
+            "mase": 0.7486
+          }
+        },
+        "9": {
+          "persistence": {
+            "mae": 1.3546,
+            "mase": 1.0111
+          },
+          "seasonal_naive": {
+            "mae": 0.9666,
+            "mase": 0.9478
+          },
+          "climatology_trend": {
+            "mae": 0.826,
+            "mase": 0.7179
+          },
+          "direct_ridge": {
+            "mae": 0.9841,
+            "mase": 0.8201
+          }
+        },
+        "10": {
+          "persistence": {
+            "mae": 1.3406,
+            "mase": 0.998
+          },
+          "seasonal_naive": {
+            "mae": 0.9611,
+            "mase": 0.8619
+          },
+          "climatology_trend": {
+            "mae": 0.782,
+            "mase": 0.6679
+          },
+          "direct_ridge": {
+            "mae": 1.0882,
+            "mase": 0.8475
+          }
+        },
+        "11": {
+          "persistence": {
+            "mae": 1.2559,
+            "mase": 0.9564
+          },
+          "seasonal_naive": {
+            "mae": 1.1584,
+            "mase": 1.0019
+          },
+          "climatology_trend": {
+            "mae": 0.9717,
+            "mase": 0.7675
+          },
+          "direct_ridge": {
+            "mae": 1.1084,
+            "mase": 0.8763
+          }
+        },
+        "12": {
+          "persistence": {
+            "mae": 1.331,
+            "mase": 0.9908
+          },
+          "seasonal_naive": {
+            "mae": 1.0751,
+            "mase": 0.9659
+          },
+          "climatology_trend": {
+            "mae": 0.9626,
+            "mase": 0.7859
+          },
+          "direct_ridge": {
+            "mae": 1.0965,
+            "mase": 0.8776
+          }
+        },
+        "13": {
+          "persistence": {
+            "mae": 1.6149,
+            "mase": 1.2073
+          },
+          "seasonal_naive": {
+            "mae": 1.2095,
+            "mase": 1.0434
+          },
+          "climatology_trend": {
+            "mae": 1.1574,
+            "mase": 0.9231
+          },
+          "direct_ridge": {
+            "mae": 1.3379,
+            "mase": 1.0192
+          }
+        },
+        "14": {
+          "persistence": {
+            "mae": 1.4874,
+            "mase": 1.1906
+          },
+          "seasonal_naive": {
+            "mae": 1.2839,
+            "mase": 1.1198
+          },
+          "climatology_trend": {
+            "mae": 1.184,
+            "mase": 0.9824
+          },
+          "direct_ridge": {
+            "mae": 1.2594,
+            "mase": 1.0363
+          }
+        },
+        "15": {
+          "persistence": {
+            "mae": 1.4667,
+            "mase": 1.1952
+          },
+          "seasonal_naive": {
+            "mae": 1.2465,
+            "mase": 1.1177
+          },
+          "climatology_trend": {
+            "mae": 1.1079,
+            "mase": 0.928
+          },
+          "direct_ridge": {
+            "mae": 1.2461,
+            "mase": 1.0332
+          }
+        },
+        "16": {
+          "persistence": {
+            "mae": 1.4892,
+            "mase": 1.1539
+          },
+          "seasonal_naive": {
+            "mae": 1.1092,
+            "mase": 1.0188
+          },
+          "climatology_trend": {
+            "mae": 0.9685,
+            "mase": 0.8649
+          },
+          "direct_ridge": {
+            "mae": 1.1128,
+            "mase": 0.9545
+          }
+        },
+        "17": {
+          "persistence": {
+            "mae": 1.2875,
+            "mase": 1.0513
+          },
+          "seasonal_naive": {
+            "mae": 0.9619,
+            "mase": 0.9225
+          },
+          "climatology_trend": {
+            "mae": 0.8859,
+            "mase": 0.8334
+          },
+          "direct_ridge": {
+            "mae": 1.015,
+            "mase": 0.9131
+          }
+        },
+        "18": {
+          "persistence": {
+            "mae": 1.3331,
+            "mase": 1.0128
+          },
+          "seasonal_naive": {
+            "mae": 0.8819,
+            "mase": 0.8496
+          },
+          "climatology_trend": {
+            "mae": 0.7829,
+            "mase": 0.6987
+          },
+          "direct_ridge": {
+            "mae": 0.8778,
+            "mase": 0.8046
+          }
+        },
+        "19": {
+          "persistence": {
+            "mae": 1.3966,
+            "mase": 1.0653
+          },
+          "seasonal_naive": {
+            "mae": 0.8704,
+            "mase": 0.8499
+          },
+          "climatology_trend": {
+            "mae": 0.7578,
+            "mase": 0.6217
+          },
+          "direct_ridge": {
+            "mae": 0.8798,
+            "mase": 0.7718
+          }
+        },
+        "20": {
+          "persistence": {
+            "mae": 1.3691,
+            "mase": 1.0392
+          },
+          "seasonal_naive": {
+            "mae": 0.9553,
+            "mase": 0.8759
+          },
+          "climatology_trend": {
+            "mae": 0.7755,
+            "mase": 0.6716
+          },
+          "direct_ridge": {
+            "mae": 1.0123,
+            "mase": 0.8522
+          }
+        },
+        "21": {
+          "persistence": {
+            "mae": 1.346,
+            "mase": 1.0303
+          },
+          "seasonal_naive": {
+            "mae": 0.9625,
+            "mase": 0.9223
+          },
+          "climatology_trend": {
+            "mae": 0.7594,
+            "mase": 0.6818
+          },
+          "direct_ridge": {
+            "mae": 0.9671,
+            "mase": 0.8399
+          }
+        },
+        "22": {
+          "persistence": {
+            "mae": 1.4047,
+            "mase": 1.0443
+          },
+          "seasonal_naive": {
+            "mae": 1.0978,
+            "mase": 1.0159
+          },
+          "climatology_trend": {
+            "mae": 0.8532,
+            "mase": 0.7112
+          },
+          "direct_ridge": {
+            "mae": 1.0307,
+            "mase": 0.8823
+          }
+        },
+        "23": {
+          "persistence": {
+            "mae": 1.3219,
+            "mase": 0.9923
+          },
+          "seasonal_naive": {
+            "mae": 1.1734,
+            "mase": 1.0071
+          },
+          "climatology_trend": {
+            "mae": 0.9906,
+            "mase": 0.7689
+          },
+          "direct_ridge": {
+            "mae": 1.0754,
+            "mase": 0.8676
+          }
+        },
+        "24": {
+          "persistence": {
+            "mae": 1.3192,
+            "mase": 1.0705
+          },
+          "seasonal_naive": {
+            "mae": 1.1208,
+            "mase": 0.9801
+          },
+          "climatology_trend": {
+            "mae": 0.9964,
+            "mase": 0.7839
+          },
+          "direct_ridge": {
+            "mae": 1.1125,
+            "mase": 0.9002
+          }
+        },
+        "25": {
+          "persistence": {
+            "mae": 1.4825,
+            "mase": 1.1878
+          },
+          "seasonal_naive": {
+            "mae": 1.0502,
+            "mase": 0.9933
+          },
+          "climatology_trend": {
+            "mae": 0.9528,
+            "mase": 0.8455
+          },
+          "direct_ridge": {
+            "mae": 1.1346,
+            "mase": 0.9826
+          }
+        },
+        "26": {
+          "persistence": {
+            "mae": 1.5584,
+            "mase": 1.1233
+          },
+          "seasonal_naive": {
+            "mae": 1.1025,
+            "mase": 0.9709
+          },
+          "climatology_trend": {
+            "mae": 1.0225,
+            "mase": 0.8061
+          },
+          "direct_ridge": {
+            "mae": 1.0846,
+            "mase": 0.8875
+          }
+        },
+        "27": {
+          "persistence": {
+            "mae": 1.6373,
+            "mase": 1.1783
+          },
+          "seasonal_naive": {
+            "mae": 1.1719,
+            "mase": 0.9807
+          },
+          "climatology_trend": {
+            "mae": 1.075,
+            "mase": 0.836
+          },
+          "direct_ridge": {
+            "mae": 1.3353,
+            "mase": 1.0119
+          }
+        },
+        "28": {
+          "persistence": {
+            "mae": 1.5068,
+            "mase": 1.1165
+          },
+          "seasonal_naive": {
+            "mae": 1.1125,
+            "mase": 0.9482
+          },
+          "climatology_trend": {
+            "mae": 1.0941,
+            "mase": 0.8854
+          },
+          "direct_ridge": {
+            "mae": 1.2327,
+            "mase": 1.0008
+          }
+        },
+        "29": {
+          "persistence": {
+            "mae": 1.3559,
+            "mase": 1.0173
+          },
+          "seasonal_naive": {
+            "mae": 0.9782,
+            "mase": 0.9332
+          },
+          "climatology_trend": {
+            "mae": 0.9174,
+            "mase": 0.7498
+          },
+          "direct_ridge": {
+            "mae": 1.0283,
+            "mase": 0.8608
+          }
+        },
+        "30": {
+          "persistence": {
+            "mae": 1.3321,
+            "mase": 1.0844
+          },
+          "seasonal_naive": {
+            "mae": 0.8146,
+            "mase": 0.8861
+          },
+          "climatology_trend": {
+            "mae": 0.7309,
+            "mase": 0.7101
+          },
+          "direct_ridge": {
+            "mae": 0.8761,
+            "mase": 0.8028
+          }
+        },
+        "31": {
+          "persistence": {
+            "mae": 1.5239,
+            "mase": 1.1948
+          },
+          "seasonal_naive": {
+            "mae": 1.0002,
+            "mase": 0.9707
+          },
+          "climatology_trend": {
+            "mae": 0.9037,
+            "mase": 0.7737
+          },
+          "direct_ridge": {
+            "mae": 1.053,
+            "mase": 0.8999
+          }
+        },
+        "32": {
+          "persistence": {
+            "mae": 1.4969,
+            "mase": 1.1568
+          },
+          "seasonal_naive": {
+            "mae": 0.9781,
+            "mase": 0.9725
+          },
+          "climatology_trend": {
+            "mae": 0.8312,
+            "mase": 0.7375
+          },
+          "direct_ridge": {
+            "mae": 0.9384,
+            "mase": 0.8316
+          }
+        },
+        "33": {
+          "persistence": {
+            "mae": 1.3646,
+            "mase": 1.0718
+          },
+          "seasonal_naive": {
+            "mae": 1.0641,
+            "mase": 1.0495
+          },
+          "climatology_trend": {
+            "mae": 0.9006,
+            "mase": 0.7884
+          },
+          "direct_ridge": {
+            "mae": 1.084,
+            "mase": 0.9115
+          }
+        },
+        "34": {
+          "persistence": {
+            "mae": 1.3836,
+            "mase": 1.0637
+          },
+          "seasonal_naive": {
+            "mae": 1.0718,
+            "mase": 0.9617
+          },
+          "climatology_trend": {
+            "mae": 0.8366,
+            "mase": 0.7178
+          },
+          "direct_ridge": {
+            "mae": 1.0488,
+            "mase": 0.8589
+          }
+        },
+        "35": {
+          "persistence": {
+            "mae": 1.4315,
+            "mase": 1.0561
+          },
+          "seasonal_naive": {
+            "mae": 1.2163,
+            "mase": 1.0768
+          },
+          "climatology_trend": {
+            "mae": 1.0179,
+            "mase": 0.8116
+          },
+          "direct_ridge": {
+            "mae": 1.0747,
+            "mase": 0.9061
+          }
+        },
+        "36": {
+          "persistence": {
+            "mae": 1.3497,
+            "mase": 1.0256
+          },
+          "seasonal_naive": {
+            "mae": 1.1669,
+            "mase": 1.0446
+          },
+          "climatology_trend": {
+            "mae": 1.05,
+            "mase": 0.8493
+          },
+          "direct_ridge": {
+            "mae": 1.1528,
+            "mase": 0.9336
+          }
+        },
+        "37": {
+          "persistence": {
+            "mae": 1.5536,
+            "mase": 1.106
+          },
+          "seasonal_naive": {
+            "mae": 1.2422,
+            "mase": 1.1027
+          },
+          "climatology_trend": {
+            "mae": 1.1535,
+            "mase": 0.8993
+          },
+          "direct_ridge": {
+            "mae": 1.2993,
+            "mase": 0.9928
+          }
+        },
+        "38": {
+          "persistence": {
+            "mae": 1.5427,
+            "mase": 1.2297
+          },
+          "seasonal_naive": {
+            "mae": 1.3865,
+            "mase": 1.2316
+          },
+          "climatology_trend": {
+            "mae": 1.2348,
+            "mase": 1.0211
+          },
+          "direct_ridge": {
+            "mae": 1.4201,
+            "mase": 1.1691
+          }
+        },
+        "39": {
+          "persistence": {
+            "mae": 1.5217,
+            "mase": 1.175
+          },
+          "seasonal_naive": {
+            "mae": 1.2508,
+            "mase": 1.1744
+          },
+          "climatology_trend": {
+            "mae": 1.0389,
+            "mase": 0.8855
+          },
+          "direct_ridge": {
+            "mae": 1.2181,
+            "mase": 1.0225
+          }
+        },
+        "40": {
+          "persistence": {
+            "mae": 1.4443,
+            "mase": 1.1157
+          },
+          "seasonal_naive": {
+            "mae": 1.1478,
+            "mase": 1.0766
+          },
+          "climatology_trend": {
+            "mae": 0.9385,
+            "mase": 0.8422
+          },
+          "direct_ridge": {
+            "mae": 1.0953,
+            "mase": 0.9667
+          }
+        },
+        "41": {
+          "persistence": {
+            "mae": 1.2709,
+            "mase": 1.0125
+          },
+          "seasonal_naive": {
+            "mae": 1.0283,
+            "mase": 1.0111
+          },
+          "climatology_trend": {
+            "mae": 0.9206,
+            "mase": 0.8482
+          },
+          "direct_ridge": {
+            "mae": 1.0321,
+            "mase": 0.94
+          }
+        },
+        "42": {
+          "persistence": {
+            "mae": 1.3565,
+            "mase": 1.0571
+          },
+          "seasonal_naive": {
+            "mae": 0.9496,
+            "mase": 0.9536
+          },
+          "climatology_trend": {
+            "mae": 0.7503,
+            "mase": 0.6767
+          },
+          "direct_ridge": {
+            "mae": 0.9506,
+            "mase": 0.8372
+          }
+        },
+        "43": {
+          "persistence": {
+            "mae": 1.4254,
+            "mase": 1.1151
+          },
+          "seasonal_naive": {
+            "mae": 0.9528,
+            "mase": 0.957
+          },
+          "climatology_trend": {
+            "mae": 0.7933,
+            "mase": 0.6547
+          },
+          "direct_ridge": {
+            "mae": 0.9181,
+            "mase": 0.7861
+          }
+        },
+        "44": {
+          "persistence": {
+            "mae": 1.4895,
+            "mase": 1.143
+          },
+          "seasonal_naive": {
+            "mae": 1.0349,
+            "mase": 0.9619
+          },
+          "climatology_trend": {
+            "mae": 0.8012,
+            "mase": 0.6901
+          },
+          "direct_ridge": {
+            "mae": 1.1051,
+            "mase": 0.8549
+          }
+        },
+        "45": {
+          "persistence": {
+            "mae": 1.3776,
+            "mase": 1.1308
+          },
+          "seasonal_naive": {
+            "mae": 1.0025,
+            "mase": 1.0068
+          },
+          "climatology_trend": {
+            "mae": 0.755,
+            "mase": 0.7106
+          },
+          "direct_ridge": {
+            "mae": 0.9646,
+            "mase": 0.8472
+          }
+        },
+        "46": {
+          "persistence": {
+            "mae": 1.4039,
+            "mase": 1.1625
+          },
+          "seasonal_naive": {
+            "mae": 1.1201,
+            "mase": 1.0627
+          },
+          "climatology_trend": {
+            "mae": 0.8306,
+            "mase": 0.7218
+          },
+          "direct_ridge": {
+            "mae": 1.0366,
+            "mase": 0.8591
+          }
+        },
+        "47": {
+          "persistence": {
+            "mae": 1.3625,
+            "mase": 1.0857
+          },
+          "seasonal_naive": {
+            "mae": 1.201,
+            "mase": 1.0351
+          },
+          "climatology_trend": {
+            "mae": 1.0223,
+            "mase": 0.7999
+          },
+          "direct_ridge": {
+            "mae": 1.0151,
+            "mase": 0.8123
+          }
+        },
+        "48": {
+          "persistence": {
+            "mae": 1.4182,
+            "mase": 1.0586
+          },
+          "seasonal_naive": {
+            "mae": 1.1664,
+            "mase": 1.0072
+          },
+          "climatology_trend": {
+            "mae": 1.0046,
+            "mase": 0.7981
+          },
+          "direct_ridge": {
+            "mae": 1.09,
+            "mase": 0.8699
+          }
+        },
+        "49": {
+          "persistence": {
+            "mae": 1.6081,
+            "mase": 1.2404
+          },
+          "seasonal_naive": {
+            "mae": 1.1972,
+            "mase": 1.0977
+          },
+          "climatology_trend": {
+            "mae": 1.0566,
+            "mase": 0.9437
+          },
+          "direct_ridge": {
+            "mae": 1.2051,
+            "mase": 1.054
+          }
+        },
+        "50": {
+          "persistence": {
+            "mae": 1.5589,
+            "mase": 1.1605
+          },
+          "seasonal_naive": {
+            "mae": 1.1114,
+            "mase": 1.0073
+          },
+          "climatology_trend": {
+            "mae": 0.9929,
+            "mase": 0.8342
+          },
+          "direct_ridge": {
+            "mae": 1.175,
+            "mase": 0.9478
+          }
+        },
+        "51": {
+          "persistence": {
+            "mae": 1.4806,
+            "mase": 1.1614
+          },
+          "seasonal_naive": {
+            "mae": 1.2235,
+            "mase": 1.0683
+          },
+          "climatology_trend": {
+            "mae": 1.0744,
+            "mase": 0.8779
+          },
+          "direct_ridge": {
+            "mae": 1.2158,
+            "mase": 0.9974
+          }
+        },
+        "52": {
+          "persistence": {
+            "mae": 1.478,
+            "mase": 1.1268
+          },
+          "seasonal_naive": {
+            "mae": 1.1507,
+            "mase": 1.0214
+          },
+          "climatology_trend": {
+            "mae": 1.0855,
+            "mase": 0.901
+          },
+          "direct_ridge": {
+            "mae": 1.2599,
+            "mase": 1.0092
+          }
+        },
+        "53": {
+          "persistence": {
+            "mae": 1.426,
+            "mase": 1.1028
+          },
+          "seasonal_naive": {
+            "mae": 0.9818,
+            "mase": 0.9764
+          },
+          "climatology_trend": {
+            "mae": 0.9128,
+            "mase": 0.7758
+          },
+          "direct_ridge": {
+            "mae": 1.0724,
+            "mase": 0.9169
+          }
+        },
+        "54": {
+          "persistence": {
+            "mae": 1.4786,
+            "mase": 1.1739
+          },
+          "seasonal_naive": {
+            "mae": 0.9157,
+            "mase": 0.9789
+          },
+          "climatology_trend": {
+            "mae": 0.8029,
+            "mase": 0.7717
+          },
+          "direct_ridge": {
+            "mae": 0.9648,
+            "mase": 0.8993
+          }
+        },
+        "55": {
+          "persistence": {
+            "mae": 1.5698,
+            "mase": 1.2562
+          },
+          "seasonal_naive": {
+            "mae": 0.9931,
+            "mase": 1.0011
+          },
+          "climatology_trend": {
+            "mae": 0.8814,
+            "mase": 0.7939
+          },
+          "direct_ridge": {
+            "mae": 1.0289,
+            "mase": 0.9216
+          }
+        },
+        "56": {
+          "persistence": {
+            "mae": 1.5755,
+            "mase": 1.2147
+          },
+          "seasonal_naive": {
+            "mae": 1.0649,
+            "mase": 1.0045
+          },
+          "climatology_trend": {
+            "mae": 0.8916,
+            "mase": 0.7941
+          },
+          "direct_ridge": {
+            "mae": 1.0291,
+            "mase": 0.9006
+          }
+        },
+        "57": {
+          "persistence": {
+            "mae": 1.5274,
+            "mase": 1.177
+          },
+          "seasonal_naive": {
+            "mae": 1.1429,
+            "mase": 1.1144
+          },
+          "climatology_trend": {
+            "mae": 0.9503,
+            "mase": 0.8204
+          },
+          "direct_ridge": {
+            "mae": 1.0987,
+            "mase": 0.9481
+          }
+        },
+        "58": {
+          "persistence": {
+            "mae": 1.3778,
+            "mase": 1.0942
+          },
+          "seasonal_naive": {
+            "mae": 1.1872,
+            "mase": 1.0535
+          },
+          "climatology_trend": {
+            "mae": 0.9234,
+            "mase": 0.7768
+          },
+          "direct_ridge": {
+            "mae": 1.0943,
+            "mase": 0.9203
+          }
+        },
+        "59": {
+          "persistence": {
+            "mae": 1.3714,
+            "mase": 1.0805
+          },
+          "seasonal_naive": {
+            "mae": 1.2652,
+            "mase": 1.1255
+          },
+          "climatology_trend": {
+            "mae": 1.0173,
+            "mase": 0.8261
+          },
+          "direct_ridge": {
+            "mae": 1.1731,
+            "mase": 0.9688
+          }
+        },
+        "60": {
+          "persistence": {
+            "mae": 1.4208,
+            "mase": 1.1147
+          },
+          "seasonal_naive": {
+            "mae": 1.2035,
+            "mase": 1.081
+          },
+          "climatology_trend": {
+            "mae": 1.0547,
+            "mase": 0.8515
+          },
+          "direct_ridge": {
+            "mae": 1.1783,
+            "mase": 0.9509
+          }
+        }
+      },
+      "precipitation": {
+        "1": {
+          "persistence": {
+            "mae": 40.8568,
+            "mase": 1.2573
+          },
+          "seasonal_naive": {
+            "mae": 24.9757,
+            "mase": 0.8189
+          },
+          "climatology_trend": {
+            "mae": 25.104,
+            "mase": 0.8231
+          },
+          "direct_ridge": {
+            "mae": 28.015,
+            "mase": 0.9162
+          }
+        },
+        "2": {
+          "persistence": {
+            "mae": 37.6126,
+            "mase": 1.2154
+          },
+          "seasonal_naive": {
+            "mae": 25.4423,
+            "mase": 0.8059
+          },
+          "climatology_trend": {
+            "mae": 25.1051,
+            "mase": 0.7832
+          },
+          "direct_ridge": {
+            "mae": 29.8447,
+            "mase": 0.9391
+          }
+        },
+        "3": {
+          "persistence": {
+            "mae": 41.4546,
+            "mase": 1.2948
+          },
+          "seasonal_naive": {
+            "mae": 25.1642,
+            "mase": 0.866
+          },
+          "climatology_trend": {
+            "mae": 24.1176,
+            "mase": 0.8153
+          },
+          "direct_ridge": {
+            "mae": 25.5591,
+            "mase": 0.8685
+          }
+        },
+        "4": {
+          "persistence": {
+            "mae": 44.8197,
+            "mase": 1.2681
+          },
+          "seasonal_naive": {
+            "mae": 21.0602,
+            "mase": 0.6887
+          },
+          "climatology_trend": {
+            "mae": 20.1216,
+            "mase": 0.627
+          },
+          "direct_ridge": {
+            "mae": 22.1376,
+            "mase": 0.7594
+          }
+        },
+        "5": {
+          "persistence": {
+            "mae": 58.9596,
+            "mase": 1.7455
+          },
+          "seasonal_naive": {
+            "mae": 19.6281,
+            "mase": 0.7225
+          },
+          "climatology_trend": {
+            "mae": 18.1507,
+            "mase": 0.6598
+          },
+          "direct_ridge": {
+            "mae": 20.8729,
+            "mase": 0.7678
+          }
+        },
+        "6": {
+          "persistence": {
+            "mae": 68.7402,
+            "mase": 2.2038
+          },
+          "seasonal_naive": {
+            "mae": 18.3119,
+            "mase": 0.7845
+          },
+          "climatology_trend": {
+            "mae": 17.6133,
+            "mase": 0.7475
+          },
+          "direct_ridge": {
+            "mae": 20.7649,
+            "mase": 0.8564
+          }
+        },
+        "7": {
+          "persistence": {
+            "mae": 70.0482,
+            "mase": 2.5445
+          },
+          "seasonal_naive": {
+            "mae": 19.2385,
+            "mase": 0.8601
+          },
+          "climatology_trend": {
+            "mae": 18.6132,
+            "mase": 0.8435
+          },
+          "direct_ridge": {
+            "mae": 21.5593,
+            "mase": 0.8969
+          }
+        },
+        "8": {
+          "persistence": {
+            "mae": 68.7828,
+            "mase": 2.7223
+          },
+          "seasonal_naive": {
+            "mae": 20.659,
+            "mase": 1.0065
+          },
+          "climatology_trend": {
+            "mae": 20.3771,
+            "mase": 1.0137
+          },
+          "direct_ridge": {
+            "mae": 24.1828,
+            "mase": 1.1335
+          }
+        },
+        "9": {
+          "persistence": {
+            "mae": 60.3107,
+            "mase": 2.0073
+          },
+          "seasonal_naive": {
+            "mae": 23.523,
+            "mase": 0.9066
+          },
+          "climatology_trend": {
+            "mae": 22.5033,
+            "mase": 0.8865
+          },
+          "direct_ridge": {
+            "mae": 24.2535,
+            "mase": 0.9257
+          }
+        },
+        "10": {
+          "persistence": {
+            "mae": 52.9302,
+            "mase": 1.6483
+          },
+          "seasonal_naive": {
+            "mae": 21.4176,
+            "mase": 0.8782
+          },
+          "climatology_trend": {
+            "mae": 20.4119,
+            "mase": 0.8294
+          },
+          "direct_ridge": {
+            "mae": 23.492,
+            "mase": 0.9528
+          }
+        },
+        "11": {
+          "persistence": {
+            "mae": 45.6863,
+            "mase": 1.3482
+          },
+          "seasonal_naive": {
+            "mae": 25.9491,
+            "mase": 0.8273
+          },
+          "climatology_trend": {
+            "mae": 26.2873,
+            "mase": 0.8225
+          },
+          "direct_ridge": {
+            "mae": 29.5062,
+            "mase": 0.9667
+          }
+        },
+        "12": {
+          "persistence": {
+            "mae": 34.2544,
+            "mase": 0.9783
+          },
+          "seasonal_naive": {
+            "mae": 24.8913,
+            "mase": 0.7128
+          },
+          "climatology_trend": {
+            "mae": 24.2894,
+            "mase": 0.7168
+          },
+          "direct_ridge": {
+            "mae": 25.7431,
+            "mase": 0.8041
+          }
+        },
+        "13": {
+          "persistence": {
+            "mae": 43.0434,
+            "mase": 1.2481
+          },
+          "seasonal_naive": {
+            "mae": 32.8621,
+            "mase": 0.922
+          },
+          "climatology_trend": {
+            "mae": 32.5039,
+            "mase": 0.932
+          },
+          "direct_ridge": {
+            "mae": 34.8883,
+            "mase": 1.0248
+          }
+        },
+        "14": {
+          "persistence": {
+            "mae": 39.1353,
+            "mase": 1.2206
+          },
+          "seasonal_naive": {
+            "mae": 28.3336,
+            "mase": 0.8438
+          },
+          "climatology_trend": {
+            "mae": 27.5654,
+            "mase": 0.8071
+          },
+          "direct_ridge": {
+            "mae": 32.0109,
+            "mase": 0.9353
+          }
+        },
+        "15": {
+          "persistence": {
+            "mae": 40.5214,
+            "mase": 1.2545
+          },
+          "seasonal_naive": {
+            "mae": 22.7666,
+            "mase": 0.8007
+          },
+          "climatology_trend": {
+            "mae": 21.6227,
+            "mase": 0.7439
+          },
+          "direct_ridge": {
+            "mae": 24.8115,
+            "mase": 0.8342
+          }
+        },
+        "16": {
+          "persistence": {
+            "mae": 52.0295,
+            "mase": 1.461
+          },
+          "seasonal_naive": {
+            "mae": 24.1543,
+            "mase": 0.8216
+          },
+          "climatology_trend": {
+            "mae": 23.5537,
+            "mase": 0.7605
+          },
+          "direct_ridge": {
+            "mae": 27.8176,
+            "mase": 0.8732
+          }
+        },
+        "17": {
+          "persistence": {
+            "mae": 58.5272,
+            "mase": 1.7122
+          },
+          "seasonal_naive": {
+            "mae": 21.446,
+            "mase": 0.7848
+          },
+          "climatology_trend": {
+            "mae": 20.0956,
+            "mase": 0.7301
+          },
+          "direct_ridge": {
+            "mae": 24.5548,
+            "mase": 0.927
+          }
+        },
+        "18": {
+          "persistence": {
+            "mae": 71.2975,
+            "mase": 2.3694
+          },
+          "seasonal_naive": {
+            "mae": 20.1122,
+            "mase": 0.8125
+          },
+          "climatology_trend": {
+            "mae": 19.2443,
+            "mase": 0.7718
+          },
+          "direct_ridge": {
+            "mae": 23.0647,
+            "mase": 0.9225
+          }
+        },
+        "19": {
+          "persistence": {
+            "mae": 73.2309,
+            "mase": 2.7404
+          },
+          "seasonal_naive": {
+            "mae": 18.6043,
+            "mase": 0.8747
+          },
+          "climatology_trend": {
+            "mae": 17.6263,
+            "mase": 0.8546
+          },
+          "direct_ridge": {
+            "mae": 21.168,
+            "mase": 0.9788
+          }
+        },
+        "20": {
+          "persistence": {
+            "mae": 74.4655,
+            "mase": 2.885
+          },
+          "seasonal_naive": {
+            "mae": 20.8409,
+            "mase": 0.9941
+          },
+          "climatology_trend": {
+            "mae": 20.5736,
+            "mase": 1.0162
+          },
+          "direct_ridge": {
+            "mae": 23.3405,
+            "mase": 1.1024
+          }
+        },
+        "21": {
+          "persistence": {
+            "mae": 59.2636,
+            "mase": 2.0242
+          },
+          "seasonal_naive": {
+            "mae": 20.6261,
+            "mase": 0.8605
+          },
+          "climatology_trend": {
+            "mae": 19.568,
+            "mase": 0.8457
+          },
+          "direct_ridge": {
+            "mae": 23.132,
+            "mase": 0.9145
+          }
+        },
+        "22": {
+          "persistence": {
+            "mae": 55.9078,
+            "mase": 1.833
+          },
+          "seasonal_naive": {
+            "mae": 23.9699,
+            "mase": 0.9511
+          },
+          "climatology_trend": {
+            "mae": 23.0631,
+            "mase": 0.9089
+          },
+          "direct_ridge": {
+            "mae": 24.2292,
+            "mase": 0.9579
+          }
+        },
+        "23": {
+          "persistence": {
+            "mae": 39.6336,
+            "mase": 1.1655
+          },
+          "seasonal_naive": {
+            "mae": 23.8637,
+            "mase": 0.7712
+          },
+          "climatology_trend": {
+            "mae": 23.6762,
+            "mase": 0.7598
+          },
+          "direct_ridge": {
+            "mae": 26.7628,
+            "mase": 0.8549
+          }
+        },
+        "24": {
+          "persistence": {
+            "mae": 33.7489,
+            "mase": 0.977
+          },
+          "seasonal_naive": {
+            "mae": 26.4287,
+            "mase": 0.7792
+          },
+          "climatology_trend": {
+            "mae": 27.026,
+            "mase": 0.814
+          },
+          "direct_ridge": {
+            "mae": 28.3881,
+            "mase": 0.9048
+          }
+        },
+        "25": {
+          "persistence": {
+            "mae": 40.0406,
+            "mase": 1.2051
+          },
+          "seasonal_naive": {
+            "mae": 26.0767,
+            "mase": 0.8444
+          },
+          "climatology_trend": {
+            "mae": 26.3626,
+            "mase": 0.8533
+          },
+          "direct_ridge": {
+            "mae": 28.9651,
+            "mase": 0.9643
+          }
+        },
+        "26": {
+          "persistence": {
+            "mae": 38.1905,
+            "mase": 1.1975
+          },
+          "seasonal_naive": {
+            "mae": 24.8158,
+            "mase": 0.7659
+          },
+          "climatology_trend": {
+            "mae": 24.2903,
+            "mase": 0.7398
+          },
+          "direct_ridge": {
+            "mae": 28.2144,
+            "mase": 0.8938
+          }
+        },
+        "27": {
+          "persistence": {
+            "mae": 39.4946,
+            "mase": 1.2573
+          },
+          "seasonal_naive": {
+            "mae": 24.7497,
+            "mase": 0.8603
+          },
+          "climatology_trend": {
+            "mae": 23.8836,
+            "mase": 0.8067
+          },
+          "direct_ridge": {
+            "mae": 25.7372,
+            "mase": 0.8681
+          }
+        },
+        "28": {
+          "persistence": {
+            "mae": 44.1813,
+            "mase": 1.2575
+          },
+          "seasonal_naive": {
+            "mae": 21.4337,
+            "mase": 0.7118
+          },
+          "climatology_trend": {
+            "mae": 20.446,
+            "mase": 0.6464
+          },
+          "direct_ridge": {
+            "mae": 25.6333,
+            "mase": 0.8151
+          }
+        },
+        "29": {
+          "persistence": {
+            "mae": 60.4643,
+            "mase": 1.7395
+          },
+          "seasonal_naive": {
+            "mae": 20.5536,
+            "mase": 0.7379
+          },
+          "climatology_trend": {
+            "mae": 19.2284,
+            "mase": 0.6803
+          },
+          "direct_ridge": {
+            "mae": 23.0235,
+            "mase": 0.8307
+          }
+        },
+        "30": {
+          "persistence": {
+            "mae": 68.3378,
+            "mase": 2.2344
+          },
+          "seasonal_naive": {
+            "mae": 17.791,
+            "mase": 0.7648
+          },
+          "climatology_trend": {
+            "mae": 17.1843,
+            "mase": 0.7387
+          },
+          "direct_ridge": {
+            "mae": 22.2425,
+            "mase": 0.9023
+          }
+        },
+        "31": {
+          "persistence": {
+            "mae": 70.6213,
+            "mase": 2.5832
+          },
+          "seasonal_naive": {
+            "mae": 19.0962,
+            "mase": 0.856
+          },
+          "climatology_trend": {
+            "mae": 18.4741,
+            "mase": 0.8548
+          },
+          "direct_ridge": {
+            "mae": 20.8534,
+            "mase": 0.9078
+          }
+        },
+        "32": {
+          "persistence": {
+            "mae": 70.7505,
+            "mase": 2.7243
+          },
+          "seasonal_naive": {
+            "mae": 20.3025,
+            "mase": 0.9152
+          },
+          "climatology_trend": {
+            "mae": 20.3491,
+            "mase": 0.9395
+          },
+          "direct_ridge": {
+            "mae": 23.4465,
+            "mase": 1.0548
+          }
+        },
+        "33": {
+          "persistence": {
+            "mae": 59.5305,
+            "mase": 1.9999
+          },
+          "seasonal_naive": {
+            "mae": 21.8516,
+            "mase": 0.8487
+          },
+          "climatology_trend": {
+            "mae": 20.7499,
+            "mase": 0.8364
+          },
+          "direct_ridge": {
+            "mae": 24.8758,
+            "mase": 1.0212
+          }
+        },
+        "34": {
+          "persistence": {
+            "mae": 51.3837,
+            "mase": 1.5683
+          },
+          "seasonal_naive": {
+            "mae": 22.3454,
+            "mase": 0.8944
+          },
+          "climatology_trend": {
+            "mae": 21.2676,
+            "mase": 0.8381
+          },
+          "direct_ridge": {
+            "mae": 24.3147,
+            "mase": 1.0035
+          }
+        },
+        "35": {
+          "persistence": {
+            "mae": 41.7252,
+            "mase": 1.2253
+          },
+          "seasonal_naive": {
+            "mae": 25.6261,
+            "mase": 0.8289
+          },
+          "climatology_trend": {
+            "mae": 26.2632,
+            "mase": 0.843
+          },
+          "direct_ridge": {
+            "mae": 28.6039,
+            "mase": 0.9597
+          }
+        },
+        "36": {
+          "persistence": {
+            "mae": 32.5785,
+            "mase": 0.9441
+          },
+          "seasonal_naive": {
+            "mae": 25.3415,
+            "mase": 0.7243
+          },
+          "climatology_trend": {
+            "mae": 24.7812,
+            "mase": 0.7289
+          },
+          "direct_ridge": {
+            "mae": 26.5827,
+            "mase": 0.7898
+          }
+        },
+        "37": {
+          "persistence": {
+            "mae": 41.5175,
+            "mase": 1.2629
+          },
+          "seasonal_naive": {
+            "mae": 31.3413,
+            "mase": 0.9005
+          },
+          "climatology_trend": {
+            "mae": 31.1431,
+            "mase": 0.916
+          },
+          "direct_ridge": {
+            "mae": 31.8162,
+            "mase": 0.9895
+          }
+        },
+        "38": {
+          "persistence": {
+            "mae": 38.7059,
+            "mase": 1.2304
+          },
+          "seasonal_naive": {
+            "mae": 29.4207,
+            "mase": 0.872
+          },
+          "climatology_trend": {
+            "mae": 28.534,
+            "mase": 0.8272
+          },
+          "direct_ridge": {
+            "mae": 32.1716,
+            "mase": 0.9753
+          }
+        },
+        "39": {
+          "persistence": {
+            "mae": 39.4727,
+            "mase": 1.2167
+          },
+          "seasonal_naive": {
+            "mae": 23.1093,
+            "mase": 0.807
+          },
+          "climatology_trend": {
+            "mae": 21.7884,
+            "mase": 0.7399
+          },
+          "direct_ridge": {
+            "mae": 22.1705,
+            "mase": 0.7321
+          }
+        },
+        "40": {
+          "persistence": {
+            "mae": 50.3109,
+            "mase": 1.4154
+          },
+          "seasonal_naive": {
+            "mae": 23.8192,
+            "mase": 0.8196
+          },
+          "climatology_trend": {
+            "mae": 22.8475,
+            "mase": 0.7463
+          },
+          "direct_ridge": {
+            "mae": 25.9701,
+            "mase": 0.8126
+          }
+        },
+        "41": {
+          "persistence": {
+            "mae": 61.4589,
+            "mase": 1.8003
+          },
+          "seasonal_naive": {
+            "mae": 21.475,
+            "mase": 0.7925
+          },
+          "climatology_trend": {
+            "mae": 20.1744,
+            "mase": 0.7469
+          },
+          "direct_ridge": {
+            "mae": 21.7699,
+            "mase": 0.8625
+          }
+        },
+        "42": {
+          "persistence": {
+            "mae": 69.3461,
+            "mase": 2.3445
+          },
+          "seasonal_naive": {
+            "mae": 19.9905,
+            "mase": 0.8115
+          },
+          "climatology_trend": {
+            "mae": 19.1662,
+            "mase": 0.7887
+          },
+          "direct_ridge": {
+            "mae": 23.5274,
+            "mase": 1.0005
+          }
+        },
+        "43": {
+          "persistence": {
+            "mae": 73.7432,
+            "mase": 2.7842
+          },
+          "seasonal_naive": {
+            "mae": 18.3554,
+            "mase": 0.8453
+          },
+          "climatology_trend": {
+            "mae": 17.5122,
+            "mase": 0.8309
+          },
+          "direct_ridge": {
+            "mae": 22.9883,
+            "mase": 1.0484
+          }
+        },
+        "44": {
+          "persistence": {
+            "mae": 72.86,
+            "mase": 2.8679
+          },
+          "seasonal_naive": {
+            "mae": 21.0432,
+            "mase": 1.0159
+          },
+          "climatology_trend": {
+            "mae": 20.7702,
+            "mase": 1.0396
+          },
+          "direct_ridge": {
+            "mae": 24.6153,
+            "mase": 1.1601
+          }
+        },
+        "45": {
+          "persistence": {
+            "mae": 58.5439,
+            "mase": 2.013
+          },
+          "seasonal_naive": {
+            "mae": 20.3839,
+            "mase": 0.8463
+          },
+          "climatology_trend": {
+            "mae": 19.2607,
+            "mase": 0.8352
+          },
+          "direct_ridge": {
+            "mae": 21.5319,
+            "mase": 0.8995
+          }
+        },
+        "46": {
+          "persistence": {
+            "mae": 58.7344,
+            "mase": 1.8578
+          },
+          "seasonal_naive": {
+            "mae": 24.0593,
+            "mase": 0.9372
+          },
+          "climatology_trend": {
+            "mae": 23.2406,
+            "mase": 0.894
+          },
+          "direct_ridge": {
+            "mae": 25.5601,
+            "mase": 1.0062
+          }
+        },
+        "47": {
+          "persistence": {
+            "mae": 43.7264,
+            "mase": 1.1968
+          },
+          "seasonal_naive": {
+            "mae": 24.0058,
+            "mase": 0.7714
+          },
+          "climatology_trend": {
+            "mae": 24.1004,
+            "mase": 0.7765
+          },
+          "direct_ridge": {
+            "mae": 29.3615,
+            "mase": 0.9942
+          }
+        },
+        "48": {
+          "persistence": {
+            "mae": 37.765,
+            "mase": 1.0245
+          },
+          "seasonal_naive": {
+            "mae": 24.3576,
+            "mase": 0.7038
+          },
+          "climatology_trend": {
+            "mae": 24.7968,
+            "mase": 0.738
+          },
+          "direct_ridge": {
+            "mae": 29.6941,
+            "mase": 0.8805
+          }
+        },
+        "49": {
+          "persistence": {
+            "mae": 41.01,
+            "mase": 1.2495
+          },
+          "seasonal_naive": {
+            "mae": 26.2155,
+            "mase": 0.842
+          },
+          "climatology_trend": {
+            "mae": 26.658,
+            "mase": 0.8524
+          },
+          "direct_ridge": {
+            "mae": 28.5993,
+            "mase": 0.932
+          }
+        },
+        "50": {
+          "persistence": {
+            "mae": 37.6925,
+            "mase": 1.2031
+          },
+          "seasonal_naive": {
+            "mae": 25.2603,
+            "mase": 0.7637
+          },
+          "climatology_trend": {
+            "mae": 24.6338,
+            "mase": 0.7349
+          },
+          "direct_ridge": {
+            "mae": 28.4049,
+            "mase": 0.9144
+          }
+        },
+        "51": {
+          "persistence": {
+            "mae": 38.6096,
+            "mase": 1.2243
+          },
+          "seasonal_naive": {
+            "mae": 24.0662,
+            "mase": 0.8514
+          },
+          "climatology_trend": {
+            "mae": 23.125,
+            "mase": 0.7933
+          },
+          "direct_ridge": {
+            "mae": 26.19,
+            "mase": 0.8817
+          }
+        },
+        "52": {
+          "persistence": {
+            "mae": 47.5566,
+            "mase": 1.3141
+          },
+          "seasonal_naive": {
+            "mae": 22.1545,
+            "mase": 0.7194
+          },
+          "climatology_trend": {
+            "mae": 20.9896,
+            "mase": 0.6421
+          },
+          "direct_ridge": {
+            "mae": 23.6879,
+            "mase": 0.7563
+          }
+        },
+        "53": {
+          "persistence": {
+            "mae": 57.2539,
+            "mase": 1.6961
+          },
+          "seasonal_naive": {
+            "mae": 21.4504,
+            "mase": 0.7688
+          },
+          "climatology_trend": {
+            "mae": 20.1026,
+            "mase": 0.7167
+          },
+          "direct_ridge": {
+            "mae": 24.7518,
+            "mase": 0.9284
+          }
+        },
+        "54": {
+          "persistence": {
+            "mae": 65.8383,
+            "mase": 2.2125
+          },
+          "seasonal_naive": {
+            "mae": 17.9743,
+            "mase": 0.7973
+          },
+          "climatology_trend": {
+            "mae": 17.5243,
+            "mase": 0.7924
+          },
+          "direct_ridge": {
+            "mae": 23.4156,
+            "mase": 1.0585
+          }
+        },
+        "55": {
+          "persistence": {
+            "mae": 68.8171,
+            "mase": 2.5703
+          },
+          "seasonal_naive": {
+            "mae": 18.4652,
+            "mase": 0.8486
+          },
+          "climatology_trend": {
+            "mae": 18.0913,
+            "mase": 0.8693
+          },
+          "direct_ridge": {
+            "mae": 22.5594,
+            "mase": 1.0168
+          }
+        },
+        "56": {
+          "persistence": {
+            "mae": 69.3357,
+            "mase": 2.7071
+          },
+          "seasonal_naive": {
+            "mae": 21.5838,
+            "mase": 0.9867
+          },
+          "climatology_trend": {
+            "mae": 21.4812,
+            "mase": 1.0265
+          },
+          "direct_ridge": {
+            "mae": 24.3227,
+            "mase": 1.1114
+          }
+        },
+        "57": {
+          "persistence": {
+            "mae": 60.5544,
+            "mase": 1.9726
+          },
+          "seasonal_naive": {
+            "mae": 20.2028,
+            "mase": 0.81
+          },
+          "climatology_trend": {
+            "mae": 19.3993,
+            "mase": 0.8134
+          },
+          "direct_ridge": {
+            "mae": 21.9564,
+            "mase": 0.9239
+          }
+        },
+        "58": {
+          "persistence": {
+            "mae": 53.215,
+            "mase": 1.6639
+          },
+          "seasonal_naive": {
+            "mae": 22.5497,
+            "mase": 0.899
+          },
+          "climatology_trend": {
+            "mae": 21.3918,
+            "mase": 0.843
+          },
+          "direct_ridge": {
+            "mae": 27.7619,
+            "mase": 1.1244
+          }
+        },
+        "59": {
+          "persistence": {
+            "mae": 46.3516,
+            "mase": 1.3307
+          },
+          "seasonal_naive": {
+            "mae": 25.9975,
+            "mase": 0.8372
+          },
+          "climatology_trend": {
+            "mae": 26.4665,
+            "mase": 0.8469
+          },
+          "direct_ridge": {
+            "mae": 29.5113,
+            "mase": 1.0326
+          }
+        },
+        "60": {
+          "persistence": {
+            "mae": 30.7083,
+            "mase": 0.9283
+          },
+          "seasonal_naive": {
+            "mae": 24.9422,
+            "mase": 0.7235
+          },
+          "climatology_trend": {
+            "mae": 24.4304,
+            "mase": 0.7399
+          },
+          "direct_ridge": {
+            "mae": 26.5606,
+            "mase": 0.855
+          }
+        }
+      },
+      "sst": {
+        "1": {
+          "persistence": {
+            "mae": 0.8521,
+            "mase": 3.8655
+          },
+          "seasonal_naive": {
+            "mae": 0.4033,
+            "mase": 1.2448
+          },
+          "climatology_trend": {
+            "mae": 0.3279,
+            "mase": 1.0952
+          },
+          "direct_ridge": {
+            "mae": 0.2621,
+            "mase": 1.0188
+          }
+        },
+        "2": {
+          "persistence": {
+            "mae": 1.15,
+            "mase": 4.7811
+          },
+          "seasonal_naive": {
+            "mae": 0.3596,
+            "mase": 1.0289
+          },
+          "climatology_trend": {
+            "mae": 0.3035,
+            "mase": 0.9144
+          },
+          "direct_ridge": {
+            "mae": 0.3019,
+            "mase": 0.9788
+          }
+        },
+        "3": {
+          "persistence": {
+            "mae": 0.9972,
+            "mase": 3.506
+          },
+          "seasonal_naive": {
+            "mae": 0.3497,
+            "mase": 0.9938
+          },
+          "climatology_trend": {
+            "mae": 0.2993,
+            "mase": 0.89
+          },
+          "direct_ridge": {
+            "mae": 0.3178,
+            "mase": 0.9854
+          }
+        },
+        "4": {
+          "persistence": {
+            "mae": 0.8611,
+            "mase": 2.4896
+          },
+          "seasonal_naive": {
+            "mae": 0.3222,
+            "mase": 0.899
+          },
+          "climatology_trend": {
+            "mae": 0.3225,
+            "mase": 0.8892
+          },
+          "direct_ridge": {
+            "mae": 0.2836,
+            "mase": 0.8606
+          }
+        },
+        "5": {
+          "persistence": {
+            "mae": 0.8086,
+            "mase": 2.3584
+          },
+          "seasonal_naive": {
+            "mae": 0.2848,
+            "mase": 0.6155
+          },
+          "climatology_trend": {
+            "mae": 0.2943,
+            "mase": 0.6185
+          },
+          "direct_ridge": {
+            "mae": 0.2923,
+            "mase": 0.7604
+          }
+        },
+        "6": {
+          "persistence": {
+            "mae": 1.1674,
+            "mase": 3.0309
+          },
+          "seasonal_naive": {
+            "mae": 0.3227,
+            "mase": 0.6875
+          },
+          "climatology_trend": {
+            "mae": 0.3093,
+            "mase": 0.6516
+          },
+          "direct_ridge": {
+            "mae": 0.3217,
+            "mase": 0.8781
+          }
+        },
+        "7": {
+          "persistence": {
+            "mae": 1.9644,
+            "mase": 5.0116
+          },
+          "seasonal_naive": {
+            "mae": 0.4178,
+            "mase": 1.2229
+          },
+          "climatology_trend": {
+            "mae": 0.4008,
+            "mase": 1.1776
+          },
+          "direct_ridge": {
+            "mae": 0.3762,
+            "mase": 1.211
+          }
+        },
+        "8": {
+          "persistence": {
+            "mae": 2.7162,
+            "mase": 7.2132
+          },
+          "seasonal_naive": {
+            "mae": 0.575,
+            "mase": 1.9439
+          },
+          "climatology_trend": {
+            "mae": 0.526,
+            "mase": 1.8369
+          },
+          "direct_ridge": {
+            "mae": 0.454,
+            "mase": 1.504
+          }
+        },
+        "9": {
+          "persistence": {
+            "mae": 2.5121,
+            "mase": 6.7515
+          },
+          "seasonal_naive": {
+            "mae": 0.5265,
+            "mase": 1.7166
+          },
+          "climatology_trend": {
+            "mae": 0.4691,
+            "mase": 1.6062
+          },
+          "direct_ridge": {
+            "mae": 0.4906,
+            "mase": 1.7264
+          }
+        },
+        "10": {
+          "persistence": {
+            "mae": 1.7389,
+            "mase": 4.5369
+          },
+          "seasonal_naive": {
+            "mae": 0.4151,
+            "mase": 1.1254
+          },
+          "climatology_trend": {
+            "mae": 0.3537,
+            "mase": 1.0206
+          },
+          "direct_ridge": {
+            "mae": 0.4123,
+            "mase": 1.3283
+          }
+        },
+        "11": {
+          "persistence": {
+            "mae": 0.8497,
+            "mase": 2.3865
+          },
+          "seasonal_naive": {
+            "mae": 0.3319,
+            "mase": 0.6829
+          },
+          "climatology_trend": {
+            "mae": 0.2627,
+            "mase": 0.5484
+          },
+          "direct_ridge": {
+            "mae": 0.3727,
+            "mase": 1.0221
+          }
+        },
+        "12": {
+          "persistence": {
+            "mae": 0.4118,
+            "mase": 1.3377
+          },
+          "seasonal_naive": {
+            "mae": 0.4012,
+            "mase": 1.3457
+          },
+          "climatology_trend": {
+            "mae": 0.3572,
+            "mase": 1.2568
+          },
+          "direct_ridge": {
+            "mae": 0.4328,
+            "mase": 1.4821
+          }
+        },
+        "13": {
+          "persistence": {
+            "mae": 0.8903,
+            "mase": 4.0385
+          },
+          "seasonal_naive": {
+            "mae": 0.3999,
+            "mase": 1.135
+          },
+          "climatology_trend": {
+            "mae": 0.3445,
+            "mase": 1.0231
+          },
+          "direct_ridge": {
+            "mae": 0.4261,
+            "mase": 1.3193
+          }
+        },
+        "14": {
+          "persistence": {
+            "mae": 1.1285,
+            "mase": 4.7891
+          },
+          "seasonal_naive": {
+            "mae": 0.399,
+            "mase": 1.0382
+          },
+          "climatology_trend": {
+            "mae": 0.3277,
+            "mase": 0.8992
+          },
+          "direct_ridge": {
+            "mae": 0.4039,
+            "mase": 1.0895
+          }
+        },
+        "15": {
+          "persistence": {
+            "mae": 1.0028,
+            "mase": 3.5036
+          },
+          "seasonal_naive": {
+            "mae": 0.4344,
+            "mase": 1.1405
+          },
+          "climatology_trend": {
+            "mae": 0.3738,
+            "mase": 1.0174
+          },
+          "direct_ridge": {
+            "mae": 0.437,
+            "mase": 1.2939
+          }
+        },
+        "16": {
+          "persistence": {
+            "mae": 0.8909,
+            "mase": 2.551
+          },
+          "seasonal_naive": {
+            "mae": 0.3841,
+            "mase": 1.0284
+          },
+          "climatology_trend": {
+            "mae": 0.372,
+            "mase": 0.9972
+          },
+          "direct_ridge": {
+            "mae": 0.4038,
+            "mase": 1.0854
+          }
+        },
+        "17": {
+          "persistence": {
+            "mae": 0.8072,
+            "mase": 2.3675
+          },
+          "seasonal_naive": {
+            "mae": 0.3669,
+            "mase": 0.7705
+          },
+          "climatology_trend": {
+            "mae": 0.3623,
+            "mase": 0.7533
+          },
+          "direct_ridge": {
+            "mae": 0.4335,
+            "mase": 1.0657
+          }
+        },
+        "18": {
+          "persistence": {
+            "mae": 1.1234,
+            "mase": 3.0465
+          },
+          "seasonal_naive": {
+            "mae": 0.3536,
+            "mase": 0.8048
+          },
+          "climatology_trend": {
+            "mae": 0.3394,
+            "mase": 0.7737
+          },
+          "direct_ridge": {
+            "mae": 0.4317,
+            "mase": 1.2236
+          }
+        },
+        "19": {
+          "persistence": {
+            "mae": 2.0121,
+            "mase": 5.2674
+          },
+          "seasonal_naive": {
+            "mae": 0.5292,
+            "mase": 1.5956
+          },
+          "climatology_trend": {
+            "mae": 0.4541,
+            "mase": 1.4485
+          },
+          "direct_ridge": {
+            "mae": 0.5176,
+            "mase": 1.6269
+          }
+        },
+        "20": {
+          "persistence": {
+            "mae": 2.8074,
+            "mase": 7.4941
+          },
+          "seasonal_naive": {
+            "mae": 0.6485,
+            "mase": 2.1734
+          },
+          "climatology_trend": {
+            "mae": 0.5539,
+            "mase": 1.9941
+          },
+          "direct_ridge": {
+            "mae": 0.5782,
+            "mase": 2.0735
+          }
+        },
+        "21": {
+          "persistence": {
+            "mae": 2.5436,
+            "mase": 6.8886
+          },
+          "seasonal_naive": {
+            "mae": 0.5639,
+            "mase": 1.8338
+          },
+          "climatology_trend": {
+            "mae": 0.4818,
+            "mase": 1.676
+          },
+          "direct_ridge": {
+            "mae": 0.5415,
+            "mase": 1.9761
+          }
+        },
+        "22": {
+          "persistence": {
+            "mae": 1.7717,
+            "mase": 4.7996
+          },
+          "seasonal_naive": {
+            "mae": 0.4965,
+            "mase": 1.5141
+          },
+          "climatology_trend": {
+            "mae": 0.4156,
+            "mase": 1.3598
+          },
+          "direct_ridge": {
+            "mae": 0.5222,
+            "mase": 1.7001
+          }
+        },
+        "23": {
+          "persistence": {
+            "mae": 0.8605,
+            "mase": 2.389
+          },
+          "seasonal_naive": {
+            "mae": 0.3417,
+            "mase": 0.7388
+          },
+          "climatology_trend": {
+            "mae": 0.2667,
+            "mase": 0.5925
+          },
+          "direct_ridge": {
+            "mae": 0.3613,
+            "mase": 0.9931
+          }
+        },
+        "24": {
+          "persistence": {
+            "mae": 0.4584,
+            "mase": 1.8212
+          },
+          "seasonal_naive": {
+            "mae": 0.3974,
+            "mase": 1.3459
+          },
+          "climatology_trend": {
+            "mae": 0.328,
+            "mase": 1.2075
+          },
+          "direct_ridge": {
+            "mae": 0.4332,
+            "mase": 1.7051
+          }
+        },
+        "25": {
+          "persistence": {
+            "mae": 0.8791,
+            "mase": 4.0331
+          },
+          "seasonal_naive": {
+            "mae": 0.4071,
+            "mase": 1.2098
+          },
+          "climatology_trend": {
+            "mae": 0.3275,
+            "mase": 1.0533
+          },
+          "direct_ridge": {
+            "mae": 0.4524,
+            "mase": 1.484
+          }
+        },
+        "26": {
+          "persistence": {
+            "mae": 1.1484,
+            "mase": 4.8459
+          },
+          "seasonal_naive": {
+            "mae": 0.3653,
+            "mase": 1.0395
+          },
+          "climatology_trend": {
+            "mae": 0.3051,
+            "mase": 0.9186
+          },
+          "direct_ridge": {
+            "mae": 0.3789,
+            "mase": 1.156
+          }
+        },
+        "27": {
+          "persistence": {
+            "mae": 1.0081,
+            "mase": 3.5873
+          },
+          "seasonal_naive": {
+            "mae": 0.3676,
+            "mase": 1.024
+          },
+          "climatology_trend": {
+            "mae": 0.3108,
+            "mase": 0.9097
+          },
+          "direct_ridge": {
+            "mae": 0.4096,
+            "mase": 1.1583
+          }
+        },
+        "28": {
+          "persistence": {
+            "mae": 0.8781,
+            "mase": 2.5493
+          },
+          "seasonal_naive": {
+            "mae": 0.3373,
+            "mase": 0.9439
+          },
+          "climatology_trend": {
+            "mae": 0.3218,
+            "mase": 0.9048
+          },
+          "direct_ridge": {
+            "mae": 0.3889,
+            "mase": 1.1364
+          }
+        },
+        "29": {
+          "persistence": {
+            "mae": 0.8261,
+            "mase": 2.3819
+          },
+          "seasonal_naive": {
+            "mae": 0.3003,
+            "mase": 0.6661
+          },
+          "climatology_trend": {
+            "mae": 0.3094,
+            "mase": 0.6696
+          },
+          "direct_ridge": {
+            "mae": 0.3931,
+            "mase": 1.0322
+          }
+        },
+        "30": {
+          "persistence": {
+            "mae": 1.2061,
+            "mase": 3.1103
+          },
+          "seasonal_naive": {
+            "mae": 0.3216,
+            "mase": 0.7007
+          },
+          "climatology_trend": {
+            "mae": 0.3229,
+            "mase": 0.6979
+          },
+          "direct_ridge": {
+            "mae": 0.409,
+            "mase": 1.1353
+          }
+        },
+        "31": {
+          "persistence": {
+            "mae": 1.9688,
+            "mase": 4.9688
+          },
+          "seasonal_naive": {
+            "mae": 0.4475,
+            "mase": 1.2867
+          },
+          "climatology_trend": {
+            "mae": 0.4203,
+            "mase": 1.2229
+          },
+          "direct_ridge": {
+            "mae": 0.4897,
+            "mase": 1.545
+          }
+        },
+        "32": {
+          "persistence": {
+            "mae": 2.7379,
+            "mase": 7.228
+          },
+          "seasonal_naive": {
+            "mae": 0.6001,
+            "mase": 1.9979
+          },
+          "climatology_trend": {
+            "mae": 0.5418,
+            "mase": 1.8782
+          },
+          "direct_ridge": {
+            "mae": 0.6072,
+            "mase": 2.151
+          }
+        },
+        "33": {
+          "persistence": {
+            "mae": 2.5144,
+            "mase": 6.731
+          },
+          "seasonal_naive": {
+            "mae": 0.5416,
+            "mase": 1.7438
+          },
+          "climatology_trend": {
+            "mae": 0.4865,
+            "mase": 1.6411
+          },
+          "direct_ridge": {
+            "mae": 0.5515,
+            "mase": 1.8726
+          }
+        },
+        "34": {
+          "persistence": {
+            "mae": 1.763,
+            "mase": 4.5793
+          },
+          "seasonal_naive": {
+            "mae": 0.427,
+            "mase": 1.1553
+          },
+          "climatology_trend": {
+            "mae": 0.3648,
+            "mase": 1.0489
+          },
+          "direct_ridge": {
+            "mae": 0.4766,
+            "mase": 1.3965
+          }
+        },
+        "35": {
+          "persistence": {
+            "mae": 0.8674,
+            "mase": 2.4143
+          },
+          "seasonal_naive": {
+            "mae": 0.343,
+            "mase": 0.7092
+          },
+          "climatology_trend": {
+            "mae": 0.2704,
+            "mase": 0.5687
+          },
+          "direct_ridge": {
+            "mae": 0.3829,
+            "mase": 1.0278
+          }
+        },
+        "36": {
+          "persistence": {
+            "mae": 0.384,
+            "mase": 1.3818
+          },
+          "seasonal_naive": {
+            "mae": 0.4029,
+            "mase": 1.3365
+          },
+          "climatology_trend": {
+            "mae": 0.3576,
+            "mase": 1.2452
+          },
+          "direct_ridge": {
+            "mae": 0.437,
+            "mase": 1.5638
+          }
+        },
+        "37": {
+          "persistence": {
+            "mae": 0.8752,
+            "mase": 4.1878
+          },
+          "seasonal_naive": {
+            "mae": 0.4046,
+            "mase": 1.092
+          },
+          "climatology_trend": {
+            "mae": 0.3387,
+            "mase": 0.9558
+          },
+          "direct_ridge": {
+            "mae": 0.4538,
+            "mase": 1.427
+          }
+        },
+        "38": {
+          "persistence": {
+            "mae": 1.1245,
+            "mase": 4.8927
+          },
+          "seasonal_naive": {
+            "mae": 0.4186,
+            "mase": 1.0858
+          },
+          "climatology_trend": {
+            "mae": 0.3433,
+            "mase": 0.9326
+          },
+          "direct_ridge": {
+            "mae": 0.4501,
+            "mase": 1.3163
+          }
+        },
+        "39": {
+          "persistence": {
+            "mae": 1.0046,
+            "mase": 3.6905
+          },
+          "seasonal_naive": {
+            "mae": 0.4365,
+            "mase": 1.0891
+          },
+          "climatology_trend": {
+            "mae": 0.3684,
+            "mase": 0.9463
+          },
+          "direct_ridge": {
+            "mae": 0.4601,
+            "mase": 1.3141
+          }
+        },
+        "40": {
+          "persistence": {
+            "mae": 0.8594,
+            "mase": 2.5994
+          },
+          "seasonal_naive": {
+            "mae": 0.3986,
+            "mase": 1.0656
+          },
+          "climatology_trend": {
+            "mae": 0.3747,
+            "mase": 1.0044
+          },
+          "direct_ridge": {
+            "mae": 0.4571,
+            "mase": 1.4188
+          }
+        },
+        "41": {
+          "persistence": {
+            "mae": 0.7611,
+            "mase": 2.3224
+          },
+          "seasonal_naive": {
+            "mae": 0.3861,
+            "mase": 0.8096
+          },
+          "climatology_trend": {
+            "mae": 0.3511,
+            "mase": 0.7266
+          },
+          "direct_ridge": {
+            "mae": 0.4572,
+            "mase": 1.2406
+          }
+        },
+        "42": {
+          "persistence": {
+            "mae": 1.1289,
+            "mase": 3.0389
+          },
+          "seasonal_naive": {
+            "mae": 0.3827,
+            "mase": 0.8666
+          },
+          "climatology_trend": {
+            "mae": 0.3446,
+            "mase": 0.7828
+          },
+          "direct_ridge": {
+            "mae": 0.4892,
+            "mase": 1.5585
+          }
+        },
+        "43": {
+          "persistence": {
+            "mae": 2.0073,
+            "mase": 5.2271
+          },
+          "seasonal_naive": {
+            "mae": 0.5458,
+            "mase": 1.5893
+          },
+          "climatology_trend": {
+            "mae": 0.4487,
+            "mase": 1.3981
+          },
+          "direct_ridge": {
+            "mae": 0.54,
+            "mase": 1.7911
+          }
+        },
+        "44": {
+          "persistence": {
+            "mae": 2.7981,
+            "mase": 7.4675
+          },
+          "seasonal_naive": {
+            "mae": 0.6634,
+            "mase": 2.1996
+          },
+          "climatology_trend": {
+            "mae": 0.5437,
+            "mase": 1.9733
+          },
+          "direct_ridge": {
+            "mae": 0.6019,
+            "mase": 2.1567
+          }
+        },
+        "45": {
+          "persistence": {
+            "mae": 2.5501,
+            "mase": 6.9203
+          },
+          "seasonal_naive": {
+            "mae": 0.5874,
+            "mase": 1.8964
+          },
+          "climatology_trend": {
+            "mae": 0.4959,
+            "mase": 1.7259
+          },
+          "direct_ridge": {
+            "mae": 0.5219,
+            "mase": 1.9019
+          }
+        },
+        "46": {
+          "persistence": {
+            "mae": 1.7896,
+            "mase": 4.8171
+          },
+          "seasonal_naive": {
+            "mae": 0.5235,
+            "mase": 1.5669
+          },
+          "climatology_trend": {
+            "mae": 0.4362,
+            "mase": 1.4006
+          },
+          "direct_ridge": {
+            "mae": 0.4467,
+            "mase": 1.5539
+          }
+        },
+        "47": {
+          "persistence": {
+            "mae": 0.8696,
+            "mase": 2.3744
+          },
+          "seasonal_naive": {
+            "mae": 0.3545,
+            "mase": 0.7705
+          },
+          "climatology_trend": {
+            "mae": 0.2801,
+            "mase": 0.622
+          },
+          "direct_ridge": {
+            "mae": 0.3344,
+            "mase": 0.9523
+          }
+        },
+        "48": {
+          "persistence": {
+            "mae": 0.4189,
+            "mase": 1.3481
+          },
+          "seasonal_naive": {
+            "mae": 0.4052,
+            "mase": 1.4101
+          },
+          "climatology_trend": {
+            "mae": 0.3477,
+            "mase": 1.2894
+          },
+          "direct_ridge": {
+            "mae": 0.4028,
+            "mase": 1.6011
+          }
+        },
+        "49": {
+          "persistence": {
+            "mae": 0.9533,
+            "mase": 4.3352
+          },
+          "seasonal_naive": {
+            "mae": 0.449,
+            "mase": 1.3059
+          },
+          "climatology_trend": {
+            "mae": 0.3831,
+            "mase": 1.1747
+          },
+          "direct_ridge": {
+            "mae": 0.4791,
+            "mase": 1.5766
+          }
+        },
+        "50": {
+          "persistence": {
+            "mae": 1.1917,
+            "mase": 5.043
+          },
+          "seasonal_naive": {
+            "mae": 0.4032,
+            "mase": 1.1612
+          },
+          "climatology_trend": {
+            "mae": 0.3385,
+            "mase": 1.0279
+          },
+          "direct_ridge": {
+            "mae": 0.437,
+            "mase": 1.4323
+          }
+        },
+        "51": {
+          "persistence": {
+            "mae": 1.0343,
+            "mase": 3.746
+          },
+          "seasonal_naive": {
+            "mae": 0.408,
+            "mase": 1.1484
+          },
+          "climatology_trend": {
+            "mae": 0.3428,
+            "mase": 1.0185
+          },
+          "direct_ridge": {
+            "mae": 0.4572,
+            "mase": 1.5303
+          }
+        },
+        "52": {
+          "persistence": {
+            "mae": 0.8879,
+            "mase": 2.6419
+          },
+          "seasonal_naive": {
+            "mae": 0.3705,
+            "mase": 1.0241
+          },
+          "climatology_trend": {
+            "mae": 0.3502,
+            "mase": 0.9741
+          },
+          "direct_ridge": {
+            "mae": 0.4427,
+            "mase": 1.3748
+          }
+        },
+        "53": {
+          "persistence": {
+            "mae": 0.8005,
+            "mase": 2.3661
+          },
+          "seasonal_naive": {
+            "mae": 0.321,
+            "mase": 0.729
+          },
+          "climatology_trend": {
+            "mae": 0.3417,
+            "mase": 0.7554
+          },
+          "direct_ridge": {
+            "mae": 0.3941,
+            "mase": 1.0539
+          }
+        },
+        "54": {
+          "persistence": {
+            "mae": 1.1585,
+            "mase": 2.9986
+          },
+          "seasonal_naive": {
+            "mae": 0.3414,
+            "mase": 0.7489
+          },
+          "climatology_trend": {
+            "mae": 0.3467,
+            "mase": 0.7542
+          },
+          "direct_ridge": {
+            "mae": 0.4183,
+            "mase": 1.2081
+          }
+        },
+        "55": {
+          "persistence": {
+            "mae": 1.9684,
+            "mase": 5.0059
+          },
+          "seasonal_naive": {
+            "mae": 0.4836,
+            "mase": 1.405
+          },
+          "climatology_trend": {
+            "mae": 0.4543,
+            "mase": 1.3418
+          },
+          "direct_ridge": {
+            "mae": 0.5542,
+            "mase": 1.765
+          }
+        },
+        "56": {
+          "persistence": {
+            "mae": 2.7107,
+            "mase": 7.2306
+          },
+          "seasonal_naive": {
+            "mae": 0.6025,
+            "mase": 2.0758
+          },
+          "climatology_trend": {
+            "mae": 0.5713,
+            "mase": 2.0152
+          },
+          "direct_ridge": {
+            "mae": 0.5408,
+            "mase": 1.9337
+          }
+        },
+        "57": {
+          "persistence": {
+            "mae": 2.5081,
+            "mase": 6.7273
+          },
+          "seasonal_naive": {
+            "mae": 0.5502,
+            "mase": 1.7864
+          },
+          "climatology_trend": {
+            "mae": 0.4869,
+            "mase": 1.665
+          },
+          "direct_ridge": {
+            "mae": 0.4935,
+            "mase": 1.729
+          }
+        },
+        "58": {
+          "persistence": {
+            "mae": 1.7764,
+            "mase": 4.6458
+          },
+          "seasonal_naive": {
+            "mae": 0.4694,
+            "mase": 1.2879
+          },
+          "climatology_trend": {
+            "mae": 0.3899,
+            "mase": 1.1466
+          },
+          "direct_ridge": {
+            "mae": 0.4873,
+            "mase": 1.5139
+          }
+        },
+        "59": {
+          "persistence": {
+            "mae": 0.8851,
+            "mase": 2.4393
+          },
+          "seasonal_naive": {
+            "mae": 0.3739,
+            "mase": 0.776
+          },
+          "climatology_trend": {
+            "mae": 0.2875,
+            "mase": 0.6149
+          },
+          "direct_ridge": {
+            "mae": 0.432,
+            "mase": 1.2029
+          }
+        },
+        "60": {
+          "persistence": {
+            "mae": 0.47,
+            "mase": 1.8244
+          },
+          "seasonal_naive": {
+            "mae": 0.4246,
+            "mase": 1.4875
+          },
+          "climatology_trend": {
+            "mae": 0.3735,
+            "mase": 1.3914
+          },
+          "direct_ridge": {
+            "mae": 0.4811,
+            "mase": 1.8449
+          }
+        }
+      }
+    }
+  },
+  "ensemble_note": "ensemble (mean of climatology_trend + direct_ridge) computed in models/ensemble.py",
+  "residual_file": "reports\\forecast_backtest.npz (for conformal calibration; not committed)",
+  "elapsed_seconds": 33.8
+}

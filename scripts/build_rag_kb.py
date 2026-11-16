@@ -30,7 +30,7 @@ def main() -> None:
     kb = build_kb()
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(kb, ensure_ascii=False, indent=1))
+    out.write_text(json.dumps(kb, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"wrote {out} — {len(kb['chunks'])} chunks from {len(kb['sources'])} sources")
 
     if args.sync_space:

@@ -176,7 +176,7 @@ def generate_sample(output: str | Path | None = None) -> Path:
     arrays = build_sample_arrays()
     np.savez(out, **arrays)
     try:
-        META_PATH.write_text(arrays["meta_json"].item())
+        META_PATH.write_text(arrays["meta_json"].item(), encoding="utf-8")
     except Exception:
         pass
     return out

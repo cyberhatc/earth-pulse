@@ -1,4 +1,4 @@
-.PHONY: help venv install sample-data engine test api web web-install build clean
+.PHONY: help venv install sample-data engine test api web web-install build clean real-store real-analysis backtest conform validate-trend
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -7,8 +7,24 @@ venv: ## Create a virtualenv in .venv
 	python3 -m venv .venv
 	. .venv/bin/activate && pip install --upgrade pip
 
-install: venv ## Install Python deps (pipeline, engine, models, api, tests)
-	. .venv/bin/activate && pip install numpy scipy fastapi uvicorn pydantic httpx pytest
+install: venv ## Install Python deps (pinned; mirrors requirements.txt)
+	. .venv/bin/activate && pip install -r requirements.txt
+
+real-store: ## Build the REAL 2.5deg multi-variable store (--fast: GISTEMP+GPCP+ERSST, no login; ~2 min, network)
+	python3 pipeline/build_store.py --fast $(ARGS)
+
+real-analysis: ## Engine on the real store -> data/processed/analysis_real.json
+	python3 engine/run_engine.py --input data/processed/earth_pulse_real.npz --output data/processed/analysis_real.json
+
+backtest: ## Rolling-origin forecast backtest on the real store (writes reports/forecast_backtest.{json,md})
+	python3 models/evaluate.py --npz data/processed/earth_pulse_real.npz --cells 24
+
+conform: backtest ## Conformal calibration report + /place fallback JSON (writes reports/calibration.{json,md}, data/processed/conformal.json)
+	python3 -m models.conformal report --residuals reports/forecast_backtest.npz --model climatology_trend
+	python3 -m models.conformal fallback-json --residuals reports/forecast_backtest.npz --model climatology_trend
+
+validate-trend: ## Validate global-mean trend vs NASA GISTEMP -> reports/trend_validation.md
+	python3 engine/validate.py --npz data/processed/earth_pulse_real.npz --report reports/trend_validation.md
 
 sample-data: ## Generate the bundled synthetic sample store (offline demo)
 	python3 pipeline/run_pipeline.py --sample

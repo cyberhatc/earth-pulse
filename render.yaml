@@ -13,5 +13,6 @@ services:
       #   value: /app/data/processed/earth_pulse_power_real.npz
       # - key: EP_ANALYSIS_PATH
       #   value: /app/data/processed/analysis_power_real.json
-      - key: CORS_ORIGINS
-        value: "*"
+      # Single-service deploy is same-origin (frontend served by FastAPI), so no
+      # CORS allow-list is needed. If you expose the API cross-origin, list exact
+      # origins here instead of "*".

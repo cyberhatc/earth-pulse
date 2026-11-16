@@ -4,11 +4,13 @@ from __future__ import annotations
 import numpy as np
 from fastapi import APIRouter, Query, HTTPException
 
-from api.deps import get_store, get_analysis, ANALYSIS_PATH
+from api.deps import get_store, get_analysis, ANALYSIS_PATH, normalise_lon
+from api.schemas import SCHEMA_VERSION
 from api.services import store as svc
 from api.services import ondemand, explainer
 from models.infer import forecast_place
 from models.anomaly import anomalies_for_cell
+from api.schemas import PlacePayload
 
 router = APIRouter()
 
@@ -17,10 +19,11 @@ def r3(x: float) -> float:
     return round(float(x), 3)
 
 
-@router.get("/place")
+@router.get("/place", response_model=PlacePayload)
 def place(lat: float = Query(..., ge=-90, le=90),
-          lon: float = Query(..., ge=-180, le=180),
+          lon: float = Query(..., ge=-360, le=360),
           horizon_months: int = Query(60, ge=3, le=240)):
+    lon = normalise_lon(lon)
     try:
         store = get_store()
         analysis = get_analysis()
@@ -39,7 +42,7 @@ def place(lat: float = Query(..., ge=-90, le=90),
     ocean_mask = store.get("ocean_mask")
     is_ocean_cell = bool(ocean_mask[cell] == 1) if ocean_mask is not None else None
 
-    dates, ts = svc.past_timeseries(store, cell, usable)
+    dates, _ = svc.past_timeseries(store, cell, usable)
     # fill interior gaps so charts/JSON stay valid; record raw coverage in data_coverage
     from pipeline.clean import fill_missing_linear
     ts = {p: [round(float(v), 3) for v in fill_missing_linear(store[p][:, cell])] for p in usable}
@@ -68,18 +71,20 @@ def place(lat: float = Query(..., ge=-90, le=90),
         from models.backtest import backtest_cell
         import json as _json
         from models.infer import _artifact_for, _artifact_config
-        model_vars, _ = _artifact_config(_artifact_for(store))
+        model_vars, artifact_seq_len = _artifact_config(_artifact_for(store))
         lam = 1e-2
         try:
             meta_path = _artifact_for(store).parent / "forecaster_meta.json"
             if meta_path.exists():
-                lam = float(_json.loads(meta_path.read_text()).get("lam", 1e-2))
+                lam = float(_json.loads(meta_path.read_text(encoding="utf-8")).get("lam", 1e-2))
         except Exception:
             pass
         # Backtest the EXACT artifact configuration (all trained variables),
         # then report only the exposed ones.
         _, Xbt = prepare_cell_matrix(store, cell, model_vars)
-        bt_all = backtest_cell(Xbt, model_vars, seq_len=24, test_months=12, horizon=12, lam=lam)
+        bt_all = backtest_cell(Xbt, model_vars, seq_len=artifact_seq_len or 24, test_months=12, horizon=12, lam=lam)
+        if "per_parameter" not in bt_all:  # series too short — degrade, never 500
+            raise ValueError(bt_all.get("error", "backtest unavailable"))
         asked = list(fc["timeseries"].keys())
         bt = {"per_parameter": {p: bt_all["per_parameter"][p] for p in asked if p in bt_all["per_parameter"]}}
         pv = list(bt["per_parameter"].values())
@@ -101,9 +106,9 @@ def place(lat: float = Query(..., ge=-90, le=90),
             },
             "note": "ridge vs prefix, horizon 12, artifact ridge lambda; top-level metrics average all parameters",
         }
-    except Exception as e:
+    except Exception:
+        # Backtest is diagnostic metadata — a failure must never take /place down.
         backtest_out = None
-        raise e
     fc_timeseries = {
         p: {"mean": [r3(v) for v in d["mean"]],
             "lower": [r3(v) for v in d["lower"]],
@@ -128,7 +133,8 @@ def place(lat: float = Query(..., ge=-90, le=90),
     try:
         from sklearn.ensemble import IsolationForest
         import yaml
-        cfg = yaml.safe_load(open('configs/model.yaml', 'r', encoding='utf-8')) or {}
+        from pathlib import Path as _Path
+        cfg = yaml.safe_load(_Path(__file__).resolve().parents[2].joinpath("configs", "model.yaml").read_text(encoding="utf-8")) or {}
         if_cfg = (cfg.get('anomaly', {}) or {}).get('isolation_forest', {})
         if if_cfg.get('enabled'):
             # build matrix of past timeseries for usable params
@@ -213,7 +219,7 @@ def place(lat: float = Query(..., ge=-90, le=90),
     explanation = explainer.explain(facts)
 
     return {
-        "schema_version": "1.0.0",
+        "schema_version": SCHEMA_VERSION,
         "location": {"lat": lat, "lon": lon, "cell_index": int(cell), "grid_lat": r3(glat), "grid_lon": r3(glon), "name": None},
         "data_coverage": data_coverage,
         "past": {
@@ -232,10 +238,13 @@ def place(lat: float = Query(..., ge=-90, le=90),
             "dates": fc["dates"],
             "timeseries": fc_timeseries,
             "backtest": backtest_out,
+            "band_method": fc.get("band_method"),
+            "calibration": fc.get("calibration"),
             "projected_images": projected_images,
             "scenarios": [],
         },
         "opposite_trends": opposite,
+        "opposite_meta": analysis.get("opposite_meta"),
         "climate_twin": twin,
         "explanation": explanation,
     }

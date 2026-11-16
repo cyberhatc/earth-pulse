@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT))
 
 from pipeline.fetch_highres_point import build_point_store
 from models.point_forecast import analyse_point
+from api.deps import normalise_lon
 
 router = APIRouter()
 
@@ -32,9 +33,10 @@ def _store_path(lat: float, lon: float) -> Path:
 
 @router.get("/point")
 def point(lat: float = Query(..., ge=-90, le=90),
-          lon: float = Query(..., ge=-180, le=180),
+          lon: float = Query(..., ge=-360, le=360),
           horizon_months: int = Query(60, ge=3, le=240),
           rebuild: bool = Query(False)):
+    lon = normalise_lon(lon)
     p = _store_path(lat, lon)
     if rebuild or not p.exists():
         try:
@@ -62,6 +64,7 @@ def point(lat: float = Query(..., ge=-90, le=90),
 
 @router.get("/point/imagery")
 def point_imagery(lat: float = Query(..., ge=-90, le=90),
-                  lon: float = Query(..., ge=-180, le=180)):
+                  lon: float = Query(..., ge=-360, le=360)):
+    lon = normalise_lon(lon)
     from pipeline.fetch_highres_point import fetch_satellite_imagery_links
     return fetch_satellite_imagery_links(lat, lon)

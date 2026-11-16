@@ -247,6 +247,8 @@ Highlights from the first real run: global mean warming **+0.21 °C/decade** (11
 
 For the full real stack (NDVI/SST/sea level from MODIS/PO.DAAC + real mask) you need a free **NASA Earthdata login** — see `docs/real-data-ingestion.md`.
 
+> **Superseded by sections 19–21 (2026-11-16):** the significance figures above came from the old monthly Mann–Kendall on seasonally raw series (inflated). Corrected stats (deseasonalised annual means + TFPW + Benjamini–Hochberg FDR) and the 2.5° store are below. Kept for history.
+
 ## 17. High-resolution, real-data path (Belgaum case study)
 
 Sub-kilometre analysis for a single place is now supported via the point-level
@@ -274,3 +276,40 @@ uvicorn api.main:app --port 8000
 ```
 
 With `EP_RAG_BACKEND=hf-router`, answers carry `sources: [{id, title, source}]` (rendered as a muted "Sources" line in the chat UI); local BM25 retrieval + HF serverless inference — no servers. **Note:** this account currently gets HTTP 402 from HF for serverless calls — it needs pre-paid credits or PRO. A fully free alternative is live at **https://devildead-earth-pulse-ai.static.hf.space/** (on-device WebGPU, linked from the chat UI via "On-device AI ↗"). If the RAG backend is down, chat falls back to Ollama, then to templated prose — never a hard failure. Design, deploy runbook, token setup and rollback: `docs/rag.md`.
+
+## 19. REAL 2.5Â° global store, corrected statistics, backtest + conformal calibration (v0.4.x Â· 2026-11-16)
+
+This session executed Phases 1â€“4 of `docs/BACKEND_PLAN.md`. Everything below was run on this tree.
+
+**Phase 1 â€” real 2.5Â° store (`data/processed/earth_pulse_real.{zarr,npz}`)** â€” no login:
+- Temperature: **GISTEMP v4 LOTI** anomalies (2Â°, degC vs 1951â€“1980 baseline) â€” anomalies, clearly labelled; GISTEMP publishes no absolute gridded field.
+- Precipitation: **GPCP v2.3** monthly, 1979â†’present, mm/month (converted from mm/day).
+- SST: **NOAA ERSST v5**, 1854â†’present, degC, ocean-only (real NOAA lsmask re-applied post-regrid).
+- NDVI, sea level, solar radiation, humidity, wind: **unavailable without logins/products â€” NaN, never faked.**
+- Grid 72Ã—144 (2.5Â°), 550 months 1981-01â†’2026-10, `data/processed/manifest.json`, `source: GISTEMP_v4_LOTI + GPCP_v2.3 + ERSST_v5`, `synthetic_demo: false`.
+
+```bash
+python pipeline/build_store.py --fast      # ~2 min (sources cached)
+make real-analysis                          # -> data/processed/analysis_real.json (schema 1.1.0)
+EP_STORE_PATH=$PWD/data/processed/earth_pulse_real.npz \
+EP_ANALYSIS_PATH=$PWD/data/processed/analysis_real.json uvicorn api.main:app --port 8000
+# try /place?lat=12.97&lon=77.59&horizon_months=60
+```
+- Honest gridding notes: POWER is point-only and was NOT used for the grid; temperature is an interpolated analysis; GPCP/ERSST regridded by bilinear with nearest-finite fill; masks re-applied after regrid.
+- Engine on real store: temperature **FDR-significant 73.9%** of cells (raw 79.2%); precipitation **FDR 26.4%** (raw 37.2%); SST **FDR 42.3%**. Validation vs GISTEMP: EP global-mean T trend **+0.272 Â°C/decade** vs GISTEMP **+0.212** (abs diff **0.06**) â€” `reports/trend_validation.md`.
+
+**Phase 2 â€” statistics engine rewrite** (`engine/trend.py`, `engine/preprocess.py`, `engine/field_significance.py`):
+- Deseasonalise vs 1991â€“2020 climatology â†’ annual-mean series (min 10 finite months/yr) â†’ **Sen slope + Mannâ€“Kendall headline on annual means**, with **Yueâ€“Wang TFPW pre-whitening** (lag-1 autocorrelation corrected; reported), and seasonal Mannâ€“Kendall on monthly anomalies alongside.
+- **Benjaminiâ€“Hochberg FDR across all cells** (q=0.05) with both raw and FDR-adjusted flags; `schema_version 1.1.0` gains `ci_low/ci_high`, `p_value_uncorrected`, `p_value_seasonal`, `p_value_fdr`, `tau`, `lag1_autocorr`, `autocorr_corrected`, `fdr_summary` per variable.
+- Cross-checked vs `pymannkendall` (S/z/tau exact match) and `scipy.stats.theilslopes`; 10 new tests (`tests/test_trend_v2.py`).
+
+**Phase 3 â€” honest backtest** (`models/evaluate.py`, rolling origin every 24 months from 2005, horizon 60, 24 stratified cells, prefix-only training):
+- `climatology_trend` (Theilâ€“Sen + monthly climatology) beats seasonal-naive and `direct_ridge` at every horizon; per-variable MASE: temperature 0.69â€“0.85 (skill to hâ‰ˆ60), precipitation 0.71â€“0.82 (marginal), **SST unskillful beyond ~6 months** â€” do not present SST forecasts as trustworthy past h=6.
+- `direct_ridge` never beats the baseline â†’ not shipped as default. Ridge artifact trained (`models/artifacts/forecaster_power_real_grid.npz`) remains opt-in via `EP_FORECAST_ARTIFACT`.
+- Full numbers: `reports/forecast_backtest.{json,md}`.
+
+**Phase 4 â€” conformal calibration** (`models/conformal.py`): absolute-residual split conformal on the backtest residuals; nominal 0.80 â†’ empirical **0.797/0.802**, nominal 0.90 â†’ **0.896**, nominal 0.50 â†’ **0.500**. `/place` now serves `band_method: "conformal"` with a `calibration` block (`empirical_coverage_p10_p90`, `calibration_date`); widths apply only to the fingerprinted store (`models/infer.py`). `EP_BAND_METHOD=sqrt_h` reverts. `reports/calibration.{json,md}`.
+
+**Backend fixes folded in** (full review: see `docs/VERIFICATION.md` and commit log): SPA-fallback path traversal closed; ~20 text I/O calls now explicit `utf-8` (un-breaks Windows; 4 RAG tests pass); `/place` backtest failure degrades to `null` instead of HTTP 500; NASA POWER `-999` sentinel filtered; `/imagery/scenario` parameter whitelist; CORS default tightened; rate limiter evicts stale buckets; unpinned deps pinned (`requirements.txt` + mirrors + CI); `docker-compose.yml` no longer shadows the baked forecaster artifact; junk `lhr2.err`/`lt.err` removed; `pytest` **80 passed**.
+
+**Honest bottom line**: the real store is genuinely real (GISTEMP/GPCP/ERSST), the statistics are defensible (TFPW-prewhitened MK + FDR), the forecast intervals are calibrated to ~nominal coverage, and the accuracy claims are now traceable to `reports/` â€” including the unflattering ones (SST skill ends ~6 months; no neural/ridge model beats the transparent baseline).

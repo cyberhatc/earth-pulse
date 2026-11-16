@@ -8,21 +8,29 @@ from api.deps import (
     analysis_available,
     store_available,
     store_info,
+    manifest_hash,
+    models_info,
+    uptime_seconds,
 )
+from api.schemas import SCHEMA_VERSION, API_VERSION, HealthResponse
 from api.services import explainer, rag
 
 router = APIRouter()
 
 
-@router.get("/health")
+@router.get("/health", response_model=HealthResponse)
 def health():
     return {
         "status": "ok",
-        "schema_version": "1.0.0",
+        "schema_version": SCHEMA_VERSION,
+        "api_version": API_VERSION,
+        "uptime_seconds": uptime_seconds(),
         # Legacy field: true when the configured store file exists. It does NOT
         # mean the data is synthetic; read store.synthetic for that.
         "sample_store": store_available(),
         "store": store_info(),
+        "manifest_hash": manifest_hash(),
+        "models": models_info(),
         "analysis": analysis_available(),
         "analysis_path": str(ANALYSIS_PATH),
         "llm": explainer.llm_status(),

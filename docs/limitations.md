@@ -96,3 +96,10 @@ per-parameter coverage instead of hiding the differences.
   attribution tool. It is an **open educational explorer** with honest labels:
   *Observed* (real sources, when wired) · *Model forecast (p10–p90)* ·
   *Synthetic demo* · *AI-generated scenario* (disabled by default).
+
+## 12. Forecast + trend claims updated 2026-11-16 (v0.4.x)
+- Forecast skill is variable-specific and horizon-limited on REAL data: temperature climatology_trend MASE<1 through h=60, precipitation marginal (~0.7-0.8), **SST unskillful beyond ~6 months for every model tried** (climatology_trend, seasonal_naive, persistence, direct_ridge). SST forecasts must not be presented as trustworthy past h=6.
+- The transparent `climatology_trend` baseline beats the direct multi-horizon ridge at every horizon tested (24 stratified cells, rolling origins 2005+). Ridge/neural models are therefore NOT shipped as defaults.
+- Previously reported PICP 96-100% meant bands were far too wide; conformal calibration now yields ~0.80 empirical coverage at 0.80 nominal (0.797/0.802) â€” honest, still not a certainty.
+- Mann-Kendall significance is now computed on deseasonalised annual means with Yue-Wang pre-whitening + Benjamini-Hochberg FDR across cells. Raw monthly MK inflations are fixed; headline counts changed accordingly (temperature FDR-significant 73.9% of real-store cells).
+- Temperature in the real store is GISTEMP LOTI **anomalies vs 1951-1980**, not absolute temperatures â€” the API labels this in `data_coverage.gap_notes`.

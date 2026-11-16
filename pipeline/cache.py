@@ -28,7 +28,7 @@ def cached_json(key: str, ttl_seconds: int, producer: Callable[[], dict]) -> dic
     fp = CACHE_DIR / f"{_slug(key)}.json"
     if fp.exists():
         try:
-            body = json.loads(fp.read_text())
+            body = json.loads(fp.read_text(encoding="utf-8"))
             if time.time() - body.get("cached_at", 0) < ttl_seconds:
                 body["payload"]["_cache"] = "hit"
                 return body["payload"]
@@ -36,7 +36,7 @@ def cached_json(key: str, ttl_seconds: int, producer: Callable[[], dict]) -> dic
             pass  # corrupt cache entry -> refetch
     payload = producer()
     try:
-        fp.write_text(json.dumps({"cached_at": time.time(), "payload": payload}))
+        fp.write_text(json.dumps({"cached_at": time.time(), "payload": payload}), encoding="utf-8")
     except Exception:
         pass  # cache write failure never breaks the request
     payload["_cache"] = "miss"

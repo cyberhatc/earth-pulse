@@ -131,3 +131,20 @@ Legend: **access** = how the code fetches it · **history** = typical start of u
 ## Licensing & citation
 - NASA Earthdata data are generally free and open; **cite NASA Earthdata** and the specific product (e.g., "MODIS/Terra Vegetation Indices, LP DAAC") per each provider's terms.
 - Code is MIT. See `LICENSE`.
+
+---
+
+## Addendum (2026-11-16, v0.4.x): sources used by the real 2.5Â° store
+These are the products the `--fast` store (`pipeline/build_store.py`) actually ships, all free and no-login:
+
+| Variable | Product | Grid | Period | Units | Notes |
+|---|---|---|---|---|---|
+| temperature | NASA GISTEMP v4 LOTI (`gistemp1200_GHCNv4_ERSSTv5.nc.gz`) | 2Â° | 1880â†’present | degC anomaly (1951â€“1980) | interpolated analysis; anomalies, NOT absolute temps |
+| precipitation | GPCP v2.3 Combined Precipitation (Final) (`precip.mon.mean.nc`) | 2.5Â° | 1979â†’present | mm/month | rate Ã— days-in-month; interim data from 2021/11 |
+| sst | NOAA ERSST v5 (`sst.mnmean.nc`) | 2Â° | 1854â†’present | degC | ocean-only; land NaN |
+| mask | NOAA OISST land-sea mask (`lsmask.oisst.nc`) | 0.25Â° | â€” | 1=ocean, 0=land | cell ocean if ocean fraction â‰¥ 0.5 |
+| validation | GISTEMP GLB.Ts+dSST.csv (global-mean LOTI) | global | 1880â†’present | degC anomaly | used by `engine/validate.py` |
+
+NOT in the fast store (needs login/products): NDVI (MODIS MOD13C2 / AVHRR-GIMMS), sea level (PO.DAAC/AVISO), solar radiation/humidity/wind (NCEP Reanalysis 1/2 or ERA5) â€” marked unavailable with `reason` in `pipeline/sources/ndvi.py` and `sealevel.py`.
+
+POWER remains the point-query path (`/point`, `/tier-b`) and is not used to build the global grid (it is a point API).

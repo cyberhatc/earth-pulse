@@ -1,5 +1,7 @@
 # Earth Pulse — Complete Handbook
 
+> **⚠️ See `docs/BACKEND_PLAN.md` (phases 1–4, 2026-11-16) and README §19 first.** The v0.4.x backend replaces the statistics core (deseasonalised annual MK + TFPW + FDR, schema 1.1.0), adds the 2.5° real store (GISTEMP/GPCP/ERSST, `data/processed/earth_pulse_real.{zarr,npz}`), honest rolling-origin backtest (`reports/forecast_backtest.md`), and conformal calibration (`reports/calibration.md`). Sections below describe the v0.1–v0.3 stack and may state stale accuracy figures (e.g., PICP 96–100% and "40/40 tests" — now 80 passed with calibrated ~0.80 coverage).
+
 > Everything about the system: architecture, data, models, accuracy, LLM, training, and how it all connects.
 
 ---

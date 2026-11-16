@@ -1,0 +1,41 @@
+# Curated candidate explanations for opposite-trend region pairs.
+# These are HYPOTHESES to investigate locally — never conclusions, never
+# attributed by the LLM. Matched per variable; 'default' applies to any variable.
+hypotheses:
+  precipitation:
+    - "Monsoon shift — wind/pressure changes diverging the rain belt across the region"
+    - "Irrigation expansion — local recycling/masking of regional rainfall signal"
+    - "Land-use change — deforestation or agriculture altering evapotranspiration on one side"
+    - "Aerosol forcing — asymmetric pollution suppressing rain on the drying side"
+    - "Orographic enhancement — slope effects strengthening rain on the windward side"
+    - "ENSO teleconnection — El Niño/La Niña modulating one sub-basin differently"
+    - "Anthropogenic warming pattern — thermodynamic (Clausius–Clapeyron) vs dynamic (circulation) split"
+    - "Data artifact — regridding/satellite drift/GAUGE inhomogeneity; verify against station record"
+  ndvi:
+    - "Land-use change — cropland expansion/abandonment or reforestation on one side"
+    - "Irrigation — greening where water is applied, decline where it is not"
+    - "Drought severity gradient — rain shadow or continental gradient drying faster on one side"
+    - "CO2 fertilisation — responding vegetation benefit without rainfall change"
+    - "Soil moisture trend — snowpack shift altering spring water availability"
+    - "Fire regime shift — burning suppressing NDVI locally"
+    - "Volcanic/dust event — transient suppression in the window"
+    - "Data artifact — sensor transition (e.g., AVHRR→MODIS) or orbit drift; check overlapping sensors"
+  temperature:
+    - "Land/ocean contrast — maritime buffering on one side"
+    - "Elevation gradient — high-altitude cooling via snow-albedo feedback"
+    - "Aerosol masking — dimming on the polluted side"
+    - "Soil moisture feedback — drying land warming faster than wet land"
+    - "Circulation regime shift — storm track displacement"
+    - "Arctic amplification — high-latitude cells warming faster than mid-latitudes"
+    - "Data artifact — urban-bias or station sparsity; verify with homogenised product"
+  sst:
+    - "Ocean circulation shift — boundary current intensification/weakening"
+    - "Upwelling change — coastal upwelling strengthening on one side"
+    - "Freshwater forcing — river plume or ice-melt stratification"
+    - "ENSO decadal phase — Pacific cells warming faster than Atlantic cells"
+    - "Data artifact — bias correction change; check product release notes"
+  default:
+    - "Regional forcing difference — land/ocean, orography, land use, or aerosols"
+    - "Teleconnection — ENSO/NAO/other modes modulating one side"
+    - "Trend magnitude at the detection threshold — re-check with different baseline/method"
+    - "Data artifact — verify with an independent dataset before acting"

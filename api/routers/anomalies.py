@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Query, HTTPException
 
-from api.deps import get_store
+from api.deps import get_store, normalise_lon
+from api.schemas import SCHEMA_VERSION
 from api.services import store as svc
 from models.anomaly import anomalies_for_cell
 
@@ -11,8 +12,9 @@ router = APIRouter()
 
 
 @router.get("/anomalies")
-def anomalies(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180, le=180),
+def anomalies(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-360, le=360),
               threshold: float = Query(3.5, ge=2.0, le=6.0)):
+    lon = normalise_lon(lon)
     try:
         store = get_store()
     except Exception as exc:
@@ -23,5 +25,6 @@ def anomalies(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge
                                window=61, threshold=threshold)
     for f in flags:
         f["z"] = round(float(f["z"]), 3)
-    return {"cell_index": cell, "grid_lat": glat, "grid_lon": glon,
+    return {"schema_version": SCHEMA_VERSION,
+            "cell_index": cell, "grid_lat": glat, "grid_lon": glon,
             "threshold_abs_z": threshold, "anomalies": flags}

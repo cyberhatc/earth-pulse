@@ -20,7 +20,8 @@ services:
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     volumes:
       - ./data:/app/data
-      - ./models/artifacts:/app/models/artifacts
+      # NOTE: do NOT bind-mount ./models/artifacts here — it would shadow the
+      # forecaster artifact baked into the image (a fresh clone has only .gitkeep).
   web:
     image: node:22-alpine
     working_dir: /app

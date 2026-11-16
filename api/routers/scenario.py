@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Query, HTTPException
 
-from api.deps import get_store
+from api.deps import get_store, normalise_lon
 from api.services import store as svc
 from models.infer import forecast_place
 from pipeline.fetch_gibs import thumbnails_for_point
@@ -19,14 +19,15 @@ router = APIRouter()
 
 
 @router.get("/imagery/scenario")
-def scenario(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180, le=180),
+def scenario(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-360, le=360),
              parameter: str = Query("ndvi"), horizon_months: int = Query(60, ge=3, le=240)):
+    lon = normalise_lon(lon)
     try:
         store = get_store()
     except Exception as exc:
         raise HTTPException(503, detail=str(exc))
-    if parameter not in store:
-        raise HTTPException(400, detail=f"unknown parameter '{parameter}'")
+    if parameter not in svc.TS_PARAMS:
+        raise HTTPException(400, detail=f"unknown parameter '{parameter}' (allowed: {', '.join(svc.TS_PARAMS)})")
     cell, _, _ = svc.nearest(store, lat, lon)
 
     fc = forecast_place(store, cell, horizon_months, variables=[parameter])

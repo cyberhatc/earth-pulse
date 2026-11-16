@@ -6,7 +6,7 @@ from functools import lru_cache
 from fastapi import APIRouter, Query, HTTPException
 from fastapi.responses import Response
 
-from api.deps import get_store, get_analysis
+from api.deps import get_store, get_analysis, normalise_lon
 from api.services import ondemand
 from models.project_maps import projected_field, svg_heatmap
 
@@ -16,7 +16,8 @@ _ALLOWED = {"temperature", "precipitation", "ndvi", "sst", "sea_level", "solar_r
 
 
 @router.get("/imagery/past")
-def imagery_past(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180, le=180)):
+def imagery_past(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-360, le=360)):
+    lon = normalise_lon(lon)
     return {
         "point": {"lat": lat, "lon": lon},
         "gibs": ondemand.gibs_past(lat, lon),
@@ -44,9 +45,10 @@ def _projected_svg(parameter: str, year: int) -> str:
 
 @router.get("/imagery/timelapse")
 def imagery_timelapse(lat: float = Query(..., ge=-90, le=90),
-                      lon: float = Query(..., ge=-180, le=180),
+                      lon: float = Query(..., ge=-360, le=360),
                       start_year: int = Query(2000, ge=2000, le=2025),
                       end_year: int = Query(2025, ge=2000, le=2035)):
+    lon = normalise_lon(lon)
     """Time-lapse frames: observed GIBS true-colour tiles (past) + projected maps (future)."""
     from pipeline.fetch_gibs import thumbnails_for_point, tile_url, lon_lat_to_tile
     frames = []
@@ -69,9 +71,10 @@ def imagery_timelapse(lat: float = Query(..., ge=-90, le=90),
 
 @router.get("/imagery/timelapse.gif")
 def imagery_timelapse_gif(lat: float = Query(..., ge=-90, le=90),
-                          lon: float = Query(..., ge=-180, le=180),
+                          lon: float = Query(..., ge=-360, le=360),
                           start_year: int = Query(2000, ge=2000, le=2025),
                           end_year: int = Query(2025, ge=2000, le=2025)):
+    lon = normalise_lon(lon)
     """Animated GIF time-lapse of MODIS true-colour tiles for a point (video form)."""
     from io import BytesIO
     import urllib.request
