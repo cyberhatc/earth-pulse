@@ -50,9 +50,20 @@ Key points, unchanged from the pre-RAG design:
   notes (Theil–Sen, Mann–Kendall, robust-z anomalies, PICP bands, climate
   twins, guardrail rationale). Curated, plain-English, labeled in
   `docs/rag-corpus/`.
-- **Store-derived facts** from the active store/analysis: provenance, coverage
-  window, grid shape, per-parameter trend coverage / significant-cell counts,
-  twin clustering, opposite-trend counts. No raw series are embedded.
+- **Store-derived facts** from the active region point analysis: provenance,
+  coverage window, per-parameter trends and significance, rolling anomalies,
+  the blended ridge-rollout forecast, backtest metrics, and ERA5/GISTEMP
+  cross-checks when cached. The facts dict is marked `data_basis: "point"` and
+  includes the `region_slug`; answers must stay about that place. No raw series
+  are embedded in the prompt.
+- **Expanded catalogue facts**: labels, units and provenance come from the 63
+  registry parameters (meteorology, radiation, CAMS gases, MODIS reflectance,
+  NDVI/EVI, LST, snow/NDSI, ET/GPP). `parameters_unavailable` covers registry
+  variables with no record at this point; `requested_unavailable` covers the
+  brief's products with no free point API (runoff, glacier/ice thickness, direct
+  MERRA-2/CERES point subsets, VIIRS point series). The prompt explicitly tells
+  the model to report these as unavailable rather than invent numbers, and the
+  deterministic fallback does the same for questions about them.
 - **Citations**: passages used are returned as `sources: [{id, title, source,
   score}]` and rendered as a muted "Sources" line in the chat UI.
 

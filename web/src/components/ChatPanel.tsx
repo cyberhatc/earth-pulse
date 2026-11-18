@@ -95,6 +95,7 @@ export function ChatPanel() {
           lon: target[1],
           messages: history,
           regionName: region.name,
+          regionSlug: region.slug,
           variable: variable.name,
         });
         const cardKind = asCardKind(reply.card_kind);
@@ -198,7 +199,10 @@ export function ChatPanel() {
           : Object.keys(fc.timeseries)[0];
       const mean = key ? fc.timeseries[key]?.mean : undefined;
       if (mean && mean.length > 1) {
-        delta = mean[mean.length - 1] - mean[0];
+        const k = Math.max(1, Math.min(12, Math.floor(mean.length / 2)));
+        const head = mean.slice(0, k).reduce((a, b) => a + b, 0) / k;
+        const tail = mean.slice(-k).reduce((a, b) => a + b, 0) / k;
+        delta = tail - head;
       }
     }
 

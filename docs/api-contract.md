@@ -108,7 +108,7 @@ The unified on-click payload. Example (abridged; arrays truncated with …):
 > `generator` values actually produced by `api/services/explainer.py`: `templated` (default for `/place`), `ollama` (local LLM), `hf-router` (when `EP_RAG_BACKEND=hf-router`: local BM25 retrieval over the bundled knowledge base + HF serverless inference), `hf-rag` (when `EP_RAG_BACKEND=hf` and the Hugging Face RAG Space answers), `hf_inference` (when `HF_TOKEN` is set and the endpoint responds), and `templated-guard` (the LLM failed a post-generation fact check, so deterministic prose was substituted). A `gemini` backend is reserved/planned and is **not yet wired**. The forecast block includes `artifact` (e.g. `forecaster_power_real.npz`) so callers can see which trained model produced it. See `docs/rag.md` for the RAG design and runbook.
 
 ## `POST /chat`
-Conversational, facts-locked narration backed by the Hugging Face serverless router (when `EP_RAG_BACKEND=hf-router`), the Hugging Face RAG Space (when `EP_RAG_BACKEND=hf`), a local Ollama model (default), or deterministic templated prose (fallback). The server assembles the facts (trends, forecast deltas, anomalies, opposite pairs, climate twin, coverage) from the same store and engine as `/place`; the model only re-words them and never computes or changes a number. With a RAG backend enabled, retrieval runs over a BM25 knowledge base (repo docs + NASA POWER / method notes + store-derived coverage facts) and answers carry `sources: [{id, title, source}]`. Every draft passes the same post-generation guards regardless of backend.
+Conversational, facts-locked narration backed by the Hugging Face serverless router (when `EP_RAG_BACKEND=hf-router`), the Hugging Face RAG Space (when `EP_RAG_BACKEND=hf`), a local Ollama model (default), or deterministic templated prose (fallback). The server prefers the **same point-level analysis used by the notebook dossier** — the real NASA POWER monthly record for the requested coordinate (or region centre), Theil–Sen/Mann–Kendall trends, rolling anomalies, the blended ridge-rollout forecast and its backtest — and falls back to the gridded store only if no point record can be built. The facts dict carries `data_basis: "point" | "grid"` and the request should include `region_slug`; the model only re-words the facts and never computes or changes a number. With a RAG backend enabled, retrieval runs over a BM25 knowledge base (repo docs + NASA POWER / method notes + store-derived coverage facts) and answers carry `sources: [{id, title, source}]`. Every draft passes the same post-generation guards regardless of backend.
 
 Request:
 ```json
@@ -116,6 +116,7 @@ Request:
   "lat": 15.8497,
   "lon": 74.4977,
   "region_name": "Western Ghats + Arabian Sea",
+  "region_slug": "western-ghats",
   "variable": "Precipitation",
   "horizon_months": 60,
   "language": "en",
@@ -128,7 +129,7 @@ Request:
 Response:
 ```json
 {
-  "text": "The 5-year forecast indicates a net increase in temperature of +0.165 °C over 60 months …",
+  "text": "The 5-year forecast shows a +0.165 °C change in the annual mean temperature between the start and end of the horizon …",
   "generator": "ollama",
   "model": "qwen2.5:1.5b",
   "confidence": "medium",
@@ -141,7 +142,47 @@ Response:
 }
 ```
 `guard_reason` and `guard_numbers` are always present; the latter is empty unless a numeric guard rejected a draft.
-Forecast deltas are **net change across the full horizon**, not per-decade rates. If Ollama is unreachable the endpoint returns deterministic `templated` prose instead of failing. Post-generation guards protect the facts: answers that convert a p-value into a certainty/probability claim, call a non-significant trend significant, or contain a number absent from the facts are rejected and replaced with `templated-guard` prose. `guard_reason` is one of `certainty_claim`, `p_value_misuse`, `band_misuse`, `significance_misread`, or `unverified_numbers`; `guard_numbers` lists any rejected numerical tokens (empty otherwise).
+Forecast deltas compare the mean of the final up-to-12 months of the horizon with the mean of the initial up-to-12 months (seasonal-cycle safe), not per-decade rates. If Ollama is unreachable the endpoint returns deterministic `templated` prose instead of failing. Post-generation guards protect the facts: answers that convert a p-value into a certainty/probability claim, call a non-significant trend significant, or contain a number absent from the facts are rejected and replaced with `templated-guard` prose. `guard_reason` is one of `certainty_claim`, `p_value_misuse`, `band_misuse`, `significance_misread`, or `unverified_numbers`; `guard_numbers` lists any rejected numerical tokens (empty otherwise).
+
+## `GET /dossier?lat&lon&horizon_months=60`
+The notebook's full point payload. `mode` is `point_real` for a real point store
+and `grid_demo` for the legacy synthetic grid. Key sections:
+
+```json
+{
+  "mode": "point_real",
+  "synthetic": false,
+  "data_basis": "point",
+  "area": { "bbox": [76.6464, 13.7072, 76.6564, 13.7172], "width_km": 10, "height_km": 10 },
+  "coverage": { "parameters_used": ["temperature", "…"], "time_range": ["1981-01", "2026-09"] },
+  "parameter_groups": [
+    { "name": "Atmosphere", "parameters": [
+      { "key": "temperature", "label": "Air temperature (2 m)", "unit": "°C",
+        "source": "NASA POWER T2M", "resolution_m": 55000, "n": 549 }
+    ]}
+  ],
+  "requested_unavailable": {
+    "runoff": { "label": "Surface runoff", "source": "GLDAS / GPM land-hydrology subsets",
+                "reason": "No free no-login monthly point endpoint; GLDAS is imagery-only in GIBS." }
+  },
+  "forecast": { "dates": ["2026-10", "…"], "timeseries": { "temperature": { "mean": [], "lower": [], "upper": [] } },
+                "next_move": { "temperature": { "delta": 0.099, "window": ["2029-10", "2030-09"] } } },
+  "ml": { "model": "ridge_rollout_point", "models_by_parameter": { "ndvi": "ridge_single_point" },
+          "backtest": { "per_parameter": { "temperature": { "mae": 0.53 } } } },
+  "imagery": { "gibs": { "groups": [ { "name": "Optical / vegetation", "frames": [] } ] } }
+}
+```
+
+The registry lives in `models/parameter_registry.py` (`PARAM_ORDER`, `GROUPS`,
+`PARAMETERS`, `REQUESTED_UNAVAILABLE`) and is the single source of truth for
+labels, units, physical bounds, provenance, effective resolution and coverage.
+`PARAMETERS` currently covers 64 parameters; the six groups are Atmosphere,
+Radiation, Water & land, Air quality, Vegetation & surface and Snow &
+cryosphere. `SATELLITE_PARAMS` identifies series that start after 1981 and are
+fitted by their own ridge model over the observed span; `ML_EXCLUDE` marks
+categorical/circular variables. `GET /dossier/report` renders the same payload
+as a printable HTML visual report with charts, imagery gallery and the
+unavailable-parameter table.
 
 ## Other endpoints
 | Endpoint | Returns |

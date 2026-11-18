@@ -118,6 +118,7 @@ class ChatRequest(BaseModel):
     messages: list[ChatTurn] = Field(default_factory=list, max_length=12)
     horizon_months: int = Field(60, ge=3, le=240)
     region_name: str | None = Field(None, max_length=128)
+    region_slug: str | None = Field(None, max_length=128)
     variable: str | None = Field(None, max_length=64)
     language: str = Field("en", max_length=16)
 

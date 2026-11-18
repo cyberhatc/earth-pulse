@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ContextChipBar } from "../components/ContextChipBar";
+import { PointDossier } from "../components/PointDossier";
 import { TopBar } from "../components/TopBar";
 import { TrendChart } from "../components/TrendChart";
 import { useInvestigation } from "../lib/context";
@@ -335,6 +336,14 @@ export function RegionNotebookPage() {
               </div>
             </section>
           </div>
+
+          <PointDossier
+            lat={(point ?? region.center)[0]}
+            lon={(point ?? region.center)[1]}
+            regionName={region.name}
+            regionSlug={region.slug}
+            pinned={Boolean(point)}
+          />
         </div>
       </main>
     </div>

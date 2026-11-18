@@ -83,13 +83,26 @@ class RidgeRollout:
         ys = a @ self.W
         return ys * self.y_std + self.y_mean
 
-    def rollout(self, init_window: np.ndarray, horizon: int) -> np.ndarray:
-        """Autoregressive rollout. init_window: (seq_len, n_targets) -> returns (horizon, n_targets)."""
+    def rollout(
+        self,
+        init_window: np.ndarray,
+        horizon: int,
+        known_future: np.ndarray | None = None,
+    ) -> np.ndarray:
+        """Autoregressive rollout. init_window: (seq_len, n_targets) -> returns (horizon, n_targets).
+
+        ``known_future`` lets the caller pin deterministic trailing features
+        (e.g. month_sin/month_cos) to their true future values instead of
+        letting the autoregressive model invent them.
+        """
         window = init_window.copy().astype(np.float64)
         out = []
-        for _ in range(horizon):
+        for h in range(horizon):
             flat = window.reshape(-1)
             nxt = self.predict_next(flat)
+            if known_future is not None and h < len(known_future):
+                k = min(known_future.shape[1], nxt.size)
+                nxt[-k:] = known_future[h, -k:]
             out.append(nxt)
             window = np.vstack([window[1:], nxt.reshape(1, -1)])
         return np.array(out)

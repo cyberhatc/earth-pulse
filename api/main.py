@@ -21,7 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 
 from api.schemas import SCHEMA_VERSION, API_VERSION
-from api.routers import place, imagery, trends, forecast, anomalies, explain, health, tierb, scenario, point, chat
+from api.routers import place, imagery, trends, forecast, anomalies, explain, health, tierb, scenario, point, chat, dossier
 
 log = logging.getLogger("earth_pulse")
 if not log.handlers:
@@ -96,14 +96,14 @@ async def _rate_limit(request, call_next):
 
 for r in (health.router, place.router, imagery.router, trends.router,
           forecast.router, anomalies.router, explain.router, tierb.router, scenario.router,
-          point.router, chat.router):
+          point.router, dossier.router, chat.router):
     app.include_router(r)
 
 # Same handlers under /api so the production single-service frontend build
 # (Vite default base "/api") works same-origin. Root paths stay for back-compat.
 for r in (health.router, place.router, imagery.router, trends.router,
           forecast.router, anomalies.router, explain.router, tierb.router, scenario.router,
-          point.router, chat.router):
+          point.router, dossier.router, chat.router):
     app.include_router(r, prefix="/api")
 
 
