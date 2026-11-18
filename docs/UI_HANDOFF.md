@@ -56,10 +56,25 @@ cd web && npx tsc --noEmit && npm run build
 
 - `web/src/components/PointDossier.tsx` — notebook, catalogue groups,
   imagery, unavailable table, ML/backtest metadata.
+- `web/src/components/PointParameterAnalysis.tsx` — **new** per-parameter
+  drill-down: every parameter has its own trend, observed chart, forecast band,
+  backtest, provenance and private chat thread. “Ask every parameter” walks the
+  whole analysed catalogue and “All parameter chats” keeps every thread.
+- `web/src/components/ForecastBand.tsx` — shared p10–p90 forecast chart.
+- `web/src/pages/RegionMapPage.tsx` — a map click now carries `?pt=lat,lon`
+  straight to the notebook; the point panel also has “Analyse all parameters”.
 - `web/src/pages/RegionNotebookPage.tsx` — route/query-param handling.
-- `web/src/components/ChatPanel.tsx` — region-scoped chat.
+- `web/src/components/ChatPanel.tsx` — region-scoped chat plus a lazy
+  “Point data · all parameters” explorer; each chip asks `/chat` with that
+  parameter as the focus.
 - `web/src/lib/api.ts` — dossier/chat TypeScript contracts.
-- `web/src/styles/dossier.css` — notebook styling.
+- `web/src/styles/dossier.css` and `web/src/styles/globals.css` — styling.
+
+Conversations stay point-first: `/chat` is called with the pinned coordinates
+and `variable=<parameter key>`, and the backend only reads the matching local
+point store. A direct question such as “analyse all the parameters” returns a
+compact inventory of the real trends and explicit gaps, not generic climate
+narrative.
 
 Keep the honesty labels visible: effective resolution, `satellite_pending`,
 `requested_unavailable`, and the distinction between local point data and

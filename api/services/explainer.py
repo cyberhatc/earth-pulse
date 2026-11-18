@@ -366,6 +366,72 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
     trange = facts.get("time_range", ["?", "?"])
     lines: list[str] = []
 
+    # A direct "all parameters" question gets a compact real-data inventory,
+    # never a generic climate lecture. Only facts present in the point store
+    # are reported; gaps are named explicitly.
+    if re.search(
+        r"\b(?:all|every|list\s+of)\s+(?:the\s+)?(?:parameters|variables|indicators)\b",
+        question,
+        re.I,
+    ):
+        used = list(facts.get("parameters_used") or [])
+        trends = facts.get("trends") or {}
+        basis = (
+            "real point store for this 10 km box"
+            if facts.get("data_basis") == "point"
+            else "gridded fallback store"
+        )
+        lines.append(
+            f"At {place}, I checked {len(used)} parameters with usable data in the {basis} "
+            f"over {trange[0]} to {trange[1]}."
+        )
+        ranked = sorted(
+            (
+                (param, rec)
+                for param, rec in trends.items()
+                if int(rec.get("n", 0) or 0) >= 12
+            ),
+            key=lambda item: abs(float(item[1].get("slope_per_decade", 0) or 0)),
+            reverse=True,
+        )
+        shown = 0
+        for param, rec in ranked:
+            label = facts.get("parameter_labels", {}).get(param, {}).get(
+                "label", param.replace("_", " ").title()
+            )
+            unit = _PARAM_UNITS.get(param, "units")
+            line = _trend_line(facts, param, label, unit)
+            if not line:
+                continue
+            lines.append(line + ".")
+            shown += 1
+            if shown >= 12:
+                break
+        sig = sum(1 for _, rec in ranked if bool(rec.get("significant")))
+        lines.append(
+            f"{sig} of {len(ranked)} analysed parameters have a statistically significant "
+            "Mann–Kendall trend at α=0.05; a non-significant result means the data cannot "
+            "confirm a trend, not that nothing changed."
+        )
+        missing = list(facts.get("parameters_unavailable") or [])
+        gaps = facts.get("requested_unavailable") or {}
+        if missing or gaps:
+            lines.append(
+                f"Requested but unavailable here: {', '.join(missing[:12])}"
+                + (f" and {len(missing) - 12} more" if len(missing) > 12 else "")
+                + (f"; {len(gaps)} gated product(s) listed in the catalogue" if gaps else "")
+                + ". No values were filled in."
+            )
+        lines.append(
+            "Forecast changes, backtest skill and per-parameter provenance are in the "
+            "Parameter analysis panel; ask about any single parameter for detail."
+        )
+        return {
+            "text": " ".join(lines),
+            "generator": "templated",
+            "confidence": _confidence(facts, "finding"),
+        }
+
     if card_kind == "forecast":
         deltas = facts.get("forecast_deltas", {}) or {}
         model = facts.get("forecast_model", "ridge rollout")
@@ -394,12 +460,16 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
         if window:
             lines.append(f"The forecast window is {window[0]} to {window[1]}.")
         lines.append("These are probabilistic p10–p90 bands, not a certain future; verify the backtest skill before acting.")
-        check_params = (focus,) if focus in ("temperature", "precipitation") else ("temperature", "precipitation")
+        backtest_params = (
+            (focus,)
+            if focus and focus in (facts.get("model_backtest") or {})
+            else ("temperature", "precipitation")
+        )
         lines.extend(
             _cross_check_lines(
                 facts,
-                include_gistemp="temperature" in check_params,
-                params=check_params,
+                include_gistemp="temperature" in backtest_params,
+                params=backtest_params,
             )
         )
     elif card_kind == "anomaly":
@@ -500,7 +570,7 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
         lines.append("Explain trends as observations of the past — never as certain predictions for the future.")
     elif card_kind == "slope-map":
         focus = _focus_parameter(question) or _focus_parameter(facts.get("variable"))
-        if focus not in ("temperature", "precipitation"):
+        if not focus or focus not in (facts.get("trends") or {}):
             focus = "temperature"
         line = _trend_line(
             facts,
@@ -510,8 +580,8 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
         )
         if facts.get("data_basis") == "point":
             lines.append(
-                f"Spatial context for {place}: the backend is using the point-level NASA POWER "
-                f"record at {facts.get('lat', 0):.3f}°, {facts.get('lon', 0):.3f}°, not a regional average."
+                f"Spatial context for {place}: the backend is using the point-level record at "
+                f"{facts.get('lat', 0):.3f}°, {facts.get('lon', 0):.3f}°, not a regional average."
             )
         else:
             lines.append(
@@ -520,6 +590,14 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
             )
         if line:
             lines.append(line + ".")
+        meta = (facts.get("parameter_labels") or {}).get(focus) or {}
+        if meta.get("source"):
+            detail = f"For {focus.replace('_', ' ')}, the source is {meta['source']}"
+            if meta.get("native"):
+                detail += f" at native {meta['native']}"
+            if meta.get("coverage"):
+                detail += f", with coverage {meta['coverage']}"
+            lines.append(detail + ". No global or invented values are substituted.")
         lines.append("Open the map to inspect a specific point; the local value can differ sharply from the regional mean.")
     elif card_kind == "caveat":
         lines.append(f"Significance at {place} is reported as a Mann–Kendall p-value on the monthly record.")
@@ -594,6 +672,14 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
                 line = _trend_line(facts, focus, focus.replace("_", " ").title(), _PARAM_UNITS.get(focus, "units"))
                 if line:
                     lines.append(f"At {place}, {line[0].lower() + line[1:]}.")
+            meta = (facts.get("parameter_labels") or {}).get(focus) or {}
+            if meta.get("source"):
+                detail = f"Source: {meta['source']}"
+                if meta.get("native"):
+                    detail += f" (native {meta['native']})"
+                if meta.get("coverage"):
+                    detail += f"; coverage {meta['coverage']}"
+                lines.append(detail + ". These are local point values, not a global average.")
         else:
             lines.append(f"This case studies {facts.get('variable', 'the primary variable')} at {place}.")
             lines.append("The backend exposes temperature, precipitation, humidity, wind, and solar radiation from NASA POWER; NDVI, SST, and sea level are only available where the underlying products exist.")
