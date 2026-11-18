@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { LocationsMap } from "../components/LocationsMap";
 import { Sparkline } from "../components/Sparkline";
 import { TopBar } from "../components/TopBar";
 import { useInvestigation } from "../lib/context";
@@ -21,107 +22,80 @@ export function RegionsPage() {
         const fullSeries = analysis?.series ?? generateSeries(region);
         const series = fullSeries.filter((_, idx) => idx % 4 === 0);
         const stats = analysis?.stats ?? computeStats(region, fullSeries);
-        const color =
-          region.trendShape === "up" ? "var(--trend-up)" : "var(--trend-down)";
-        return {
-          region,
-          variable,
-          stats,
-          series,
-          color,
-          live: Boolean(analysis?.isLive),
-          status: analysis?.status ?? "loading",
-          note: analysis?.sourceLabel,
-        };
+        const color = region.trendShape === "up" ? "var(--trend-up)" : "var(--trend-down)";
+        const status = analysis?.status ?? "loading";
+        return { region, variable, series, stats, color, status, source: analysis?.sourceLabel ?? "Connecting…" };
       }),
     [liveBySlug],
   );
 
-  const handleSelect = (region: Region) => {
+  const handleOpen = (region: Region) => {
     setRegion(region);
     navigate(`/region/${region.slug}`);
   };
 
   return (
-    <div className="page regions-viewport-page">
+    <div className="page regions-map-page">
       <TopBar />
-      <main className="regions-page">
-        <div className="shell regions-shell">
-          <div className="regions-head">
-            <p className="eyebrow">Atlas Territory Selection</p>
-            <h1 className="regions-title">Three coupled case files.</h1>
-            <p className="regions-lede">
-              Each folio pairs a terrestrial basin with its neighboring ocean
-              margin across a multi-decadal NASA POWER record — with explicit
-              demo fallbacks where a satellite product is unavailable.
-            </p>
-          </div>
+      <main className="regions-page regions-page-map">
+        <div className="shell regions-shell regions-shell-wide">
+          <p className="eyebrow">Map-first entry · 3 predefined case studies</p>
+          <h1 className="regions-title">Explore Earth Pulse locations</h1>
+          <p className="regions-lede">
+            Start from the interactive map. Select one of the three case-study regions to inspect its observed history, trends,
+            forecasts, anomalies, comparisons, imagery, and location-aware tools. Hover or tap a marker for key info, then click to
+            open the full location experience.
+          </p>
 
-          <div className="region-grid">
-            {cards.map(({ region, variable, stats, series, color, live, status, note }) => (
+          <section className="locations-map-section" aria-label="Interactive locations map">
+            <div className="locations-map-frame specimen-frame">
+              <LocationsMap regions={REGIONS} analyses={liveBySlug} onSelect={setRegion} />
+            </div>
+            <div className="locations-map-legend" aria-label="Map legend">
+              <span className="legend-pill"><span className="legend-dot" style={{ background: "var(--trend-up)" }} /> Increasing primary signal</span>
+              <span className="legend-pill"><span className="legend-dot" style={{ background: "var(--trend-down)" }} /> Decreasing primary signal</span>
+              <span className="legend-pill muted">Click a marker or card to inspect location data, chatbot, videos, and visualizations.</span>
+            </div>
+          </section>
+
+          <div className="divider" aria-hidden="true">Case studies</div>
+
+          <div className="region-grid region-grid-rich" role="list">
+            {cards.map(({ region, variable, series, stats, color, status, source }) => (
               <button
                 key={region.slug}
                 type="button"
-                className="region-card specimen-frame"
-                onClick={() => handleSelect(region)}
-                title={note}
+                role="listitem"
+                className="region-card specimen-frame region-card-selectable"
+                onClick={() => handleOpen(region)}
               >
                 <div className="region-card-strip halftone-strip">
-                  <span className="region-card-overlay">
-                    {region.plate} · {variable.shortName}
-                  </span>
-                  <span
-                    className="region-card-rate"
-                    style={{ color }}
-                  >
-                    {formatSlope(stats)}
-                  </span>
-                  <Sparkline
-                    values={series}
-                    width={320}
-                    height={68}
-                    color={color}
-                    className="region-card-sparkline"
-                  />
-                  <span className={`card-live-badge preview-source-${status}`}>
-                    <span className={`live-dot live-${status}`} aria-hidden="true" />
-                    {live ? "LIVE" : status === "partial" ? "DEMO VAR" : "DEMO"}
-                  </span>
+                  <span className="region-card-overlay">{region.bboxLabel}</span>
+                  <span className="region-card-rate" style={{ color }}>{formatSlope(stats)}</span>
+                  <Sparkline values={series} width={240} height={66} color={color} className="region-card-sparkline" />
                 </div>
                 <div className="region-card-body">
-                  <div className="region-card-eyebrow">
-                    {region.bboxLabel} · {region.subtitle}
-                  </div>
+                  <div className="region-card-eyebrow">{region.plate} · {variable.shortName}</div>
                   <h2 className="region-card-name">{region.name}</h2>
-                  <p className="region-card-meta">
-                    {region.area} · {region.climate}
-                  </p>
-                  <p className="region-card-teaser">
-                    {region.teaser}{" "}
-                    <span className="teaser-arrow" aria-hidden="true">
-                      →
-                    </span>
-                  </p>
+                  <p className="region-card-meta">{region.climate} · {region.area}</p>
+                  <p className="region-card-meta subtle">Trend highlight: {formatSlope(stats)} ({stats.significant ? "significant" : "not significant"}) · {source} ({status})</p>
+                  <p className="region-card-teaser">{region.teaser} <span className="teaser-arrow">→</span></p>
+                  <div className="region-card-actions">
+                    <span className="btn-secondary btn-inline">Open location details</span>
+                  </div>
                 </div>
               </button>
             ))}
           </div>
 
-          <div className="divider" role="separator" aria-label="Alternative">
-            <span>or</span>
-          </div>
-
           <div className="custom-note" role="note">
-            Custom bounding-box selection is not yet available in this build. Open a
-            case file above, then select any point on its regional map to query the
-            backend for that coordinate’s computed trend.
+            <strong>Coverage & honesty:</strong> these are the three predefined demonstration case studies. Live views use the backend
+            `/place` payload when available and clearly label observed, projected/forecast, unavailable, and demo/synthetic content.
           </div>
 
-          <div className="regions-back">
-            <Link to="/" className="back-link">
-              ← Return to monograph overview
-            </Link>
-          </div>
+          <p className="regions-back">
+            <Link to="/" className="back-link">← About Earth Pulse</Link>
+          </p>
         </div>
       </main>
     </div>
