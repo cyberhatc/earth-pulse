@@ -301,3 +301,82 @@ export function sendChat(
     120000,
   );
 }
+
+export type BackendImageryPast = {
+  point: { lat: number; lon: number };
+  gibs: Array<{ label?: string; date: string; type: string; layer: string; url: string }>;
+  landsat_query?: { url?: string; note?: string } | string;
+  note?: string;
+};
+
+export type BackendTimelapse = {
+  parameter: string;
+  lat: number;
+  lon: number;
+  frames: Array<{ index?: number; date: string; year: number; svg: string }>;
+  note?: string;
+  error?: string;
+};
+
+export type BackendScenario = {
+  parameter: string;
+  lat: number;
+  lon: number;
+  enabled: boolean;
+  label: string;
+  prompt: string;
+  negative_prompt: string;
+  conditioning: Record<string, unknown>;
+  gibs_reference_url: string | null;
+  how_to_generate: string;
+};
+
+function buildApiUrl(path: string): string {
+  const base = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, "") ?? "/api";
+  return `${base.replace(/\/$/, "")}${path}`;
+}
+
+export async function fetchImageryPast(
+  lat: number,
+  lon: number,
+  signal?: AbortSignal,
+): Promise<BackendImageryPast> {
+  const q = new URLSearchParams({ lat: String(lat), lon: String(lon) });
+  return request(`/imagery/past?${q.toString()}`, { method: "GET", signal });
+}
+
+export async function fetchTimelapse(
+  lat: number,
+  lon: number,
+  parameter: string,
+  signal?: AbortSignal,
+): Promise<BackendTimelapse> {
+  const q = new URLSearchParams({ lat: String(lat), lon: String(lon), parameter });
+  return request(`/imagery/timelapse?${q.toString()}`, { method: "GET", signal });
+}
+
+export function timelapseGifUrl(lat: number, lon: number, parameter: string): string {
+  const q = new URLSearchParams({ lat: String(lat), lon: String(lon), parameter });
+  return buildApiUrl(`/imagery/timelapse.gif?${q.toString()}`);
+}
+
+export function projectedImageUrl(parameter: string, year: number): string {
+  const q = new URLSearchParams({ parameter, year: String(year) });
+  return buildApiUrl(`/imagery/projected?${q.toString()}`);
+}
+
+export async function fetchScenario(
+  lat: number,
+  lon: number,
+  parameter = "ndvi",
+  horizonMonths = 60,
+  signal?: AbortSignal,
+): Promise<BackendScenario> {
+  const q = new URLSearchParams({
+    lat: String(lat),
+    lon: String(lon),
+    parameter,
+    horizon_months: String(horizonMonths),
+  });
+  return request(`/imagery/scenario?${q.toString()}`, { method: "GET", signal });
+}

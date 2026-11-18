@@ -6,7 +6,7 @@ import { getVariable } from "../lib/data";
 import { formatCoords } from "../lib/trend";
 
 type ContextChipBarProps = {
-  mode: "chat" | "map" | "notebook" | "hub";
+  mode: "hub" | "chat" | "map" | "notebook" | "videos" | "visualizations";
 };
 
 export function ContextChipBar({ mode }: ContextChipBarProps) {
@@ -20,9 +20,18 @@ export function ContextChipBar({ mode }: ContextChipBarProps) {
   const period = live.analysis?.period ?? region.period;
   const status = live.status;
 
+  const tabs: Array<{ to: string; label: string; key: ContextChipBarProps["mode"] }> = [
+    { to: `/region/${region.slug}`, label: "Overview", key: "hub" },
+    { to: `/region/${region.slug}/visualizations`, label: "Visualizations", key: "visualizations" },
+    { to: `/region/${region.slug}/chat`, label: "Chat", key: "chat" },
+    { to: `/region/${region.slug}/videos`, label: "Videos", key: "videos" },
+    { to: `/region/${region.slug}/map`, label: "Map", key: "map" },
+    { to: `/region/${region.slug}/notebook`, label: "Notebook", key: "notebook" },
+  ];
+
   return (
     <div className="chipbar" role="region" aria-label="Investigation context">
-      <div className="chipbar-inner">
+      <div className="chipbar-inner chipbar-inner-rich">
         <div className="chipbar-meta">
           <span className="meta-plate">{region.plate}</span>
           <span className="meta-sep" aria-hidden="true">·</span>
@@ -51,9 +60,7 @@ export function ContextChipBar({ mode }: ContextChipBarProps) {
                   ? "BACKEND OFFLINE"
                   : "CONNECTING…"}
           </span>
-          {health?.llm?.available ? (
-            <span className="chip-llm">{health.llm.model}</span>
-          ) : null}
+          {health?.llm?.available ? <span className="chip-llm">{health.llm.model}</span> : null}
           {point ? (
             <>
               <span className="meta-sep" aria-hidden="true">·</span>
@@ -72,28 +79,17 @@ export function ContextChipBar({ mode }: ContextChipBarProps) {
           ) : null}
         </div>
 
-        <nav className="segmented" aria-label="Investigation mode">
-          <Link
-            to={`/region/${region.slug}/chat`}
-            className={mode === "chat" ? "seg active" : "seg"}
-            aria-current={mode === "chat" ? "page" : undefined}
-          >
-            Chat
-          </Link>
-          <Link
-            to={`/region/${region.slug}/map`}
-            className={mode === "map" ? "seg active" : "seg"}
-            aria-current={mode === "map" ? "page" : undefined}
-          >
-            Map
-          </Link>
-          <Link
-            to={`/region/${region.slug}/notebook`}
-            className={mode === "notebook" ? "seg active" : "seg"}
-            aria-current={mode === "notebook" ? "page" : undefined}
-          >
-            Notebook
-          </Link>
+        <nav className="segmented segmented-rich" aria-label="Location views">
+          {tabs.map((tab) => (
+            <Link
+              key={tab.key}
+              to={tab.to}
+              className={mode === tab.key ? "seg active" : "seg"}
+              aria-current={mode === tab.key ? "page" : undefined}
+            >
+              {tab.label}
+            </Link>
+          ))}
         </nav>
       </div>
     </div>
