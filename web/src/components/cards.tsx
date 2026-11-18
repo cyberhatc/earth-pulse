@@ -311,6 +311,58 @@ export function CardRenderer({
 
   if (card.kind === "anomaly") {
     const report = anomalyReport;
+    const backend = analysis.isLive ? analysis.backendAnomalies ?? [] : null;
+    if (backend) {
+      const shown = [...backend]
+        .sort((a, b) => b.date.localeCompare(a.date))
+        .slice(0, 12);
+      const high = backend.filter((a) => a.severity === "high").length;
+      return (
+        <article className="card">
+          <div className="card-head">
+            <span className="card-head-label">Earth Anomaly Detective</span>
+            <span className="card-head-meta">
+              {backend.length} flagged · {high} high severity
+            </span>
+          </div>
+          <div className="card-body">
+            <p className="anomaly-summary">
+              The backend flagged {backend.length} statistically unusual month
+              {backend.length === 1 ? "" : "s"} for this cell using a
+              61-month rolling robust-z detector (|z| ≥ 3.5) on NASA POWER
+              monthly records. Most recent shown:
+            </p>
+            <div className="anomaly-list">
+              {shown.map((a, i) => (
+                <div key={`${a.parameter}-${a.date}-${i}`} className="anomaly-row">
+                  <span className="anomaly-month">{a.date}</span>
+                  <span className="anomaly-val" style={{ color: "var(--ink)" }}>
+                    {a.parameter.replace(/_/g, " ")}
+                  </span>
+                  <span className={`stamp ${a.severity === "high" ? "stamp-sig" : "stamp-not-sig"}`}>
+                    {a.severity}
+                  </span>
+                  <span className="anomaly-z">
+                    z = {formatSignedNumber(a.z)}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="anomaly-caution">
+              These are temporary statistical departures, not evidence of a
+              permanent trend shift. Full list available from the backend
+              (rolling robust z, 61-month window).
+            </div>
+            <p className="evidence-source-note">
+              Backend source: /api/anomalies — NASA POWER monthly, nearest
+              15° analysis cell. NDVI not available from POWER; flagged months
+              are temperature/precipitation only.
+            </p>
+          </div>
+          <EvidenceFooter region={region} analysis={analysis} card={card} />
+        </article>
+      );
+    }
     const bMin = Math.min(...report.baselineByMonth);
     const bMax = Math.max(...report.baselineByMonth);
     const bRange = bMax - bMin || 1;

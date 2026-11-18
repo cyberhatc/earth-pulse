@@ -4,7 +4,7 @@ import { getVariable } from "../lib/data";
 import { formatCoords } from "../lib/trend";
 
 type ContextChipBarProps = {
-  mode: "hub" | "chat" | "map" | "notebook" | "videos" | "visualizations";
+  mode: "hub" | "chat" | "map" | "notebook" | "videos" | "visualizations" | "report";
 };
 
 export function ContextChipBar({ mode }: ContextChipBarProps) {
@@ -25,6 +25,7 @@ export function ContextChipBar({ mode }: ContextChipBarProps) {
     { to: `/region/${region.slug}/videos`, label: "Videos", key: "videos" },
     { to: `/region/${region.slug}/map`, label: "Map", key: "map" },
     { to: `/region/${region.slug}/notebook`, label: "Notebook", key: "notebook" },
+    { to: `/region/${region.slug}/report`, label: "Report", key: "report" },
   ];
 
   return (

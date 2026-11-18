@@ -114,6 +114,29 @@ export type BackendPlace = {
   };
 };
 
+export type BackendTimelapseLegacy = {
+  point: { lat: number; lon: number };
+  frames: {
+    year: number;
+    date: string;
+    kind: string;
+    url: string;
+    label: string;
+  }[];
+};
+
+export function fetchImageryTimelapse(
+  lat: number,
+  lon: number,
+  signal?: AbortSignal,
+): Promise<BackendTimelapseLegacy> {
+  return request<BackendTimelapseLegacy>(
+    `/imagery/timelapse?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}`,
+    { signal },
+    30000,
+  );
+}
+
 export type BackendHealth = {
   status: string;
   schema_version?: string;
@@ -272,6 +295,61 @@ export function fetchGridTrends(
     `/trends/grid?variable=${encodeURIComponent(variable)}`,
     { signal },
     30000,
+  );
+}
+
+export type PointAnomaly = {
+  parameter: string;
+  date: string;
+  z: number;
+  severity?: string | null;
+  kind?: string | null;
+};
+
+export type BackendPoint = {
+  schema_version?: string;
+  location: { lat: number; lon: number; name?: string };
+  data_coverage: {
+    synthetic_demo: boolean;
+    parameters_used: string[];
+    parameters_unavailable?: string[];
+    time_range: string[];
+    sources?: Record<string, string>;
+    ocean_cell?: boolean | null;
+    resolution_m?: Record<string, number | null>;
+    notes?: string;
+  };
+  trends: Record<string, BackendTrend & { n?: number }>;
+  forecast: {
+    horizon_months: number;
+    issued: string;
+    model: string;
+    dates: string[];
+    timeseries: Record<string, { mean: number[]; lower: number[]; upper: number[] }>;
+    next_move?: Record<string, { delta_over_horizon?: number; direction?: string; magnitude_in_std?: number }>;
+    scenarios?: unknown[];
+    projected_images?: unknown[];
+  };
+  anomalies?: PointAnomaly[];
+  next_move?: Record<string, { delta_over_horizon?: number; direction?: string; magnitude_in_std?: number }>;
+  past: {
+    dates: string[];
+    timeseries: Record<string, (number | null)[]>;
+    anomalies: PointAnomaly[];
+  };
+  explanation?: { text: string; language?: string; generator: string; confidence: string; model?: string | null };
+};
+
+export function fetchPoint(
+  lat: number,
+  lon: number,
+  horizonMonths = 60,
+  signal?: AbortSignal,
+): Promise<BackendPoint> {
+  return request<BackendPoint>(
+    `/point?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&horizon_months=${horizonMonths}`,
+    { signal },
+    180000,
   );
 }
 

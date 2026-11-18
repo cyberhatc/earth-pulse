@@ -452,6 +452,7 @@ def build_point_store(
         meta["satellite_note"] = "MODIS point series not requested for this build."
     meta["imagery_scenes"] = fetch_satellite_imagery_links(lat, lon).get("scenes", {})
 
+
     # Ocean/land is a coarse diagnostic only. Never wipe real MODIS values based
     # on the 15-degree demo mask; satellite no-data is already encoded as NaN.
     try:

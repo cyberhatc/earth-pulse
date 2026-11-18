@@ -54,6 +54,9 @@ export function TopBar({ backHref, backLabel, showThemeToggle = true }: TopBarPr
           <Link to="/regions" className="topbar-link">
             Case Files
           </Link>
+          <Link to="/trend" className="topbar-link">
+            Global Trend
+          </Link>
           <a
             href="https://www.earthdata.nasa.gov/"
             target="_blank"

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ContextChipBar } from "../components/ContextChipBar";
 import { RegionMap } from "../components/RegionMap";
@@ -6,6 +6,7 @@ import { Sparkline } from "../components/Sparkline";
 import { TopBar } from "../components/TopBar";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
+import { fetchPoint, type BackendPoint } from "../lib/api";
 import { formatCoords, formatSlope } from "../lib/trend";
 import { useRegionRoute } from "../lib/useRegionRoute";
 
@@ -13,6 +14,33 @@ export function RegionMapPage() {
   const { region } = useRegionRoute();
   const { point, setPoint, setPendingPrompt, live } = useInvestigation();
   const navigate = useNavigate();
+
+  const [pointAnalysis, setPointAnalysis] = useState<BackendPoint | null>(null);
+  const [pointStatus, setPointStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
+
+  // Exact NASA POWER analysis for the pinned coordinate (nearest 15° cell is a
+  // different thing — this fetches the point itself, cached after first build).
+  useEffect(() => {
+    if (!point) {
+      setPointAnalysis(null);
+      setPointStatus("idle");
+      return;
+    }
+    const controller = new AbortController();
+    setPointAnalysis(null);
+    setPointStatus("loading");
+    fetchPoint(point[0], point[1], 60, controller.signal)
+      .then((next) => {
+        setPointAnalysis(next);
+        setPointStatus("ready");
+      })
+      .catch((err: Error) => {
+        if (controller.signal.aborted) return;
+        setPointStatus("error");
+        console.warn("fetchPoint failed:", err);
+      });
+    return () => controller.abort();
+  }, [point]);
 
   const analysis = useMemo(() => {
     if (!region || !live.analysis) return null;
@@ -179,13 +207,79 @@ export function RegionMapPage() {
                   />
                 </div>
 
+                <div className="point-exact">
+                  <div className="point-exact-label">
+                    EXACT-POINT ANALYSIS · NASA POWER
+                    {pointStatus === "loading" ? " (BUILDING CACHE…)" : null}
+                  </div>
+                  {pointStatus === "error" ? (
+                    <p className="rail-caption">
+                      Point endpoint unreachable — showing the nearest 15° grid
+                      cell instead. Retry by re-selecting the pin.
+                    </p>
+                  ) : pointStatus === "loading" ? (
+                    <p className="rail-caption">
+                      Fetching NASA POWER at the exact coordinate…
+                    </p>
+                  ) : pointAnalysis ? (
+                    <>
+                      <dl className="point-exact-grid">
+                        {pointAnalysis.data_coverage.parameters_used.map(
+                          (param) => {
+                            const t = pointAnalysis.trends[param];
+                            if (!t) return null;
+                            const unit: Record<string, string> = {
+                              temperature: "°C",
+                              temperature_max: "°C",
+                              temperature_min: "°C",
+                              dew_point: "°C",
+                              skin_temperature: "°C",
+                              diurnal_temperature_range: "°C",
+                              precipitation: "mm/mo",
+                              solar_radiation: "kWh/m²/d",
+                              clear_sky_solar_radiation: "kWh/m²/d",
+                              humidity: "%",
+                              specific_humidity: "g/kg",
+                              wind: "m/s",
+                              surface_pressure: "kPa",
+                              soil_moisture_surface: "",
+                            };
+                            const u = unit[param] ?? "units";
+                            return (
+                              <div key={param}>
+                                <dt>{param.replace(/_/g, " ").toUpperCase()}</dt>
+                                <dd>
+                                  {(t.slope_per_decade >= 0 ? "+" : "") +
+                                    t.slope_per_decade.toFixed(3)}{" "}
+                                  {u}/dec
+                                  {t.significant ? " ▲" : ""}
+                                </dd>
+                              </div>
+                            );
+                          },
+                        )}
+                      </dl>
+                      <p className="rail-caption">
+                        {pointAnalysis.data_coverage.time_range[0]}→
+                        {pointAnalysis.data_coverage.time_range[1]} · real NASA
+                        POWER at this coordinate (resolution ~50 km) ·
+                        NDVI/SST not available · ▲ = Mann–Kendall significant.
+                      </p>
+                    </>
+                  ) : null}
+                </div>
+
                 <div className="point-actions">
                   <button
                     type="button"
                     className="btn-primary btn-block"
-                    onClick={() => openNotebook(point)}
+                    onClick={() =>
+                      navigate(
+                        `/region/${region.slug}/point?lat=${point[0]}&lon=${point[1]}`,
+                      )
+                    }
                   >
-                    Analyse all parameters →
+                    Open point dossier →
                   </button>
                   <button
                     type="button"

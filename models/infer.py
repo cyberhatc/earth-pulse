@@ -144,7 +144,7 @@ def _conformal_fallback_widths(store: dict | None = None) -> dict | None:
 
 def forecast_place(store, cell: int, horizon_months: int = 60,
                    variables: list[str] | None = None) -> dict:
-    requested = list(variables) if variables else list(STORE_VARIABLES)
+    requested = list(variables) if variables else None
     _BOUNDS = {"precipitation": (0.0, None), "ndvi": (0.0, 1.0),
                 "humidity": (0.0, 100.0), "wind": (0.0, None),
                 "solar_radiation": (0.0, None)}
@@ -172,6 +172,8 @@ def forecast_place(store, cell: int, horizon_months: int = 60,
     if artifact.exists() and baseline_ok:
         model = RidgeRollout.load(artifact)
         model_vars, seq_len = _artifact_config(artifact)
+        if requested is None:
+            requested = list(model_vars)
         dates, X = prepare_cell_matrix(store, cell, model_vars)
         fc = _forecast_with_ridge(model, X, model_vars, horizon_months, dates, seq_len)
         if requested != model_vars:
@@ -185,6 +187,9 @@ def forecast_place(store, cell: int, horizon_months: int = 60,
             _clip_series(ts, lo, hi)
         return fc
     # fallback: linear trend + seasonal climatology with CONFORMAL bands when available
+    if requested is None:
+        requested = [k for k in store.keys()
+                     if k not in ("dates", "lats", "lons", "grid_lat", "grid_lon", "meta", "meta_json")]
     conformal = _conformal_fallback_widths(store)
     dates, X = prepare_cell_matrix(store, cell, requested)
     if conformal:

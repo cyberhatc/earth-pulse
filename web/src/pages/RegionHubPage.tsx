@@ -122,6 +122,7 @@ export function RegionHubPage() {
           </div>
         </section>
 
+
         <section className="section-block">
           <h2>Historical observed data & trend/statistics</h2>
           <p className="muted"><strong>Observed/demo series:</strong> monthly values for {variable.name}. Fitted trend and confidence context shown below; labels indicate significance and source.</p>
