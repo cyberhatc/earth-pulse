@@ -2780,7 +2780,11 @@ button {
   }
 }
 
-/* =========================================================
+
+/* 
+}
+
+==================================================
    Map-first 3-location flow & location detail experience
    ========================================================= */
 .page.regions-map-page { min-height: 100vh; height: auto; overflow: visible; }
@@ -2883,4 +2887,102 @@ button {
   .locations-map { height: 360px; min-height: 300px; }
   .hub-meta-grid, .detail-stats-grid, .insight-grid, .coverage-callouts, .scenario-meta-grid, .feature-nav-grid { grid-template-columns: 1fr; }
   .chipbar-inner-rich { align-items: stretch; }
+=======
+/* ---------- Point parameter explorer in chat ---------- */
+.chat-point-explorer {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-sunk);
+  margin-bottom: 12px;
+  overflow: hidden;
 }
+
+.chat-point-explorer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+}
+
+.chat-point-toggle {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.chat-point-notebook {
+  color: var(--accent);
+  font-size: 0.72rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.chat-point-notebook:hover {
+  text-decoration: underline;
+}
+
+.chat-point-body {
+  border-top: 1px solid var(--line);
+  padding: 10px;
+}
+
+.chat-point-note {
+  margin: 0 0 8px;
+  color: var(--ink-mute);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.chat-point-search {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.76rem;
+  margin-bottom: 8px;
+}
+
+.chat-point-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 220px;
+  overflow: auto;
+}
+
+.chat-param-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 4px 9px;
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+.chat-param-chip span {
+  color: var(--ink-mute);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+}
+
+.chat-param-chip:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.chat-param-chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;

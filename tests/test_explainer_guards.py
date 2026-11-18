@@ -106,14 +106,14 @@ def test_correct_significant_parameter_passes():
 
 def test_facts_summary_distinguishes_net_change_from_rate():
     summary = explainer._facts_summary(FACTS, "forecast")
-    assert "TOTAL NET CHANGE" in summary
+    assert "seasonal-cycle safe" in summary
     assert "NOT a per-decade rate" in summary
     assert "Forecast window: 2026-12 to 2031-11" in summary
 
 
 def test_templated_explain_marks_unavailable_without_fake_zero():
     text = explainer.templated_explain(FACTS)["text"]
-    assert "Unavailable at this cell: ndvi, sst, sea_level" in text
+    assert "Unavailable at this location: ndvi, sst, sea_level" in text
     assert "not filled with zeroes" in text
     assert "NDVI at +0.00" not in text
     assert "mm/month/decade" in text

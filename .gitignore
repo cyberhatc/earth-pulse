@@ -14,6 +14,12 @@ data/cache/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/cache/.gitkeep
+# Rebuilt point stores and small probe caches are committed so collaborators
+# get the real 10 km data without waiting for the MODIS backfill.
+!data/processed/points/
+!data/processed/points/*.npz
+!data/processed/analysis.json
+!data/cache/*.json
 # sample npz is committed so the demo works offline; ignore if it grows
 # data/samples/*.npz
 

@@ -1,13 +1,19 @@
 """POST /chat — conversational, facts-locked LLM narration.
 
-The backend assembles the FACTS (trends, forecast deltas, anomalies, coverage)
-from the same store/engine used by /place. With EP_RAG_BACKEND=hf-router,
-retrieval runs locally over the bundled knowledge base and generation runs on
-HF's serverless router; with EP_RAG_BACKEND=hf the query goes to the Hugging
-Face RAG Space. Otherwise a local Ollama model re-words those facts. The model
-never computes or changes a number. If no LLM is available the endpoint falls
-back to a deterministic templated answer. Every LLM draft passes the same
-guards regardless of backend.
+The backend assembles the FACTS from the same point-level analysis used by the
+notebook dossier: the real NASA POWER monthly record for the requested
+coordinate (or the region centre), Theil–Sen/Mann–Kendall trends, rolling
+robust-z anomalies, the blended ridge-rollout ML forecast and its rolling
+backtest. A gridded fallback is used only when no point store can be built, and
+the facts mark that explicitly.
+
+With EP_RAG_BACKEND=hf-router, retrieval runs locally over the bundled knowledge
+base and generation runs on HF's serverless router; with EP_RAG_BACKEND=hf the
+query goes to the Hugging Face RAG Space. Otherwise a local Ollama model
+re-words those facts. The model never computes or changes a number. If no LLM is
+available the endpoint falls back to a deterministic templated answer. Every
+LLM draft passes the same guards regardless of backend, and the prompt tells the
+model to answer about the region the user is viewing.
 """
 from __future__ import annotations
 
@@ -20,6 +26,7 @@ from api.services import store as svc
 from api.services import explainer
 from models.infer import forecast_place
 from models.anomaly import anomalies_for_cell
+from models.point_forecast import horizon_delta
 
 router = APIRouter()
 
@@ -31,7 +38,8 @@ def _r3(value: float) -> float:
         return 0.0
 
 
-def _build_facts(req: ChatRequest) -> dict:
+def _grid_facts(req: ChatRequest) -> dict:
+    """Fallback facts when no point-level record can be built."""
     store = get_store()
     analysis = get_analysis()
     cell, glat, glon = svc.nearest(store, req.lat, req.lon)
@@ -57,7 +65,7 @@ def _build_facts(req: ChatRequest) -> dict:
     deltas: dict[str, float | None] = {}
     for p, block in (fc.get("timeseries") or {}).items():
         mean = block.get("mean") or []
-        deltas[p] = _r3(mean[-1] - mean[0]) if mean else None
+        deltas[p] = horizon_delta(mean) if mean else None
     fc_dates = list(fc.get("dates") or [])
 
     anomaly_params = [p for p in ("temperature", "precipitation", "ndvi") if p in store]
@@ -80,9 +88,11 @@ def _build_facts(req: ChatRequest) -> dict:
 
     # Keep only JSON-safe, presentation-ready fields for the prompt.
     return {
+        "data_basis": "grid",
         "lat": req.lat,
         "lon": req.lon,
         "region_name": req.region_name,
+        "region_slug": req.region_slug,
         "variable": req.variable,
         "grid_lat": _r3(glat),
         "grid_lon": _r3(glon),
@@ -111,6 +121,27 @@ def _build_facts(req: ChatRequest) -> dict:
                if ocean_cell is not None else [])
         ),
     }
+
+
+def _build_facts(req: ChatRequest) -> dict:
+    """Prefer the real point record for the region; fall back to the grid."""
+    try:
+        from api.services.location_facts import facts_for_chat
+
+        facts = facts_for_chat(
+            req.lat,
+            req.lon,
+            horizon_months=req.horizon_months,
+            region_name=req.region_name,
+            region_slug=req.region_slug,
+            variable=req.variable,
+        )
+        if facts:
+            return facts
+    except Exception:
+        # A missing point store must not take chat down; use the grid below.
+        pass
+    return _grid_facts(req)
 
 
 @router.post("/chat", response_model=ChatResponse)

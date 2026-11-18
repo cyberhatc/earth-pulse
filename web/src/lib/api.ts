@@ -292,12 +292,248 @@ export function fetchPlace(
   );
 }
 
+export type DossierTrend = {
+  slope_per_decade: number;
+  p_value: number;
+  significant: boolean;
+  direction: string;
+  n?: number;
+};
+
+export type DossierMove = {
+  delta_over_horizon: number;
+  direction: string;
+  magnitude_in_std: number;
+};
+
+export type DossierPhoto = {
+  date: string;
+  layer: string;
+  z?: number;
+  url: string;
+};
+
+export type DossierScene = {
+  id: string;
+  datetime?: string;
+  cloud_cover?: number | null;
+  thumbnail?: string | null;
+};
+
+export type DossierSource = {
+  name: string;
+  url: string;
+  role: string;
+  status: "used" | "context" | "restricted" | "link";
+  note?: string;
+};
+
+export type DossierArea = {
+  bbox: [number, number, number, number];
+  width_km: number;
+  height_km: number;
+  approx_km2: number;
+  resolution_note: string;
+};
+
+export type DossierCrossSource = {
+  available: boolean;
+  period?: [string, string] | null;
+  n_months?: number;
+  trends?: Record<string, DossierTrend & { period?: [string, string] }>;
+  series?: Record<string, { dates: string[]; values: number[] }>;
+  note?: string;
+  url?: string;
+};
+
+export type DossierGistemp = {
+  available: boolean;
+  source?: string;
+  period?: [number, number];
+  slope_per_decade?: number;
+  p_value?: number;
+  significant?: boolean;
+  latest_year?: number;
+  latest_anomaly?: number;
+  base_period?: string;
+  annual?: Record<string, number>;
+  note?: string;
+};
+
+export type DossierParameterMeta = {
+  key?: string;
+  label: string;
+  unit: string;
+  group?: string;
+  source?: string;
+  native?: string;
+  resolution_m?: number | null;
+  coverage?: string;
+  n?: number | null;
+  first?: string | null;
+  last?: string | null;
+};
+
+export type DossierMl = {
+  model?: string;
+  seq_len?: number;
+  n_rows?: number;
+  n_features?: number;
+  note?: string;
+  short_record_params?: string[];
+  short_record_note?: string;
+  models_by_parameter?: Record<string, string>;
+  joint_params?: string[];
+  single_series_params?: string[];
+  backtest?: {
+    available?: boolean;
+    horizon_months?: number;
+    origins?: number;
+    seq_len?: number;
+    note?: string;
+    per_parameter?: Record<
+      string,
+      {
+        mae: number;
+        rmse: number;
+        pinball: number;
+        picp_p10_p90: number;
+        persistence_mae: number;
+        skill_vs_persistence: number | null;
+      }
+    >;
+  } | null;
+};
+
+export type BackendDossier = {
+  schema_version: string;
+  requested: {
+    lat: number;
+    lon: number;
+    region_slug?: string | null;
+    horizon_months: number;
+  };
+  location: {
+    lat: number;
+    lon: number;
+    name?: string | null;
+    region_slug?: string | null;
+    resolution_m?: Record<string, number | null> | null;
+  };
+  mode: "point_real" | "grid_demo";
+  synthetic?: boolean;
+  data_basis?: "point" | "grid";
+  provenance: {
+    built_now: boolean;
+    generated_utc: string;
+    point_store: string | null;
+    note: string;
+  };
+  coverage: Record<string, unknown> & {
+    time_range?: [string, string];
+    sources?: Record<string, string>;
+    synthetic_demo?: boolean;
+    parameters_used?: string[];
+    parameter_meta?: Record<string, DossierParameterMeta>;
+    satellite_mode?: string | null;
+    satellite_note?: string | null;
+    satellite_products?: Record<string, unknown> | null;
+    air_quality_period?: [string, string] | null;
+  };
+  area: DossierArea;
+  history: {
+    dates: string[];
+    series: Record<string, (number | null)[]>;
+  };
+  trends: Record<string, DossierTrend>;
+  forecast: {
+    horizon_months: number;
+    issued?: string | null;
+    model?: string | null;
+    dates: string[];
+    timeseries: Record<
+      string,
+      { mean: number[]; lower: number[]; upper: number[] }
+    >;
+  };
+  anomalies: BackendAnomaly[];
+  next_move: Record<string, DossierMove>;
+  opposite_trends?: BackendOpposite[];
+  climate_twin?: unknown;
+  cross_check?: {
+    sources: Record<string, DossierCrossSource>;
+    gistemp: DossierGistemp;
+  };
+  ml?: DossierMl;
+  satellite?: {
+    mode?: string | null;
+    note?: string | null;
+    products?: Record<string, unknown> | null;
+    pending?: boolean;
+  };
+  imagery: {
+    gibs: DossierPhoto[];
+    gibs_groups?: Array<{ name: string; layers: string[] }>;
+    gibs_labels?: Record<string, string>;
+    satellite_scenes: Record<string, DossierScene[] | { error?: string }>;
+    links: Record<string, string>;
+  };
+  parameters: Record<string, DossierParameterMeta>;
+  parameter_groups?: Array<{
+    name: string;
+    parameters: DossierParameterMeta[];
+  }>;
+  requested_unavailable?: Record<string, {
+    label: string;
+    source: string;
+    reason: string;
+  }>;
+  explanation: { text: string; generator: string };
+  sources: DossierSource[];
+  warnings: string[];
+  timing_ms?: number;
+};
+
+export function fetchDossier(
+  lat: number,
+  lon: number,
+  horizonMonths = 60,
+  regionSlug?: string,
+  signal?: AbortSignal,
+  rebuild = false,
+): Promise<BackendDossier> {
+  const params = new URLSearchParams({
+    lat: lat.toFixed(4),
+    lon: lon.toFixed(4),
+    horizon_months: String(horizonMonths),
+  });
+  if (regionSlug) params.set("region_slug", regionSlug);
+  if (rebuild) params.set("rebuild", "true");
+  return request<BackendDossier>(`/dossier?${params.toString()}`, { signal }, 180000);
+}
+
+export function dossierReportUrl(
+  lat: number,
+  lon: number,
+  horizonMonths = 60,
+  regionSlug?: string,
+): string {
+  const params = new URLSearchParams({
+    lat: lat.toFixed(4),
+    lon: lon.toFixed(4),
+    horizon_months: String(horizonMonths),
+  });
+  if (regionSlug) params.set("region_slug", regionSlug);
+  return `${API_BASE}/dossier/report?${params.toString()}`;
+}
+
 export function sendChat(
   input: {
     lat: number;
     lon: number;
     messages: ChatTurn[];
     regionName?: string;
+    regionSlug?: string;
     variable?: string;
     horizonMonths?: number;
     language?: string;
@@ -314,6 +550,7 @@ export function sendChat(
         lon: input.lon,
         messages: input.messages,
         region_name: input.regionName ?? null,
+        region_slug: input.regionSlug ?? null,
         variable: input.variable ?? null,
         horizon_months: input.horizonMonths ?? 60,
         language: input.language ?? "en",

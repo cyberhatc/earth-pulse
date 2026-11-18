@@ -1,4 +1,4 @@
-﻿"""Plain-English explainer.
+"""Plain-English explainer.
 
 The LLM never computes numbers — it receives a `facts` dict assembled from the
 payload (trends, forecast deltas, anomaly count, opposite-trend count, coverage)
@@ -137,11 +137,15 @@ def templated_explain(facts: dict) -> dict:
         ("temperature", "Temperature", "°C"),
         ("precipitation", "Precipitation", "mm/month"),
         ("ndvi", "Vegetation (NDVI)", "index"),
-        ("sst", "Sea surface temperature", "°C"),
-        ("sea_level", "Sea level", "mm"),
-        ("solar_radiation", "Solar radiation", "MJ/m²/day"),
+        ("lst_day", "Land-surface temperature (day)", "°C"),
+        ("soil_moisture_surface", "Surface soil wetness", "fraction"),
+        ("aerosol_optical_depth", "Aerosol optical depth", "index"),
+        ("pm2_5", "PM2.5", "µg/m³"),
         ("humidity", "Humidity", "%"),
         ("wind", "Wind", "m/s"),
+        ("solar_radiation", "Solar radiation", "kWh/m²/day"),
+        ("sst", "Sea surface temperature", "°C"),
+        ("sea_level", "Sea level", "mm"),
     ]
 
     def fmt(param: str, label: str, unit: str):
@@ -165,8 +169,10 @@ def templated_explain(facts: dict) -> dict:
 
     missing = facts.get("parameters_unavailable") or []
     if missing:
+        shown = ", ".join(missing[:14])
+        extra = f" and {len(missing) - 14} more" if len(missing) > 14 else ""
         parts.append(
-            f"Unavailable at this cell: {', '.join(missing)} — reported as missing, "
+            f"Unavailable at this location: {shown}{extra} — reported as missing, "
             "not filled with zeroes."
         )
 
@@ -184,7 +190,7 @@ def templated_explain(facts: dict) -> dict:
         if window:
             span += f" ({window[0]} to {window[1]})"
         parts.append(
-            f"{model} projects a net change{span}: " + ", ".join(bits) +
+            f"{model} projects a change{span} (end-of-horizon mean vs start-of-horizon mean): " + ", ".join(bits) +
             ". These are probabilistic p10–p90 bands, not a certain future."
         )
 
@@ -198,7 +204,7 @@ def templated_explain(facts: dict) -> dict:
             "these are temporary departures, not a permanent trend shift."
         )
     else:
-        parts.append("No statistically unusual months were flagged at this cell.")
+        parts.append("No statistically unusual months were flagged at this location.")
 
     opp = facts.get("opposite_count", 0)
     if opp:
@@ -250,14 +256,14 @@ CARD_KEYWORDS: list[tuple[str, str]] = [
     ("anomaly", r"unusual|anomal|spike|outlier|depart|weird"),
     ("forecast", r"forecast|future|next (few )?years|predict|projection|horizon|what will happen"),
     ("opposite", r"opposite|dipole|diverg|neighbou?r"),
-    ("earth-twins", r"twin|similar|other region|compare|continent"),
+    ("earth-twins", r"climate twin|\btwin\b|other region|continent|analog"),
     ("story", r"story|hindi|kannada|translate|local|student|journalist"),
     ("evidence", r"evidence|provenance|audit|missing data|resolution|dataset|source"),
     ("slope-map", r"where|map|distribution|spatial|hotspot"),
     ("caveat", r"significan|caveat|trust|confiden|p-value|p value|reliable|how sure"),
+    ("finding", r"trend|changing|change|warmer|cooler|increas|decreas|warming|cooling"),
     ("variable", r"what is|explain|define|meaning|what does.*mean"),
     ("trend-chart", r"show|chart|graph|series|over time|plot|data"),
-    ("finding", r"trend|changing|change|warmer|cooler|increas|decreas|warming|cooling"),
 ]
 
 
@@ -295,6 +301,62 @@ def _trend_line(facts: dict, parameter: str, label: str, unit: str) -> str | Non
             f"({verdict}, p={rec.get('p_value', 1):.3f})")
 
 
+def _cross_check_lines(
+    facts: dict,
+    *,
+    include_gistemp: bool = True,
+    params: tuple[str, ...] = ("temperature", "precipitation"),
+) -> list[str]:
+    """Plain-English lines for independent sources and model skill."""
+    out: list[str] = []
+    cc = facts.get("cross_check") or {}
+    era5 = cc.get("era5") or {}
+    trends = era5.get("trends") or {}
+    period = era5.get("period") or []
+    label = f", {period[0]} to {period[1]}" if len(period) == 2 else ""
+    for param in params:
+        rec = trends.get(param)
+        if not rec or int(rec.get("n", 0) or 0) < 12:
+            continue
+        unit = _PARAM_UNITS.get(param, "units")
+        sig = "significant" if rec.get("significant") else "not significant"
+        out.append(
+            f"Independent ERA5 reanalysis (Open-Meteo{label}) gives {param} "
+            f"{rec.get('slope_per_decade', 0):+.3f} {unit}/decade "
+            f"(p={rec.get('p_value', 1):.3f}; {sig})."
+        )
+    gis = cc.get("gistemp") or {}
+    if include_gistemp and gis:
+        yrs = gis.get("period") or [None, None]
+        out.append(
+            f"Global context, not local: NASA GISTEMP shows "
+            f"{gis.get('slope_per_decade', 0):+.3f} °C/decade from {yrs[0]} to {yrs[1]}, "
+            f"with the latest annual anomaly at {gis.get('latest_anomaly', 0):+.2f} °C "
+            f"in {gis.get('latest_year')} versus 1951–1980."
+        )
+    bt = facts.get("model_backtest") or {}
+    for param in params:
+        rec = bt.get(param)
+        if not rec:
+            continue
+        unit = _PARAM_UNITS.get(param, "units")
+        skill = rec.get("skill_vs_persistence")
+        skill_text = "" if skill is None else f", skill vs persistence {skill:+.2f}"
+        out.append(
+            f"Backtest for {param}: MAE {rec.get('mae', 0):.3f} {unit}, "
+            f"p10–p90 coverage {rec.get('picp_p10_p90', 0):.2f}{skill_text} "
+            "on rolling 12-month origins."
+        )
+    return out
+
+
+def _unavailable_entry(facts: dict, focus: str | None) -> dict[str, str] | None:
+    if not focus:
+        return None
+    entry = (facts.get("requested_unavailable") or {}).get(focus)
+    return entry if isinstance(entry, dict) else None
+
+
 def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
     """Deterministic, fact-locked fallback when the local LLM is unavailable."""
     question = next((m.get("content", "") for m in reversed(messages)
@@ -304,26 +366,93 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
     trange = facts.get("time_range", ["?", "?"])
     lines: list[str] = []
 
+    # A direct "all parameters" question gets a compact real-data inventory,
+    # never a generic climate lecture. Only facts present in the point store
+    # are reported; gaps are named explicitly.
+    if re.search(
+        r"\b(?:all|every|list\s+of)\s+(?:the\s+)?(?:parameters|variables|indicators)\b",
+        question,
+        re.I,
+    ):
+        used = list(facts.get("parameters_used") or [])
+        trends = facts.get("trends") or {}
+        basis = (
+            "real point store for this 10 km box"
+            if facts.get("data_basis") == "point"
+            else "gridded fallback store"
+        )
+        lines.append(
+            f"At {place}, I checked {len(used)} parameters with usable data in the {basis} "
+            f"over {trange[0]} to {trange[1]}."
+        )
+        ranked = sorted(
+            (
+                (param, rec)
+                for param, rec in trends.items()
+                if int(rec.get("n", 0) or 0) >= 12
+            ),
+            key=lambda item: abs(float(item[1].get("slope_per_decade", 0) or 0)),
+            reverse=True,
+        )
+        shown = 0
+        for param, rec in ranked:
+            label = facts.get("parameter_labels", {}).get(param, {}).get(
+                "label", param.replace("_", " ").title()
+            )
+            unit = _PARAM_UNITS.get(param, "units")
+            line = _trend_line(facts, param, label, unit)
+            if not line:
+                continue
+            lines.append(line + ".")
+            shown += 1
+            if shown >= 12:
+                break
+        sig = sum(1 for _, rec in ranked if bool(rec.get("significant")))
+        lines.append(
+            f"{sig} of {len(ranked)} analysed parameters have a statistically significant "
+            "Mann–Kendall trend at α=0.05; a non-significant result means the data cannot "
+            "confirm a trend, not that nothing changed."
+        )
+        missing = list(facts.get("parameters_unavailable") or [])
+        gaps = facts.get("requested_unavailable") or {}
+        if missing or gaps:
+            lines.append(
+                f"Requested but unavailable here: {', '.join(missing[:12])}"
+                + (f" and {len(missing) - 12} more" if len(missing) > 12 else "")
+                + (f"; {len(gaps)} gated product(s) listed in the catalogue" if gaps else "")
+                + ". No values were filled in."
+            )
+        lines.append(
+            "Forecast changes, backtest skill and per-parameter provenance are in the "
+            "Parameter analysis panel; ask about any single parameter for detail."
+        )
+        return {
+            "text": " ".join(lines),
+            "generator": "templated",
+            "confidence": _confidence(facts, "finding"),
+        }
+
     if card_kind == "forecast":
         deltas = facts.get("forecast_deltas", {}) or {}
         model = facts.get("forecast_model", "ridge rollout")
         horizon = facts.get("horizon_months", 60)
-        focus = _focus_parameter(facts.get("variable"))
+        focus = _focus_parameter(question) or _focus_parameter(facts.get("variable"))
         missing = facts.get("parameters_unavailable") or []
         if focus and focus in missing:
             lines.append(
                 f"{focus.replace('_', ' ').title()} is unavailable at {place}, "
                 "so no forecast is made for it."
             )
-        ordered = [p for p in (focus,) if p and p in deltas]
-        ordered += [p for p in ("temperature", "precipitation")
-                    if p in deltas and p not in ordered]
+        ordered = [focus] if focus and focus in deltas else [
+            p for p in ("temperature", "precipitation") if p in deltas
+        ]
         for param in ordered[:2]:
             label = param.replace("_", " ").title()
             unit = _PARAM_UNITS.get(param, "units")
             lines.append(
-                f"The {model} model projects a net {deltas[param]:+.3f} {unit} "
-                f"change for {label.lower()} over the next {horizon} months at {place}."
+                f"The {model} model projects a {deltas[param]:+.3f} {unit} "
+                f"change in the annual mean for {label.lower()} between the start "
+                f"and end of the next {horizon} months at {place}."
             )
         if not ordered:
             lines.append(f"No parameter has a usable forecast at {place}.")
@@ -331,6 +460,18 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
         if window:
             lines.append(f"The forecast window is {window[0]} to {window[1]}.")
         lines.append("These are probabilistic p10–p90 bands, not a certain future; verify the backtest skill before acting.")
+        backtest_params = (
+            (focus,)
+            if focus and focus in (facts.get("model_backtest") or {})
+            else ("temperature", "precipitation")
+        )
+        lines.extend(
+            _cross_check_lines(
+                facts,
+                include_gistemp="temperature" in backtest_params,
+                params=backtest_params,
+            )
+        )
     elif card_kind == "anomaly":
         count = facts.get("anomalies_count", 0)
         samples = facts.get("anomaly_samples", []) or []
@@ -355,13 +496,58 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
         lines.append(f"The clustering features are: {', '.join(twin.get('features', []) or [])}.")
         lines.append("Treat cross-continental twins as hypotheses: compare dataset resolution and coverage before making claims.")
     elif card_kind == "evidence":
+        # Answer the direct trend question first; provenance follows.
+        focus = _focus_parameter(question) or _focus_parameter(facts.get("variable"))
+        if focus:
+            line = _trend_line(
+                facts,
+                focus,
+                focus.replace("_", " ").title(),
+                _PARAM_UNITS.get(focus, "units"),
+            )
+            if line:
+                lines.append(f"At {place}, {line[0].lower() + line[1:]}.")
+            elif focus in (facts.get("parameters_unavailable") or []) or _unavailable_entry(facts, focus):
+                entry = _unavailable_entry(facts, focus)
+                if entry:
+                    lines.append(
+                        f"{entry.get('label', focus)} is not available as a point series here: "
+                        f"{entry.get('reason', 'no free source').rstrip('. ')} No values are filled in."
+                    )
+                else:
+                    lines.append(
+                        f"{focus.replace('_', ' ').title()} is unavailable at {place}, "
+                        "so no local trend is estimated and no values are filled in."
+                    )
+        if focus in ("temperature", "precipitation"):
+            check_params = (focus,)
+            include_gistemp = focus == "temperature"
+        elif focus:
+            check_params = ()
+            include_gistemp = False
+        else:
+            check_params = ("temperature", "precipitation")
+            include_gistemp = True
+        lines.extend(
+            _cross_check_lines(
+                facts, include_gistemp=include_gistemp, params=check_params
+            )
+        )
         used = ", ".join(facts.get("parameters_used", []) or []) or "none"
         missing = ", ".join(facts.get("parameters_unavailable", []) or []) or "none"
         lines.append(f"Source coverage at {place} ({trange[0]}→{trange[1]}): available {used}; unavailable {missing}.")
         gaps = facts.get("gap_notes", []) or []
         if gaps:
             lines.append("Limitations: " + " ".join(gaps[:2]))
-        lines.append(f"Data is {'synthetic demo data' if facts.get('synthetic') else 'real NASA POWER observations/model output'}.")
+        basis = (
+            "point-level NASA POWER monthly record for this coordinate"
+            if facts.get("data_basis") == "point"
+            else "gridded store cell"
+        )
+        lines.append(
+            f"Data basis: {basis}; "
+            f"{'real observations/model output' if not facts.get('synthetic') else 'synthetic demo data'}."
+        )
     elif card_kind == "fingerprint":
         labels = [("temperature", "Temperature", "°C"),
                   ("precipitation", "Precipitation", "mm"),
@@ -383,10 +569,35 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
             lines.append(line + ".")
         lines.append("Explain trends as observations of the past — never as certain predictions for the future.")
     elif card_kind == "slope-map":
-        line = _trend_line(facts, "temperature", "Temperature", "°C")
-        lines.append(f"Spatial context for {place}: the backend serves trends per nearest grid cell, not a single regional average.")
+        focus = _focus_parameter(question) or _focus_parameter(facts.get("variable"))
+        if not focus or focus not in (facts.get("trends") or {}):
+            focus = "temperature"
+        line = _trend_line(
+            facts,
+            focus,
+            focus.replace("_", " ").title(),
+            _PARAM_UNITS.get(focus, "units"),
+        )
+        if facts.get("data_basis") == "point":
+            lines.append(
+                f"Spatial context for {place}: the backend is using the point-level record at "
+                f"{facts.get('lat', 0):.3f}°, {facts.get('lon', 0):.3f}°, not a regional average."
+            )
+        else:
+            lines.append(
+                f"Spatial context for {place}: the backend serves trends per nearest grid cell, "
+                "not a single regional average."
+            )
         if line:
             lines.append(line + ".")
+        meta = (facts.get("parameter_labels") or {}).get(focus) or {}
+        if meta.get("source"):
+            detail = f"For {focus.replace('_', ' ')}, the source is {meta['source']}"
+            if meta.get("native"):
+                detail += f" at native {meta['native']}"
+            if meta.get("coverage"):
+                detail += f", with coverage {meta['coverage']}"
+            lines.append(detail + ". No global or invented values are substituted.")
         lines.append("Open the map to inspect a specific point; the local value can differ sharply from the regional mean.")
     elif card_kind == "caveat":
         lines.append(f"Significance at {place} is reported as a Mann–Kendall p-value on the monthly record.")
@@ -407,37 +618,139 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
             if line:
                 lines.append(line + ".")
             elif focus in (facts.get("parameters_unavailable") or []):
-                lines.append(f"{label} is unavailable at this cell, so no trend can be estimated.")
+                lines.append(f"{label} is unavailable at this location, so no trend can be estimated.")
             else:
-                lines.append(f"{label} has insufficient data at this cell to estimate a trend.")
+                lines.append(f"{label} has insufficient data at this location to estimate a trend.")
         else:
             for param in ("temperature", "precipitation"):
                 line = _trend_line(facts, param, *labels[param])
                 if line:
                     lines.append(line + ".")
         lines.append("A non-significant result means the data cannot confirm a trend at the 0.05 threshold; it does not prove there is no change.")
+        if focus in ("temperature", "precipitation"):
+            check_params = (focus,)
+            include_gistemp = focus == "temperature"
+        elif focus:
+            check_params = ()
+            include_gistemp = False
+        else:
+            check_params = ("temperature", "precipitation")
+            include_gistemp = True
+        lines.extend(
+            _cross_check_lines(
+                facts, include_gistemp=include_gistemp, params=check_params
+            )
+        )
         lines.append("Correlation is not causation, and a short or noisy record can hide a real trend.")
     elif card_kind == "variable":
-        lines.append(f"This case studies {facts.get('variable', 'the primary variable')} at {place}.")
-        lines.append("The backend exposes temperature, precipitation, humidity, wind, and solar radiation from NASA POWER; NDVI, SST, and sea level are only available where the underlying products exist.")
+        focus = _focus_parameter(question) or _focus_parameter(facts.get("variable"))
+        definitions = {
+            "temperature": "Air temperature 2 m above the surface, in °C.",
+            "precipitation": "Monthly precipitation amount, in mm/month.",
+            "ndvi": "NDVI (Normalized Difference Vegetation Index) measures canopy greenness from 0 (bare) to 1 (dense vegetation).",
+            "sst": "Sea-surface temperature is an ocean variable.",
+            "sea_level": "Sea level is an ocean/coastal variable.",
+            "solar_radiation": "Solar radiation is the downward shortwave energy reaching the surface.",
+            "humidity": "Relative humidity is the amount of water vapour in the air as a percentage.",
+            "wind": "Wind is the near-surface wind speed.",
+        }
+        if focus:
+            lines.append(definitions.get(focus, f"{focus.replace('_', ' ').title()} is one of the tracked variables."))
+            if focus in (facts.get("parameters_unavailable") or []) or _unavailable_entry(facts, focus):
+                entry = _unavailable_entry(facts, focus)
+                if entry:
+                    lines.append(
+                        f"{entry.get('label', focus)} is not available here: {entry.get('reason', 'no free source').rstrip('. ')}. "
+                        "No values are filled in."
+                    )
+                else:
+                    lines.append(
+                        f"NASA POWER does not provide {focus.replace('_', ' ')} at {place}, "
+                        "so this dataset reports it as unavailable rather than filling in values."
+                    )
+            else:
+                line = _trend_line(facts, focus, focus.replace("_", " ").title(), _PARAM_UNITS.get(focus, "units"))
+                if line:
+                    lines.append(f"At {place}, {line[0].lower() + line[1:]}.")
+            meta = (facts.get("parameter_labels") or {}).get(focus) or {}
+            if meta.get("source"):
+                detail = f"Source: {meta['source']}"
+                if meta.get("native"):
+                    detail += f" (native {meta['native']})"
+                if meta.get("coverage"):
+                    detail += f"; coverage {meta['coverage']}"
+                lines.append(detail + ". These are local point values, not a global average.")
+        else:
+            lines.append(f"This case studies {facts.get('variable', 'the primary variable')} at {place}.")
+            lines.append("The backend exposes temperature, precipitation, humidity, wind, and solar radiation from NASA POWER; NDVI, SST, and sea level are only available where the underlying products exist.")
     elif card_kind == "trend-chart":
-        line = _trend_line(facts, "temperature", "Temperature", "°C")
-        if line:
-            lines.append(line + ".")
-        line = _trend_line(facts, "precipitation", "Precipitation", "mm/month")
-        if line:
-            lines.append(line + ".")
+        focus = _focus_parameter(question) or _focus_parameter(facts.get("variable"))
+        params = (
+            [focus]
+            if focus in ("temperature", "precipitation")
+            else ["temperature", "precipitation"]
+        )
+        for param in params:
+            label = param.replace("_", " ").title()
+            line = _trend_line(facts, param, label, _PARAM_UNITS.get(param, "units"))
+            if line:
+                lines.append(f"At {place}, {line[0].lower() + line[1:]}.")
         lines.append(f"The chart shows every monthly value from {trange[0]} to {trange[1]}; the fitted line uses the Theil–Sen/Mann–Kendall trend from the backend.")
     else:
-        trend_lines = [line for line in (
-            _trend_line(facts, "temperature", "Temperature", "°C"),
-            _trend_line(facts, "precipitation", "Precipitation", "mm/month"),
-            _trend_line(facts, "ndvi", "NDVI", "index"),
-        ) if line]
-        if trend_lines:
-            lines.extend(line + "." for line in trend_lines)
+        focus = _focus_parameter(question) or _focus_parameter(facts.get("variable"))
+        labels = {
+            "temperature": ("Temperature", "°C"),
+            "precipitation": ("Precipitation", "mm/month"),
+            "ndvi": ("NDVI", "index"),
+            "sst": ("Sea-surface temperature", "°C"),
+            "sea_level": ("Sea level", "mm"),
+            "solar_radiation": ("Solar radiation", "MJ/m²/day"),
+            "humidity": ("Humidity", "%"),
+            "wind": ("Wind", "m/s"),
+        }
+        if focus:
+            label, unit = labels.get(focus, (focus.replace("_", " ").title(), "units"))
+            line = _trend_line(facts, focus, label, unit)
+            if line:
+                lines.append(f"At {place}, {line[0].lower() + line[1:]}.")
+            elif focus in (facts.get("parameters_unavailable") or []) or _unavailable_entry(facts, focus):
+                entry = _unavailable_entry(facts, focus)
+                if entry:
+                    lines.append(
+                        f"{entry.get('label', label)} is not available here: {entry.get('reason', 'no free source').rstrip('. ')}. "
+                        "No local trend or values are invented."
+                    )
+                else:
+                    lines.append(
+                        f"{label} is unavailable at {place} in this dataset, so no local "
+                        "trend is estimated and no values are filled in."
+                    )
+            else:
+                lines.append(f"{label} has insufficient data at {place} to estimate a trend.")
         else:
-            lines.append(templated_explain(facts)["text"])
+            trend_lines = [line for line in (
+                _trend_line(facts, "temperature", "Temperature", "°C"),
+                _trend_line(facts, "precipitation", "Precipitation", "mm/month"),
+                _trend_line(facts, "ndvi", "NDVI", "index"),
+            ) if line]
+            if trend_lines:
+                lines.extend(line + "." for line in trend_lines)
+            else:
+                lines.append(templated_explain(facts)["text"])
+        if focus in ("temperature", "precipitation"):
+            check_params = (focus,)
+            include_gistemp = focus == "temperature"
+        elif focus:
+            check_params = ()
+            include_gistemp = False
+        else:
+            check_params = ("temperature", "precipitation")
+            include_gistemp = True
+        lines.extend(
+            _cross_check_lines(
+                facts, include_gistemp=include_gistemp, params=check_params
+            )
+        )
         if not facts.get("synthetic"):
             lines.append("Data comes from the backend's real NASA POWER record; unavailable parameters are reported honestly rather than filled in.")
 
@@ -445,25 +758,73 @@ def templated_chat(messages: list[dict], facts: dict, card_kind: str) -> dict:
     return {"text": text, "generator": "templated", "confidence": _confidence(facts, card_kind)}
 
 
-_PARAM_UNITS = {
-    "temperature": "°C",
-    "precipitation": "mm/month",
-    "ndvi": "index",
+from models.parameter_registry import PARAM_ORDER as _PARAM_ORDER, param_unit as _param_unit
+
+_PARAM_UNITS = {p: _param_unit(p) for p in _PARAM_ORDER}
+_PARAM_UNITS.update({
     "sst": "°C",
     "sea_level": "mm",
-    "humidity": "%",
-    "wind": "m/s",
-    "solar_radiation": "MJ/m²/day",
-}
+})
+# The notebook shows solar radiation in kWh/m²/day after conversion.
+_PARAM_UNITS["solar_radiation"] = "kWh/m²/day"
 
 
 _VARIABLE_TO_PARAM = {
-    "land surface temperature": "temperature",
+    "land surface temperature": "lst_day",
+    "skin temperature": "skin_temperature",
+    "apparent temperature": "apparent_temperature",
+    "dew point": "dew_point",
+    "maximum temperature": "temperature_max",
+    "minimum temperature": "temperature_min",
+    "temperature range": "temperature_range",
     "temperature": "temperature",
+    "warming": "temperature",
+    "cooling": "temperature",
     "precipitation": "precipitation",
     "rainfall": "precipitation",
+    "rain": "precipitation",
+    "snowfall": "snowfall",
+    "net radiation": "net_radiation",
+    "runoff": "runoff",
+    "surface runoff": "runoff",
+    "glacier": "glacier_ice_thickness",
+    "ice thickness": "glacier_ice_thickness",
+    "merra": "merra2_point",
+    "ceres": "ceres_net_radiation",
+    "viirs": "viirs_point_series",
+    "ndsi": "ndsi",
+    "snow cover": "snow_cover",
+    "snow fraction": "snow_cover",
+    "snow albedo": "snow_albedo",
+    "evapotranspiration": "evapotranspiration",
+    "evaporation": "evaporation",
+    "soil moisture": "soil_moisture_surface",
+    "soil temperature": "soil_temperature_0_7cm",
+    "humidity": "humidity",
+    "wind speed": "wind",
+    "wind direction": "wind_direction",
+    "wind gust": "wind_gusts",
+    "solar radiation": "solar_radiation",
+    "shortwave": "solar_radiation",
+    "longwave": "longwave_radiation",
+    "photosynthetically active": "par",
+    "par": "par",
+    "aerosol": "aerosol_optical_depth",
+    "pm2.5": "pm2_5",
+    "pm25": "pm2_5",
+    "pm10": "pm10",
+    "nitrogen dioxide": "nitrogen_dioxide",
+    "no2": "nitrogen_dioxide",
+    "sulphur dioxide": "sulphur_dioxide",
+    "sulfur dioxide": "sulphur_dioxide",
+    "so2": "sulphur_dioxide",
+    "ozone": "ozone",
+    "carbon monoxide": "carbon_monoxide",
     "vegetation index": "ndvi",
     "ndvi": "ndvi",
+    "evi": "evi",
+    "gross primary": "gpp",
+    "gpp": "gpp",
     "sea surface": "sst",
     "surface water": "sea_level",
     "water extent": "sea_level",
@@ -480,13 +841,39 @@ def _focus_parameter(label: str | None) -> str | None:
 
 _PARAM_SYNONYMS: dict[str, tuple[str, ...]] = {
     "temperature": ("temperature", "temp", "warming", "cooling", "lst"),
+    "temperature_max": ("maximum temperature", "max temperature", "tmax"),
+    "temperature_min": ("minimum temperature", "min temperature", "tmin"),
+    "skin_temperature": ("skin temperature", "surface temperature"),
+    "lst_day": ("land surface temperature", "lst", "surface temperature"),
     "precipitation": ("precipitation", "rainfall", "rain"),
+    "snowfall": ("snowfall", "snow"),
     "ndvi": ("ndvi", "vegetation"),
+    "evi": ("evi", "enhanced vegetation"),
     "sst": ("sst", "sea surface", "sea-surface"),
     "sea_level": ("sea level", "sea-level", "water extent"),
-    "solar_radiation": ("solar radiation", "solar", "radiation"),
+    "solar_radiation": ("solar radiation", "solar", "radiation", "shortwave"),
+    "longwave_radiation": ("longwave", "thermal radiation"),
+    "par": ("par", "photosynthetically active"),
     "humidity": ("humidity", "relative humidity"),
-    "wind": ("wind", "winds"),
+    "wind": ("wind", "winds", "wind speed"),
+    "wind_direction": ("wind direction",),
+    "wind_gusts": ("wind gust", "gusts"),
+    "soil_moisture_surface": ("soil moisture", "soil wetness"),
+    "evapotranspiration": ("evapotranspiration", "et"),
+    "et_reference": ("reference evapotranspiration", "et0"),
+    "aerosol_optical_depth": ("aerosol", "aod"),
+    "pm2_5": ("pm2.5", "pm25", "particulate"),
+    "pm10": ("pm10", "particulate"),
+    "nitrogen_dioxide": ("nitrogen dioxide", "no2"),
+    "sulphur_dioxide": ("sulphur dioxide", "sulfur dioxide", "so2"),
+    "ozone": ("ozone", "o3"),
+    "carbon_monoxide": ("carbon monoxide", "co"),
+    "gpp": ("gpp", "gross primary production"),
+    "net_radiation": ("net radiation", "radiation balance"),
+    "ndsi": ("ndsi", "snow index"),
+    "snow_cover": ("snow cover", "snow fraction"),
+    "snow_albedo": ("snow albedo",),
+    "surface_reflectance_swir2": ("swir", "shortwave infrared"),
 }
 _SIG_CLAIM_RE = re.compile(
     r"statistically significant|significant\s+(?:trend|increase|decrease|warming|cooling|change)",
@@ -551,28 +938,53 @@ def _facts_summary(facts: dict, card_kind: str = "finding") -> str:
         f"{facts.get('lat', 0):.2f}°, {facts.get('lon', 0):.2f}°"
     )
     trange = facts.get("time_range", ["?", "?"])
-    lines = [
-        f"Place: {place} (backend grid cell {facts.get('cell_index', '?')} at "
-        f"{facts.get('grid_lat', '?')}°, {facts.get('grid_lon', '?')}°).",
-        f"Record period: {trange[0]} to {trange[1]}.",
-        "Data type: SYNTHETIC DEMO DATA (not observations)."
-        if facts.get("synthetic")
-        else "Data type: real NASA POWER monthly observations/model output.",
-    ]
+    point_basis = facts.get("data_basis") == "point"
+    if point_basis:
+        lines = [
+            f"Place: {place} (NASA POWER point record at "
+            f"{facts.get('lat', 0):.3f}°, {facts.get('lon', 0):.3f}°; not a grid-cell average).",
+            f"Record period: {trange[0]} to {trange[1]}.",
+            "Data type: real NASA POWER monthly point observations/model output.",
+        ]
+    else:
+        lines = [
+            f"Place: {place} (backend grid cell {facts.get('cell_index', '?')} at "
+            f"{facts.get('grid_lat', '?')}°, {facts.get('grid_lon', '?')}°).",
+            f"Record period: {trange[0]} to {trange[1]}.",
+            "Data type: SYNTHETIC DEMO DATA (not observations)."
+            if facts.get("synthetic")
+            else "Data type: real NASA POWER monthly observations/model output.",
+        ]
     focus = facts.get("variable")
+    qfocus = facts.get("question_focus")
     if focus:
         lines.append(f"User's case-file variable: {focus}.")
+    if qfocus and qfocus != _focus_parameter(focus):
+        lines.append(f"User's question is about: {qfocus}.")
 
     usable = facts.get("parameters_used") or []
     missing = facts.get("parameters_unavailable") or []
     if usable:
         lines.append("Available parameters: " + ", ".join(usable) + ".")
     if missing:
-        lines.append("UNAVAILABLE at this cell (never invent values): " + ", ".join(missing) + ".")
+        lines.append("UNAVAILABLE at this location (never invent values): " + ", ".join(missing) + ".")
+    unavail_products = facts.get("requested_unavailable") or {}
+    if unavail_products:
+        gaps = [
+            f"{v.get('label', k)}: {v.get('reason', 'no free point API')}"
+            for k, v in unavail_products.items()
+        ]
+        lines.append(
+            "Requested products with no free point series (never invent values): "
+            + "; ".join(gaps)
+            + "."
+        )
 
     trends = facts.get("trends") or {}
-    focus_param = _focus_parameter(focus)
+    focus_param = qfocus or _focus_parameter(focus)
     trend_params = list(trends)
+    if focus_param and focus_param in trend_params:
+        trend_params = [focus_param] + [p for p in trend_params if p != focus_param]
     if card_kind == "forecast":
         # Keep the prompt focused: the requested variable plus temperature.
         trend_params = [p for p in (focus_param, "temperature") if p in trends]
@@ -595,7 +1007,7 @@ def _facts_summary(facts: dict, card_kind: str = "finding") -> str:
             f"{verdict}, direction={rec.get('direction', 'unknown')}."
         )
     if trend_count == 0:
-        lines.append("- No parameter has enough data for a trend at this cell.")
+        lines.append("- No parameter has enough data for a trend at this location.")
 
     deltas = facts.get("forecast_deltas") or {}
     if deltas:
@@ -605,18 +1017,58 @@ def _facts_summary(facts: dict, card_kind: str = "finding") -> str:
             lines.append(f"Forecast window: {window[0]} to {window[1]}.")
         lines.append(
             f"Forecast ({facts.get('forecast_model', 'ridge rollout')}, next {horizon} months). "
-            "Each value is the TOTAL NET CHANGE from the first to the last forecast month "
-            "across the whole horizon — it is NOT a per-decade rate:"
+            "Each value compares the mean of the final part of the horizon with the mean of "
+            "the initial part (up to 12 months each, seasonal-cycle safe). It is NOT a per-decade rate:"
         )
         for param, delta in deltas.items():
             if delta is None:
                 continue
             lines.append(
                 f"- {param}: {delta:+.3f} {_PARAM_UNITS.get(param, 'units')} "
-                f"net change over {horizon} months."
+                f"change in the end-of-horizon mean over {horizon} months."
             )
         lines.append(
             "The forecast has probabilistic p10–p90 bands; do not describe it as certain."
+        )
+
+    cc = facts.get("cross_check") or {}
+    era5 = cc.get("era5") or {}
+    era5_temp = (era5.get("trends") or {}).get("temperature")
+    if era5_temp:
+        period = era5.get("period") or ["?", "?"]
+        lines.append(
+            "Independent cross-check (ERA5 via Open-Meteo, "
+            f"{period[0]} to {period[1]}): temperature "
+            f"{era5_temp.get('slope_per_decade', 0):+.3f} °C/decade, "
+            f"p={era5_temp.get('p_value', 1):.3f}, "
+            + (
+                "statistically significant."
+                if era5_temp.get("significant")
+                else "NOT statistically significant."
+            )
+        )
+    gis = cc.get("gistemp") or {}
+    if gis:
+        period = gis.get("period") or [None, None]
+        lines.append(
+            "Global context (NASA GISTEMP, NOT local): "
+            f"{gis.get('slope_per_decade', 0):+.3f} °C/decade from "
+            f"{period[0]} to {period[1]}, latest anomaly "
+            f"{gis.get('latest_anomaly', 0):+.2f} °C in {gis.get('latest_year')} "
+            "versus 1951-1980."
+        )
+    bt = facts.get("model_backtest") or {}
+    bt_params = (focus_param,) if focus_param in bt else ("temperature", "precipitation")
+    for param in bt_params:
+        rec = bt.get(param)
+        if not rec:
+            continue
+        skill = rec.get("skill_vs_persistence")
+        skill_text = "" if skill is None else f", skill vs persistence {skill:+.2f}"
+        lines.append(
+            f"Backtest ({param}, rolling origin, 12-month horizon): MAE "
+            f"{rec.get('mae', 0):.3f} {_PARAM_UNITS.get(param, 'units')}, "
+            f"p10-p90 coverage {rec.get('picp_p10_p90', 0):.2f}{skill_text}."
         )
 
     if card_kind != "forecast":
@@ -629,7 +1081,7 @@ def _facts_summary(facts: dict, card_kind: str = "finding") -> str:
             )
             lines.append(f"Anomalies: {count} unusual months flagged" + (f"; largest: {detail}." if detail else "."))
         else:
-            lines.append("Anomalies: none flagged at this cell.")
+            lines.append("Anomalies: none flagged at this location.")
 
         if facts.get("opposite_count"):
             pairs = facts.get("opposite_pairs") or []
@@ -758,7 +1210,18 @@ def chat(messages: list[dict], facts: dict, language: str = "en") -> dict:
     ]
     if not safe_messages:
         safe_messages = [{"role": "user", "content": "Summarise this place."}]
-    card_kind = classify_card(safe_messages[-1].get("content", ""))
+    question = safe_messages[-1].get("content", "")
+    card_kind = classify_card(question)
+    facts = dict(facts)
+    question_focus = _focus_parameter(question)
+    if question_focus:
+        facts["question_focus"] = question_focus
+    if card_kind == "earth-twins" and not (facts.get("climate_twin") or {}).get("cluster_id"):
+        card_kind = "finding"
+    if card_kind == "opposite" and not facts.get("opposite_count"):
+        card_kind = "finding"
+    if card_kind == "forecast" and not (facts.get("forecast_deltas") or {}):
+        card_kind = "finding"
 
     facts_summary = _facts_summary(facts, card_kind)
 
@@ -782,15 +1245,16 @@ def chat(messages: list[dict], facts: dict, language: str = "en") -> dict:
         "The FACTS SUMMARY below is the only source of numbers.\n"
         "STRICT RULES:\n"
         "1. Use ONLY numbers that appear in FACTS SUMMARY. Never invent, round inconsistently, or alter a number.\n"
-        "2. Forecast values are TOTAL NET CHANGE over the whole horizon, NOT per decade. Never call them per-decade rates.\n"
+        "2. Forecast values compare the mean of the final part of the horizon with the mean of the initial part (up to 12 months each, seasonal-cycle safe). They are NOT per-decade rates. Never call them per-decade rates.\n"
         "3. A p-value measures trend significance only. NEVER turn it into a confidence percentage, a certainty level, or '100%'. Forecasts have p10–p90 uncertainty and are not certain futures.\n"
         "4. If significant=false, say no statistically significant trend can be confirmed. Never call it warming/cooling certainty.\n"
         "5. If a parameter is unavailable, say so; never fill gaps with numbers.\n"
         "6. If data is synthetic, say it is synthetic demo data.\n"
         "7. Answer in at most 3 short sentences of plain language (no bullet lists, no parameter-by-parameter dump). "
-        "Focus on the user's case-file variable and at most one other parameter."
+        "Focus on the parameter the user asked about; otherwise use the case-file variable and at most one other parameter."
         + (" Use the same language as the user's question." if language == "auto" else "")
-        + "\n8. Call forecast numbers 'forecast net change', never 'trend'. Prefer the user's case-file variable when it is relevant, but do not ignore a direct question about another parameter.\n"
+        + "\n8. Call forecast numbers 'forecast change in the annual mean', never 'trend'. Prefer the user's case-file variable when it is relevant, but do not ignore a direct question about another parameter.\n"
+        "9. The FACTS SUMMARY describes the region the user is viewing. Answer about that place and those values; do not substitute another region, global averages, or generic knowledge. If a parameter is unavailable there, say so.\n"
         "FACTS SUMMARY:\n" + facts_summary
     )
     text, model = _ollama_chat(

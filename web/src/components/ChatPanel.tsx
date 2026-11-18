@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { Link } from "react-router-dom";
 import { SUGGESTIONS, generateReply } from "../lib/chat";
-import { sendChat, type ChatTurn } from "../lib/api";
+import { fetchDossier, sendChat, type BackendDossier, type ChatTurn } from "../lib/api";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
 import { computeStats, generateSeries } from "../lib/trend";
@@ -62,11 +63,15 @@ export function ChatPanel() {
 
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
+  const [pointParamsOpen, setPointParamsOpen] = useState(false);
+  const [pointDossier, setPointDossier] = useState<BackendDossier | null>(null);
+  const [pointParamsBusy, setPointParamsBusy] = useState(false);
+  const [pointParamQuery, setPointParamQuery] = useState("");
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const lastConsumedPromptRef = useRef<string | null>(null);
 
   const handleSend = useCallback(
-    async (text: string) => {
+    async (text: string, focusParam?: string) => {
       const trimmed = text.trim();
       if (!trimmed || !region) return;
 
@@ -93,7 +98,8 @@ export function ChatPanel() {
           lon: target[1],
           messages: history,
           regionName: region.name,
-          variable: variable.name,
+          regionSlug: region.slug,
+          variable: focusParam ?? variable.name,
         });
         const cardKind = asCardKind(reply.card_kind);
         const card = addCard({
@@ -196,7 +202,10 @@ export function ChatPanel() {
           : Object.keys(fc.timeseries)[0];
       const mean = key ? fc.timeseries[key]?.mean : undefined;
       if (mean && mean.length > 1) {
-        delta = mean[mean.length - 1] - mean[0];
+        const k = Math.max(1, Math.min(12, Math.floor(mean.length / 2)));
+        const head = mean.slice(0, k).reduce((a, b) => a + b, 0) / k;
+        const tail = mean.slice(-k).reduce((a, b) => a + b, 0) / k;
+        delta = tail - head;
       }
     }
 
@@ -219,6 +228,48 @@ export function ChatPanel() {
     if (delta !== null) params.set("delta", delta.toFixed(3));
     return `${SPACE_URL}?${params.toString()}`;
   }, [region, point, live.analysis]);
+
+  const loadPointDossier = useCallback(async () => {
+    if (!region || pointDossier || pointParamsBusy) return;
+    const target = point ?? region.center;
+    setPointParamsBusy(true);
+    try {
+      const dossier = await fetchDossier(target[0], target[1], 60, region.slug);
+      setPointDossier(dossier);
+    } catch (error) {
+      console.warn("Point dossier for parameter explorer failed:", error);
+    } finally {
+      setPointParamsBusy(false);
+    }
+  }, [region, point, pointDossier, pointParamsBusy]);
+
+  const pointParams = useMemo(() => {
+    const all = pointDossier?.parameter_groups?.flatMap((g) => g.parameters) ?? [];
+    const q = pointParamQuery.trim().toLowerCase();
+    const filtered = q
+      ? all.filter(
+          (p) =>
+            p.label.toLowerCase().includes(q) ||
+            (p.key ?? "").toLowerCase().includes(q) ||
+            (p.group ?? "").toLowerCase().includes(q),
+        )
+      : all;
+    return filtered.slice(0, 80);
+  }, [pointDossier, pointParamQuery]);
+
+  const askAboutParameter = (key: string, label: string) => {
+    const target = point ?? region?.center;
+    void handleSend(
+      `Using only the real point data at ${target?.[0].toFixed(3)}°, ${target?.[1].toFixed(3)}°, explain the observed trend, significance, forecast and data source for ${label} (${key}).`,
+      key,
+    );
+  };
+
+  const notebookHref = region
+    ? `/region/${region.slug}/notebook${
+        point ? `?pt=${point[0].toFixed(4)},${point[1].toFixed(4)}` : ""
+      }`
+    : "/regions";
 
   return (
     <section className="chat-panel" aria-label="Investigation conversation">
@@ -260,6 +311,72 @@ export function ChatPanel() {
           </a>
         ) : null}
       </div>
+
+      <div className="chat-point-explorer">
+        <div className="chat-point-explorer-head">
+          <button
+            type="button"
+            className="chat-point-toggle"
+            onClick={() => {
+              setPointParamsOpen((v) => !v);
+              if (!pointParamsOpen) void loadPointDossier();
+            }}
+            aria-expanded={pointParamsOpen}
+          >
+            <span aria-hidden="true">{pointParamsOpen ? "▾" : "▸"}</span>{" "}
+            Point data · all parameters (10 km box)
+          </button>
+          <Link className="chat-point-notebook" to={notebookHref}>
+            Full analysis ↗
+          </Link>
+        </div>
+        {pointParamsOpen && (
+          <div className="chat-point-body">
+            <p className="chat-point-note">
+              {pointDossier
+                ? `Real point store at ${pointDossier.location.lat.toFixed(3)}°, ${pointDossier.location.lon.toFixed(3)}° · ${pointParams.length} parameters · click any parameter to ask about its own data.`
+                : "Loading the real point catalogue for this coordinate…"}
+            </p>
+            {pointDossier && (
+              <>
+                <input
+                  className="chat-point-search"
+                  type="search"
+                  value={pointParamQuery}
+                  onChange={(e) => setPointParamQuery(e.target.value)}
+                  placeholder="Filter parameters…"
+                  aria-label="Filter point parameters"
+                />
+                <div className="chat-point-chips">
+                  {pointParams.map((p) => (
+                    <button
+                      type="button"
+                      key={p.key ?? p.label}
+                      className="chat-param-chip"
+                      disabled={busy}
+                      title={`${p.source ?? ""} · ${p.unit ?? ""}`}
+                      onClick={() => askAboutParameter(p.key ?? p.label, p.label)}
+                    >
+                      {p.label}
+                      <span>
+                        {(pointDossier.trends[p.key ?? ""]?.n ?? 0) >= 12
+                          ? `${pointDossier.trends[p.key ?? ""].slope_per_decade >= 0 ? "+" : "−"}${Math.abs(
+                              pointDossier.trends[p.key ?? ""].slope_per_decade,
+                            ).toFixed(3)}`
+                          : "no series"}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+            {pointParamsBusy && !pointDossier && (
+              <p className="chat-point-note">Reading local point store…</p>
+            )}
+          </div>
+        )}
+      </div>
+
       <div className="chat-messages" ref={scrollRef}>
         {messages.length === 0 && region ? (
           <div className="chat-bubble chat-bubble-assistant">

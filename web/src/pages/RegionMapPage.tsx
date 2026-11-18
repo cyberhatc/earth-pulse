@@ -42,6 +42,12 @@ export function RegionMapPage() {
           : "var(--trend-down)"
         : "var(--trend-flat)";
 
+  const openNotebook = (coords: [number, number]) => {
+    navigate(
+      `/region/${region.slug}/notebook?pt=${coords[0].toFixed(4)},${coords[1].toFixed(4)}`,
+    );
+  };
+
   const handleDiscuss = () => {
     if (!point) return;
     setPendingPrompt(
@@ -105,7 +111,10 @@ export function RegionMapPage() {
           <RegionMap
             region={region}
             selectedPoint={point}
-            onSelectPoint={(coords) => setPoint(coords)}
+            onSelectPoint={(coords) => {
+              setPoint(coords);
+              openNotebook(coords);
+            }}
           />
         </section>
 
@@ -174,6 +183,13 @@ export function RegionMapPage() {
                   <button
                     type="button"
                     className="btn-primary btn-block"
+                    onClick={() => openNotebook(point)}
+                  >
+                    Analyse all parameters →
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-secondary btn-block"
                     onClick={handleDiscuss}
                   >
                     Discuss this point →
