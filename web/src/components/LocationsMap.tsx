@@ -132,8 +132,11 @@ export function LocationsMap({ regions, analyses, onSelect }: LocationsMapProps)
           opacity: 0.95,
         });
 
-        marker.on("click", () => {
-          marker.openPopup();
+        marker.on("click", (e) => {
+          // Navigate directly on marker click (popup button remains as an additional affordance)
+          L.DomEvent.stopPropagation(e);
+          onSelectRef.current(region);
+          navigate(`/region/${region.slug}`);
         });
 
         marker.on("popupopen", () => {
@@ -147,7 +150,9 @@ export function LocationsMap({ regions, analyses, onSelect }: LocationsMapProps)
         });
       });
 
-      map.on("click", () => {});
+      map.on("click", () => {
+        map.closePopup();
+      });
     }
 
     init();

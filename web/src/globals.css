@@ -875,10 +875,16 @@ button {
     overflow: hidden;
   }
 
-  .regions-page {
+  .regions-page:not(.regions-page-map) {
     height: calc(100vh - var(--topbar-h));
     overflow: hidden;
     padding: 16px 0;
+  }
+
+  .regions-page.regions-page-map {
+    height: auto;
+    overflow: visible;
+    padding: 24px 0 48px;
   }
 }
 
@@ -2777,12 +2783,24 @@ button {
 /* =========================================================
    Map-first 3-location flow & location detail experience
    ========================================================= */
-.regions-page-map { align-items: flex-start; padding: 24px 0 40px; }
+.page.regions-map-page { min-height: 100vh; height: auto; overflow: visible; }
+.regions-page.regions-page-map { 
+  flex: 1 1 auto;
+  display: block;
+  align-items: stretch;
+  height: auto !important;
+  min-height: 0;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 24px 0 48px;
+}
 .regions-shell-wide { max-width: 1280px; }
 .locations-map-section { margin: 18px 0 10px; }
-.locations-map-frame { border-radius: 12px; overflow: hidden; background: var(--surface-card); border: 1px solid var(--line); }
+.locations-map-frame { position: relative; border-radius: 12px; overflow: hidden; background: var(--surface-card); border: 1px solid var(--line); }
 .locations-map { width: 100%; height: min(62vh, 560px); min-height: 360px; display: block; }
 .locations-map .leaflet-container { width: 100%; height: 100%; font-family: inherit; background: #eef3f7; }
+.locations-map .leaflet-control-container, .locations-map .leaflet-pane, .locations-map .leaflet-top, .locations-map .leaflet-bottom { z-index: 400; }
+.locations-map a, .locations-map button { pointer-events: auto; }
 .locations-map-legend { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 10px; font-size: 13px; color: var(--ink-soft); }
 .legend-pill { display: inline-flex; align-items: center; gap: 8px; }
 .legend-pill.muted { color: var(--ink-mute); }
