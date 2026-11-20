@@ -1,5 +1,6 @@
 import { Link, useParams, useLocation } from "react-router-dom";
 import { concepts, references } from "../lib/earthpedia";
+import { ConceptFigure } from "../components/ConceptFigure";
 
 export function ConceptArticle() {
   const { concept } = useParams();
@@ -15,6 +16,7 @@ export function ConceptArticle() {
     <header><small>{item.subject}</small><h1>{item.name}</h1><p>{item.summary}</p></header>
     <h2>In the field</h2><p>{item.example}</p>
     <h2>Behind the science</h2><p>{item.science}</p>
+    <ConceptFigure slug={item.slug} />
     <h2>Explore in EarthPulse</h2><p>{method ? "Use the illustrative signal chart to distinguish a trend, an unusual reading and a forecast." : item.subject === "Sources" ? "Check the source directory to see which products are integrated, optional or available for further reading." : "Use the variable guide to choose a measure, then check its unit, dates and coverage in a regional case file."}</p>
     <Link to={"/#" + section}>Open the {section} guide</Link>
     <h2>Read further</h2><a href={url}>{credit}</a>
