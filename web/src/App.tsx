@@ -1,8 +1,9 @@
-﻿import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+﻿import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { InvestigationProvider } from "./lib/context";
 import { LandingPage } from "./pages/LandingPage";
 import { EarthPedia } from "./pages/EarthPedia";
 import { ConceptArticle } from "./pages/ConceptArticle";
+import { TopBar } from "./components/TopBar";
 import { GlobalHelp } from "./components/GlobalHelp";
 import { RegionChatPage } from "./pages/RegionChatPage";
 import { RegionHubPage } from "./pages/RegionHubPage";
@@ -24,8 +25,10 @@ export default function App() {
         </a>
         <div id="main-content" tabIndex={-1}>
           <Routes>
-            <Route path="/earthpedia" element={<EarthPedia />} />
-            <Route path="/earthpedia/:concept" element={<ConceptArticle />} />
+            <Route path="/earthpedia" element={<div className="workspace-page pedia-workspace"><TopBar /><div className="shell pedia-shell"><Outlet /></div></div>}>
+              <Route index element={<EarthPedia />} />
+              <Route path=":concept" element={<ConceptArticle />} />
+            </Route>
             <Route path="/" element={<LandingPage />} />
             <Route path="/regions" element={<RegionsPage />} />
             <Route path="/region/:slug" element={<RegionHubPage />} />

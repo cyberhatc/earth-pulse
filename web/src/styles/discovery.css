@@ -1,29 +1,68 @@
-.discovery,.explainer {--ink:#f1f5f4;--muted:#b1c2c8;--teal:#53cbb9;background:#101a20;color:var(--ink);padding-top:1.25rem;padding-bottom:5rem}
+.discovery,.explainer {--ink:inherit;--muted:var(--ink-soft);--teal:var(--trend-down);color-scheme:inherit;background:var(--surface);color:var(--ink);padding-top:1.25rem;padding-bottom:5rem}
 .discovery h2,.explainer h2 {font:500 clamp(1.65rem,3vw,2.4rem)/1.14 Georgia,serif;letter-spacing:-.025em;color:var(--ink)}
-.discovery .atlas-hero {position:relative;isolation:isolate;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;overflow:hidden;margin:0 -2vw;padding:clamp(1.3rem,3vw,3rem);background:linear-gradient(110deg,#102128,#0b1419 70%);border-bottom:1px solid #34474d}
+.discovery .atlas-hero {position:relative;isolation:isolate;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;overflow:hidden;margin:0 -2vw;padding:clamp(1.3rem,3vw,3rem);background:linear-gradient(110deg,var(--surface-sunk),var(--surface) 70%);border-bottom:1px solid var(--line)}
 .atlas-copy {z-index:1}
 .atlas-brand,.atlas-copy small,.atlas-meta,.plate-caption,.planet-plate figcaption,.path-copy small,.library-head span,.library-grid small,.breadcrumb {font:500 .78rem/1.5 system-ui,sans-serif;letter-spacing:.04em}
-.atlas-brand {color:#f1f5f4!important;text-decoration:none}.atlas-copy small {color:#91a6af}
+.atlas-brand {color:var(--ink)!important;text-decoration:none}.atlas-copy small {color:var(--ink-soft)}
 .atlas-copy h1,.explainer header h1 {font:500 clamp(2.8rem,6vw,4.7rem)/1 Georgia,serif;letter-spacing:-.055em}
 .atlas-copy h1 {margin:1.1rem 0 .6rem}.atlas-copy h2 {font:500 clamp(1.2rem,2.3vw,1.65rem)/1.2 Georgia,serif;letter-spacing:0}.atlas-copy h2 br{display:none}.atlas-copy h2 br:after{content:" "}
-.atlas-copy p {max-width:48ch;font-size:.98rem}.atlas-meta,.plate-caption,.library-head span {color:#a0b4bd}
-.planet-plate {margin:0;position:relative;text-align:center}.planet-plate img {display:block;aspect-ratio:1;object-fit:contain;width:min(100%,360px);margin:auto;mix-blend-mode:screen}.planet-plate figcaption a {color:#a8bcc4}
+.atlas-copy p {max-width:48ch;font-size:.98rem}.atlas-meta,.plate-caption,.library-head span {color:var(--ink-soft)}
+.planet-plate {margin:0;position:relative;text-align:center}.planet-plate img {display:block;aspect-ratio:1;object-fit:contain;width:min(100%,360px);margin:auto;clip-path:circle(34% at 50% 50%)}.planet-plate figcaption a {color:var(--ink-soft)}
 .atlas-search {margin:2.4rem 0}.atlas-search h2,.discovery-section h2 {margin:0 0 1rem}
 .atlas-search .learn-filters {grid-template-columns:1fr minmax(10rem,20%);align-items:center}
-.search-wrap {display:flex;align-items:center;border:1px solid #52666d;border-radius:6px;background:#17252b;padding-left:.8rem}.search-wrap:focus-within {outline:2px solid #53cbb9}
+.search-wrap {display:flex;align-items:center;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface-sunk);padding-left:.8rem}.search-wrap:focus-within {outline:2px solid var(--trend-down)}
 .search-wrap span {font-size:1.5rem}.search-wrap input {background:transparent;border:0;min-width:0;outline:0!important}.search-wrap button {border:0;background:transparent}
 .question-links,.popular-index,.library-head,.subject-index {display:flex;gap:.6rem 1.1rem;flex-wrap:wrap;align-items:center}
-.question-links {margin-top:.75rem}.question-links a {font-size:.85rem;color:#b1c2c8}.discovery-section {border-top:1px solid #33454c;padding:2rem 0 .5rem}
+.question-links {margin-top:.75rem}.question-links a {font-size:.85rem;color:var(--ink-soft)}.discovery-section {border-top:1px solid var(--line);padding:2rem 0 .5rem}
 .pathways,.library-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
-.pathways>a {overflow:hidden;background:#17252b;border:1px solid #34464e;border-radius:8px;text-decoration:none;color:var(--ink)}
-.path-art {height:135px;background:#102128;overflow:hidden;display:grid;align-items:center}.path-art img {width:100%;height:135px;object-fit:cover}.science-plot svg {width:100%;display:block}.path-art svg {max-height:120px}
-.path-copy {padding:1rem}.path-copy h3 {font:500 1.45rem/1.14 Georgia,serif;margin:.5rem 0}.path-copy p {font-size:.9rem;margin:.45rem 0}.path-copy span,.library-grid article>span {font-size:.78rem;color:#a9c1c8}
-.subject-index button {display:flex;gap:.65rem;align-items:center;background:#17252b;border-color:#40545e}.subject-index b {color:#53cbb9;font:1.45rem Georgia}.subject-index button[data-subject="Vegetation"] b {color:#87c996}.subject-index button[data-subject="Oceans"] b {color:#5ba8e5}.subject-index button[data-subject="Atmosphere"] b {color:#e8b679}.subject-index button span {color:#b1c2c8;font-size:.8rem}
-.popular-index a {padding:.4rem 0;border-bottom:1px solid #52666d;color:#d8e4e5;text-decoration:none}
-.library-head {justify-content:space-between;margin-bottom:1rem}.library-head h2 {margin:0}.library-grid article {padding:1rem;background:transparent;border:0;border-top:1px solid #41545d;border-radius:0;position:relative}.library-grid h3 {margin:.35rem 0;font:500 1.4rem Georgia,serif}.library-grid h3 a {color:#f1f5f4;text-decoration:none}.library-grid h3 a:after {content:"";position:absolute;inset:0}.library-grid p {font-size:.92rem;margin:.5rem 0}
-.explainer {max-width:none}.breadcrumb {display:flex;gap:.6rem;flex-wrap:wrap}.explainer header {padding:1.3rem 0;border-bottom:1px solid #3e525c}.explainer header p {font-size:1.25rem}.article-body {max-width:46rem}.article-body section {margin:2rem 0}.article-body h2 {font-size:1.6rem;margin-bottom:.6rem}.reading-note {border-left:2px solid #e8b679;padding:.1rem 1rem;background:#17252b}.concept-figure .science-plot svg {max-width:34rem}
+.pathways>a {overflow:hidden;background:var(--surface-sunk);border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--ink)}
+.path-art {height:135px;background:var(--surface-sunk);overflow:hidden;display:grid;align-items:center}.path-art img {width:100%;height:135px;object-fit:cover}.science-plot svg {width:100%;display:block}.path-art svg {max-height:120px}
+.path-copy {padding:1rem}.path-copy h3 {font:500 1.45rem/1.14 Georgia,serif;margin:.5rem 0}.path-copy p {font-size:.9rem;margin:.45rem 0}.path-copy span,.library-grid article>span {font-size:.78rem;color:var(--ink-soft)}
+.subject-index button {display:flex;gap:.65rem;align-items:center;background:var(--surface-sunk);border-color:var(--line-strong)}.subject-index b {color:var(--trend-down);font:1.45rem Georgia}.subject-index button[data-subject="Vegetation"] b {color:var(--trend-down)}.subject-index button[data-subject="Oceans"] b {color:var(--trend-down)}.subject-index button[data-subject="Atmosphere"] b {color:var(--trend-up)}.subject-index button span {color:var(--ink-soft);font-size:.8rem}
+.popular-index a {padding:.4rem 0;border-bottom:1px solid var(--line-strong);color:var(--ink);text-decoration:none}
+.library-head {justify-content:space-between;margin-bottom:1rem}.library-head h2 {margin:0}.library-grid article {padding:1rem;background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;position:relative}.library-grid h3 {margin:.35rem 0;font:500 1.4rem Georgia,serif}.library-grid h3 a {color:var(--ink);text-decoration:none}.library-grid h3 a:after {content:"";position:absolute;inset:0}.library-grid p {font-size:.92rem;margin:.5rem 0}
+.explainer {max-width:none}.breadcrumb {display:flex;gap:.6rem;flex-wrap:wrap}.explainer header {padding:1.3rem 0;border-bottom:1px solid var(--line)}.explainer header p {font-size:1.25rem}.article-body {max-width:46rem}.article-body section {margin:2rem 0}.article-body h2 {font-size:1.6rem;margin-bottom:.6rem}.reading-note {border-left:2px solid var(--trend-up);padding:.1rem 1rem;background:var(--surface-sunk)}.concept-figure .science-plot svg {max-width:34rem}
 .help-launch {border-radius:99px;border-color:#55746f;background:#17252b;display:flex;align-items:center;gap:.5rem}.help-launch span {border:1px solid #53cbb9;color:#a5e8db;border-radius:50%;width:1.35em;text-align:center}.help-menu {background:#17252b;border-color:#52666d}.help-options {padding:.8rem;background:#101a20;border-radius:.5rem}
-@media(hover:hover){.pathways>a:hover,.library-grid article:hover,.subject-index button:hover {background:#1d3037;border-color:#698184}}
+@media(hover:hover){.pathways>a:hover,.library-grid article:hover,.subject-index button:hover {background:var(--surface-sunk);border-color:var(--line-strong)}}
 @media(max-width:900px){.library-grid {grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.discovery .atlas-hero {grid-template-columns:1fr;margin:0;padding:1.2rem}.planet-plate img {width:190px}.atlas-search .learn-filters,.pathways,.library-grid {grid-template-columns:1fr}.path-art,.path-art img{height:125px}.planet-plate {margin-top:1rem}.discovery-section{padding-top:1.5rem}.learn-page{padding-inline:1rem}.atlas-search{margin:1.5rem 0}}
 @media(prefers-reduced-motion:no-preference){.pathways>a,.subject-index button {transition:background .18s,border-color .18s}}
+
+:root[data-theme="light"] .learn-page {color-scheme:light}
+:root[data-theme="dark"] .learn-page {color-scheme:dark}
+.learn-page {--ink:inherit;--muted:var(--ink-soft);--teal:var(--trend-down);background-color:var(--surface)}
+.learn-page a {color:var(--ink)}
+.learn-page :is(input,select,button,.concept-figure) {background-color:var(--surface-sunk);color:var(--ink);border-color:var(--line-strong)}
+.learn-page .learn-filters input {background:transparent}
+.learn-page .library-grid article small {color:var(--ink-soft)}
+.learn-page .library-grid article[data-subject="Vegetation"] small,.learn-page .library-grid article[data-subject="Oceans"] small {color:var(--trend-down)}
+.learn-page .library-grid article[data-subject="Atmosphere"] small {color:var(--trend-up)}
+.learn-page .concept-figure figcaption {color:var(--ink-soft)}
+.learn-page .concept-figure i {background:var(--trend-down)}
+
+/* EarthPedia shares the case-file shell and the workspace grid underneath it. */
+.pedia-shell {width:100%;min-width:0}
+.pedia-workspace .learn-page {background:transparent;padding:28px 0 60px;min-height:0;font-family:var(--font-ui)}
+.pedia-workspace .atlas-hero {background:transparent;margin:0 0 18px;padding:0 0 20px;gap:24px;grid-template-columns:minmax(0,1fr) minmax(180px,28%)}
+.pedia-workspace .regions-title {font:600 clamp(36px,4.2vw,50px)/1.02 var(--font-display);letter-spacing:-.02em;margin:0 0 8px}
+.pedia-workspace .eyebrow {font:12px/1.4 var(--font-mono);margin:0 0 12px;color:var(--ink-soft)}
+.pedia-workspace :is(h2,h3) {font-family:var(--font-display)}
+.pedia-workspace .planet-plate {background:var(--surface-card);padding:8px;margin:0}
+.pedia-workspace .planet-plate img {width:min(100%,190px)}
+.pedia-workspace .atlas-search {background:var(--surface-card);margin:18px 0;padding:20px}
+.pedia-workspace :is(.search-wrap,select,button,.pathways>a,.library-grid article) {border-radius:var(--radius)}
+.pedia-workspace :is(.atlas-meta,.path-copy small,.library-grid small,.breadcrumb,.library-head span) {font-family:var(--font-mono)}
+.pedia-workspace .discovery-section {padding:24px 0 14px}
+.pedia-workspace .pathways>a,.pedia-workspace .library-grid article {background:var(--surface-card);border:1px solid var(--line-strong)}
+.pedia-workspace .library-grid article:focus-within {outline:2px solid var(--ink)}
+.pedia-workspace .explainer header {margin:20px 0;padding:0 0 16px}
+.pedia-article-grid {display:grid;grid-template-columns:minmax(0,2fr) minmax(200px,1fr);align-items:start;gap:24px}
+.pedia-article-grid .article-body,.pedia-reference {background:var(--surface-card);padding:0 clamp(16px,3vw,32px);border:1px solid var(--line)}
+.pedia-reference section {margin:22px 0}
+.field-guides details {border-top:1px solid var(--line);padding:.8rem 1rem;background:var(--surface-card)}
+.field-guides summary,.article-body summary {cursor:pointer;font-weight:600}
+.field-guides details[open] {border-inline-start:2px solid var(--trend-down);padding-bottom:1rem}
+.reading-sequence {padding-inline-start:1.5rem;line-height:1.75}
+.reading-sequence li::marker {font: .8rem var(--font-mono);color:var(--ink-soft)}
+.reading-sequence strong {border-bottom:2px solid var(--trend-down)}
+@media(max-width:700px){.pedia-workspace .atlas-hero {grid-template-columns:1fr}.pedia-workspace .planet-plate {display:flex;align-items:center;justify-content:center;gap:12px}.pedia-workspace .planet-plate img {width:100px}.pedia-article-grid {grid-template-columns:1fr}.pedia-workspace .atlas-search {padding:16px}}
