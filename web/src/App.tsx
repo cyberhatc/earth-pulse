@@ -3,6 +3,7 @@ import { InvestigationProvider } from "./lib/context";
 import { LandingPage } from "./pages/LandingPage";
 import { EarthPedia } from "./pages/EarthPedia";
 import { ConceptArticle } from "./pages/ConceptArticle";
+import { GlobalHelp } from "./components/GlobalHelp";
 import { RegionChatPage } from "./pages/RegionChatPage";
 import { RegionHubPage } from "./pages/RegionHubPage";
 import { RegionMapPage } from "./pages/RegionMapPage";
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
+        <GlobalHelp />
       </BrowserRouter>
     </InvestigationProvider>
   );

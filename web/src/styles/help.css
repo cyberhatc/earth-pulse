@@ -1,0 +1,10 @@
+.help-launch,.help-menu button,.tour-panel button,.learn-page button {background:#202c33;border:1px solid #66777e;border-radius:6px;color:#f4f7f7;padding:.55rem .85rem;cursor:pointer;font:inherit}
+.help-launch {position:fixed;right:max(1rem,env(safe-area-inset-right));bottom:max(1rem,env(safe-area-inset-bottom));z-index:1200;box-shadow:0 2px 12px #0006}
+.help-menu,.tour-panel {color-scheme:dark;box-sizing:border-box;padding:1.5rem;border:1px solid #56656b;border-radius:12px;width:min(27rem,calc(100vw - 2rem));max-height:76dvh;overflow:auto}
+.help-menu {position:fixed;margin:auto;background:#11191e;color:#f4f7f7}
+.help-menu::backdrop {background:#05090bbf}
+.help-menu h2,.tour-panel h2 {font:500 1.8rem/1.1 Georgia,serif;margin:.65rem 0}
+.help-menu details {padding:.75rem 0;border-top:1px solid #354148}
+.help-menu summary {cursor:pointer}
+.help-close {float:right}
+.help-launch:focus-visible,.tour-panel :focus-visible {outline:2px solid #49c5b6;outline-offset:3px}
