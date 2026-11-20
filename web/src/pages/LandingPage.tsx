@@ -16,6 +16,7 @@ import { LaunchSection } from "../components/landing/sections/LaunchSection";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useLandingScroll } from "../hooks/useLandingScroll";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScienceShelf } from "../components/ScienceShelf";
 import { useAnimeMicro } from "../hooks/useAnimeMicro";
 import "../styles/landing.css";
 
@@ -164,6 +165,7 @@ export function LandingPage() {
           <SignalsSection />
           <VariablesSection />
           <MethodsSection />
+          <ScienceShelf />
           <DataSourcesSection />
           <ImagerySection />
           <TransparencySection />
