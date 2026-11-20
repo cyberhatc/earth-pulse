@@ -4,6 +4,7 @@ import type { TourStep } from "./GuidedTour";
 import { getPageGuide } from "../lib/pageGuides";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { beginnerGuide } from "../lib/beginnerGuide";
+import { readProgress, saveProgress, type Progress } from "../lib/tourProgress";
 import { REGIONS } from "../lib/data";
 import "../styles/help.css";
 
@@ -25,15 +26,22 @@ export function GlobalHelp() {
   }, []);
   const [steps, setSteps] = useState<TourStep[]>([]);
   const [index, setIndex] = useState(0);
-  function start(guide: TourStep[]) {
+  const [saved, setSaved] = useState(readProgress);
+  function remember(value: Progress | null) {
+    setSaved(value);
+    saveProgress(value);
+  }
+  function start(guide: TourStep[], at = 0) {
     dialog.current?.close();
-    setIndex(0);
+    setIndex(at);
     setSteps(guide);
-    if (guide[0].path) navigate(guide[0].path);
+    const path = guide[at].path;
+    if (path) navigate(path);
   }
   function move(next: number) {
     const path = steps[next].path;
     if (path && pathname !== path) navigate(path);
+    if (path && saved) remember({...saved,index:next});
     setIndex(next);
   }
   return <>
@@ -47,13 +55,18 @@ export function GlobalHelp() {
       <details ref={options} className="beginner-options"><summary>How to use EarthPulse</summary>
         <label>Study region<select value={region} onChange={e=>setRegion(e.target.value)}>{REGIONS.map(r=><option value={r.slug} key={r.slug}>{r.name}</option>)}</select></label>
         <label>Investigation topic<select value={topic} onChange={e=>setTopic(e.target.value)}><option value="temperature">Temperature</option><option value="precipitation">Rainfall</option><option value="ndvi">Vegetation</option><option value="sst">Ocean temperature</option></select></label>
-        <button onClick={()=>start(beginnerGuide(region,topic))}>Start beginner walkthrough</button>
+        <button onClick={()=>{remember({region,topic,index:0});start(beginnerGuide(region,topic));}}>{saved ? "Restart beginner walkthrough" : "Start beginner walkthrough"}</button>
+        {saved && <button onClick={()=>start(beginnerGuide(saved.region,saved.topic),saved.index)}>Resume step {saved.index+1}</button>}
       </details>
       <h3>Frequently asked questions</h3>
       <details><summary>Are the demo values measured?</summary><p>The offline sample is synthetic. Check the source and coverage labels for the active investigation.</p></details>
       <details><summary>Why is a reading missing?</summary><p>Location, date, cloud cover and the source product can limit coverage. A missing value is different from zero.</p></details>
       <details><summary>How certain is a forecast?</summary><p>The center line is a model estimate. Read the uncertainty band and the forecast horizon together.</p></details>
     </dialog>
-    {steps.length > 0 && <GuidedTour steps={steps} index={index} move={move} close={() => setSteps([])} />}
+    {steps.length > 0 && <GuidedTour steps={steps} index={index} move={move} close={() => {
+      if (steps[index].path && index === steps.length-1) remember(null);
+      setSteps([]);
+      requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(".help-launch")?.focus({preventScroll:true}));
+    }} />}
   </>;
 }
