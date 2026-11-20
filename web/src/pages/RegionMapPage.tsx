@@ -125,12 +125,14 @@ export function RegionMapPage() {
           </div>
 
           <p className="rail-caption">
-            <strong>Legend (illustrative layer):</strong> grid colors show a relative
-            neighborhood slope tendency for {variable.name} (not a direct measured
-            per-point series). <strong>Fetched point:</strong> click/tap any point to
-            retrieve that location’s computed trend from the backend, reported in{" "}
+            <strong>Legend:</strong> grid markers are the nearest measured 15°
+            NASA POWER analysis cells to each marker, coloured by their real
+            Theil–Sen slope (orange = increasing, blue = decreasing) when live —
+            a schematic neighbourhood layer otherwise.{" "}
+            <strong>Fetched point:</strong> click/tap any point to retrieve that
+            location’s computed trend from the backend, reported in{" "}
             {variable.perDecadeUnit}. Warm/orange = increasing tendency, cool/blue =
-            decreasing tendency, neutral = near zero. “Raw values” are not yet
+            decreasing tendency. “Raw values” are not yet
             available as a map layer.
           </p>
         </aside>
@@ -139,6 +141,7 @@ export function RegionMapPage() {
           <RegionMap
             region={region}
             selectedPoint={point}
+            gridParam={current.isLive ? current.param : null}
             onSelectPoint={(coords) => {
               setPoint(coords);
               openNotebook(coords);
