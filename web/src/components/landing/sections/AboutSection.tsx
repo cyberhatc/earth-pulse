@@ -6,10 +6,10 @@ export function AboutSection() {
           <p className="l-eyebrow" data-anime="mark">About</p>
           <h2 className="l-section-title">About Earth Pulse</h2>
           <p className="l-section-lede l-section-lede-strong">
-            A focused environment for investigating Earth-system signals.
+            One dry summer can leave a hillside brown. How would you tell whether it has been getting drier for years?
           </p>
           <p>
-            Earth Pulse is an open-source, map-first explorer for examining how environmental conditions vary over time
+            Earth Pulse is an open-source map for checking how conditions change over time
             and differ across regions—using Earth observation data, statistical analysis, and transparent presentation.
           </p>
 

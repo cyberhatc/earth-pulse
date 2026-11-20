@@ -1,26 +1,20 @@
 import { Link } from "react-router-dom";
 import { ScrollIndicator } from "../ScrollIndicator";
 
-export function ArrivalSection() {
+export function ArrivalSection({ children }: { children: React.ReactNode }) {
   return (
     <section id="hero" className="landing-section l-arrival" data-section="arrival" aria-label="Arrival">
+      {children}
       <div className="landing-shell l-hero-grid">
         <div className="l-hero-copy">
           <p className="l-eyebrow" data-l-reveal>
-            LIVE CONTEXT · 03 REGIONS · MULTI-VARIABLE · SIGNAL → EVIDENCE
-          </p>
-          <p className="l-eyebrow l-eyebrow-sub" data-l-reveal data-anime="mark">
-            OBS MODE · GLOBAL · 23.5°N 78.9°E REF <span className="l-meta-note">(illustrative reference)</span>
+            Earth observation explorer
           </p>
           <h1 className="l-hero-title" data-l-reveal>
-            Discover the Signals.
-            <br />
-            <em>Understand Earth&apos;s Changing Systems.</em>
+            How is Earth changing<br /><em>where you live?</em>
           </h1>
           <p className="l-lede" data-l-reveal>
-            Explore environmental trends, investigate regional differences and uncover what is changing across our
-            planet through Earth observation data. Earth Pulse brings time series, robust statistics, forecasts with
-            uncertainty, anomalies, and imagery context into one investigation workflow.
+            Pick a place and follow its rainfall, heat or vegetation through the years. Compare it with a neighbor to see whether they share the same pattern.
           </p>
           <div className="l-actions" data-l-reveal>
             <Link to="/regions" className="l-btn-primary">
@@ -36,12 +30,12 @@ export function ArrivalSection() {
               <p>Inspect past observations, trends, and forecasts for selected locations.</p>
             </article>
             <article className="l-value-card" data-anime="accent">
-              <h2 className="l-value-title">Statistical rigor</h2>
+              <h2 className="l-value-title">Check the evidence</h2>
               <p>Theil–Sen trends, Mann–Kendall significance, and uncertainty-aware outputs.</p>
             </article>
             <article className="l-value-card" data-anime="accent">
               <h2 className="l-value-title">Transparent coverage</h2>
-              <p>Clear labeling for observed data, forecasts, scenarios, and synthetic demo stores.</p>
+              <p>The offline demo uses simulated data. Check the source label in each investigation.</p>
             </article>
           </div>
         </div>

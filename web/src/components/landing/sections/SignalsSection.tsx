@@ -23,10 +23,7 @@ export function SignalsSection() {
         <div className="l-section-head" data-l-reveal>
           <p className="l-eyebrow" data-anime="mark">Signals</p>
           <h2 className="l-section-title">Reading the Signals</h2>
-          <p className="l-section-lede">How an environmental time series is interpreted.</p>
-          <p className="l-section-lede">
-            A clean explanatory chart showing historical observations, a trend line, an anomaly marker, a forecast
-            horizon, and p10/p50/p90 uncertainty — using clearly illustrative data only.
+          <p className="l-section-lede">Switch the trend line on to see the long-term direction. Then switch on the forecast: its shaded band widens as the possible outcomes spread apart.
           </p>
         </div>
 

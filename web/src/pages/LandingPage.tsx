@@ -15,11 +15,12 @@ import { TransparencySection } from "../components/landing/sections/Transparency
 import { LaunchSection } from "../components/landing/sections/LaunchSection";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useLandingScroll } from "../hooks/useLandingScroll";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useAnimeMicro } from "../hooks/useAnimeMicro";
 import "../styles/landing.css";
 
-const DESKTOP_VIDEO = "/videos/earth-pulse-earth-desktop.mp4";
-const MOBILE_VIDEO = "/videos/earth-pulse-earth-mobile.mp4";
+const DESKTOP_VIDEO = "/videos/earth-pulse-earth-desktop-loop.mp4";
+const MOBILE_VIDEO = "/videos/earth-pulse-earth-mobile-loop.mp4";
 const MOBILE_QUERY = "(max-width: 768px)";
 
 function useIsMobile() {
@@ -45,6 +46,7 @@ function useIsMobile() {
 export function LandingPage() {
   const rootRef = useRef<HTMLDivElement>(null);
   const lenisRef = useRef<Lenis | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const reducedMotion = usePrefersReducedMotion();
   const isMobile = useIsMobile();
   const [videoFailed, setVideoFailed] = useState(false);
@@ -62,6 +64,30 @@ export function LandingPage() {
   useEffect(() => {
     setVideoFailed(false);
   }, [videoSrc]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    let visible = false;
+    const update = () => {
+      if (visible && !document.hidden) {
+        void video.play().catch(() => { /* Browser autoplay preference. */ });
+      } else {
+        video.pause();
+      }
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      update();
+    });
+    observer.observe(video);
+    document.addEventListener("visibilitychange", update);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", update);
+      video.pause();
+    };
+  }, [videoSrc, reducedMotion, videoFailed]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -90,33 +116,47 @@ export function LandingPage() {
     return () => root.removeEventListener("click", onClick);
   }, [reducedMotion, lenisRef]);
 
+  const poster = videoSrc.replace("-loop.mp4", ".webp");
   const showVideo = !reducedMotion && !videoFailed;
+
+  useEffect(() => {
+    if (reducedMotion) return;
+    const images = rootRef.current?.querySelectorAll<HTMLElement>("figure img");
+    const triggers = Array.from(images ?? [], image => ScrollTrigger.create({
+      trigger: image,
+      start: "top 95%",
+      end: "center 48%",
+      onUpdate: self => image.style.setProperty("--desaturation", String(1 - self.progress)),
+    }));
+    return () => triggers.forEach(trigger => trigger.kill());
+  }, [reducedMotion]);
 
   return (
     <div className="page landing-root" ref={rootRef}>
-      <div className="landing-video-layer" aria-hidden="true">
-        {showVideo ? (
-          <video
-            key={videoSrc}
-            className={`landing-video ${isMobile ? "landing-video--mobile" : "landing-video--desktop"}`}
-            src={videoSrc}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            onError={() => setVideoFailed(true)}
-          />
-        ) : (
-          <div className="landing-video-fallback" />
-        )}
-        <div className="landing-video-overlay" />
-      </div>
-
       <div className="landing-content">
         <LandingNav />
         <main>
-          <ArrivalSection />
+          <ArrivalSection>
+            <div className="landing-video-layer" aria-hidden="true">
+              {showVideo ? (
+                <video
+                  ref={videoRef}
+                  className={`landing-video ${isMobile ? "landing-video--mobile" : "landing-video--desktop"}`}
+                  src={videoSrc}
+                  poster={poster}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  onError={() => setVideoFailed(true)}
+                />
+              ) : (
+                <img src={poster} alt="" className="landing-video" />
+              )}
+              <div className="landing-video-overlay" />
+            </div>
+          </ArrivalSection>
           <ObservationSection />
           <AboutSection />
           <HowItWorksSection />

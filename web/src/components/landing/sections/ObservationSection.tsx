@@ -4,10 +4,9 @@ export function ObservationSection() {
       <div className="landing-shell">
         <div className="l-section-head" data-l-reveal>
           <p className="l-eyebrow" data-anime="mark">Observation</p>
-          <h2 className="l-section-title">Investigate change with context.</h2>
+          <h2 className="l-section-title">What can a satellite see?</h2>
           <p className="l-section-lede">
-            Earth Pulse connects environmental signals across time and space, supporting comparison, interpretation,
-            and careful communication of uncertainty.
+            A sensor measures light reflected or emitted by Earth. Each pixel covers a patch of ground or water. Return to that patch over many seasons and a record begins to form.
           </p>
         </div>
 
@@ -54,17 +53,9 @@ export function ObservationSection() {
         </div>
 
         <div className="l-note-panel" data-l-reveal>
-          <p className="l-note-kicker">Explanatory visual context (non-live)</p>
-          <p>
-            Earth observation imagery is presented as contextual, explanatory material only — <strong>not live satellite
-            telemetry</strong> and not a direct output of this application unless explicitly labeled in the app.
-          </p>
-          <p className="l-credit">
-            Credit: NASA Blue Marble / NASA Image and Video Library.{" "}
-            <a href="https://images.nasa.gov/details/PIA18033" target="_blank" rel="noreferrer">
-              NASA Blue Marble (PIA18033)
-            </a>
-          </p>
+          <p className="l-note-kicker">Explore satellite imagery</p>
+          <p>Use the date selector in NASA Worldview to revisit a coastline. Look for clouds before comparing the land underneath.</p>
+          <a href="https://worldview.earthdata.nasa.gov/">Open NASA Worldview</a>
         </div>
       </div>
     </section>

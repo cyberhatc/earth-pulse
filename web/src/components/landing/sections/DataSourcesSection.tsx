@@ -138,18 +138,17 @@ export function DataSourcesSection() {
           <p className="l-eyebrow" data-anime="mark">Data sources</p>
           <h2 className="l-section-title">Data sources</h2>
           <p className="l-section-lede">
-            Accurate status categories based on repository-documented workflows. External resources are not embedded
-            integrations; optional APIs are not active without configuration/credentials.
+            Use NASA POWER for monthly climate records and Worldview to look at the landscape. Open a group below to see its sources, coverage and role in Earth Pulse.
           </p>
         </div>
 
         <div className="l-source-groups" data-l-stagger>
           {GROUPS.map((g) => (
-            <article key={g.title} className="l-source-group">
-              <div className="l-source-group-head">
+            <details key={g.title} className="l-source-group">
+              <summary className="l-source-group-head">
                 <h3>{g.title}</h3>
                 <p className="l-source-status">{g.status}</p>
-              </div>
+              </summary>
               <div className="l-source-table-wrap">
                 <table className="l-source-table">
                   <thead>
@@ -181,7 +180,7 @@ export function DataSourcesSection() {
                   </tbody>
                 </table>
               </div>
-            </article>
+            </details>
           ))}
         </div>
       </div>

@@ -16,49 +16,46 @@ const REGION_DETAILS: Record<
   "western-ghats": {
     label: "REGION 01",
     bbox: "8°N–20°N, 70°E–78°E",
-    desc: "A steep, biodiversity-rich mountain range along India's western margin adjacent to the Arabian Sea, with strong monsoon influence, complex orography, and varied land cover.",
-    context:
-      "Seasonal rainfall gradients, coastal–inland contrasts, and elevation effects can shape temperature, moisture, and vegetation signals.",
+    desc: "On India's west coast, a narrow coastal plain rises into the forested Western Ghats.",
+    context: "How does monsoon rainfall differ between the coast and the hills?",
     landscape: "Escarpments, tropical forests, plateaus, river basins, and coastal plains.",
     variables:
       "Precipitation, temperature, humidity, NDVI/vegetation condition, wind, and nearby sea-surface conditions where relevant.",
     image: {
-      src: "https://images-assets.nasa.gov/image/iss036e022303/iss036e022303~orig.jpg",
-      alt: "Orbital view representing the Western Ghats and Arabian Sea region (illustrative geographical context).",
-      credit: "NASA Image and Video Library (ISS036-E-022303)",
-      href: "https://images.nasa.gov/details/iss036e022303",
+      src: "/atlas/western-ghats.jpg",
+      alt: "Western Indian coastline with the Arabian Sea west of the forested Ghats",
+      credit: "Esri World Imagery and contributing providers",
+      href: "https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9",
     },
   },
   "north-china-plain": {
     label: "REGION 02",
     bbox: "30°N–42°N, 110°E–125°E",
-    desc: "A broad, densely populated alluvial plain connected to major river systems and bordered by the Bohai and Yellow Seas.",
-    context:
-      "Continental seasonality, irrigation and land-use intensity, coastal processes, and atmospheric conditions.",
+    desc: "Rivers cross a low, heavily farmed plain on their way to the Bohai and Yellow Seas.",
+    context: "Do crops green up at the same time inland and near the coast?",
     landscape: "Lowland plains, river deltas, megacity corridors, and semi-enclosed seas.",
     variables:
       "Temperature, precipitation, humidity, wind, solar radiation, vegetation indices, and coastal/ocean parameters where applicable.",
     image: {
-      src: "https://images-assets.nasa.gov/image/PIA12063/PIA12063~orig.jpg",
-      alt: "Satellite view representing the North China Plain and Bohai/Yellow Sea coastal context (illustrative).",
-      credit: "NASA Image and Video Library (PIA12063)",
-      href: "https://images.nasa.gov/details/PIA12063",
+      src: "/atlas/north-china-plain.jpg",
+      alt: "Eastern China showing the North China Plain and the Bohai Sea",
+      credit: "Esri World Imagery and contributing providers",
+      href: "https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9",
     },
   },
   "california-coast": {
     label: "REGION 03",
     bbox: "32°N–42°N, 122°W–117°W",
-    desc: "A diverse coastal margin spanning Mediterranean-climate zones, upwelling-influenced waters, mountain ranges, valleys, and urbanized shorelines.",
-    context:
-      "Marine influence, drought and precipitation variability, vegetation responses, and coastal circulation.",
+    desc: "The Pacific meets coastal mountains, with agricultural valleys sheltered farther inland.",
+    context: "How far inland does the moderating influence of the ocean reach?",
     landscape: "Pacific coastline, coastal ranges, valleys, chaparral, and agricultural/urban mosaics.",
     variables:
       "Temperature, precipitation, humidity, wind, NDVI, and sea-surface/ocean-related indicators where relevant.",
     image: {
-      src: "https://images-assets.nasa.gov/image/PIA11066/PIA11066~orig.jpg",
-      alt: "Satellite view representing the California coastal region (illustrative geographical context).",
-      credit: "NASA Image and Video Library (PIA11066)",
-      href: "https://images.nasa.gov/details/PIA11066",
+      src: "/atlas/california-coast.jpg",
+      alt: "Pacific coast of California with coastal ranges and inland valleys",
+      credit: "Esri World Imagery and contributing providers",
+      href: "https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9",
     },
   },
 };
@@ -69,10 +66,9 @@ export function RegionsSection() {
       <div className="landing-shell">
         <div className="l-section-head" data-l-reveal>
           <p className="l-eyebrow" data-anime="mark">Study regions</p>
-          <h2 className="l-section-title">Three contrasting geographical case files</h2>
+          <h2 className="l-section-title">Three coasts, three questions</h2>
           <p className="l-section-lede">
-            Explore three contrasting geographical contexts. Descriptions provide geographic and investigative context
-            only—no trend findings or statistics are claimed here.
+            Choose a coast and compare it with the land behind it. Each question is a starting point for an investigation.
           </p>
         </div>
 
@@ -87,7 +83,7 @@ export function RegionsSection() {
                   <span className="l-region-coord-chip">{detail.bbox}</span>
                   <img src={detail.image.src} alt={detail.image.alt} loading="lazy" decoding="async" />
                   <figcaption>
-                    Representative imagery (not an exact bounding-box capture).{" "}
+                    Regional satellite mosaic.{" "}
                     <a href={detail.image.href} target="_blank" rel="noreferrer">
                       {detail.image.credit}
                     </a>
@@ -97,7 +93,7 @@ export function RegionsSection() {
                   <h3>{region.name}</h3>
                   <p className="l-region-bbox"><strong>Bounding box:</strong> {detail.bbox}</p>
                   <p>{detail.desc}</p>
-                  <p><strong>Environmental context:</strong> {detail.context}</p>
+                  <p><strong>Investigation question</strong><br /> {detail.context}</p>
                   <dl className="l-region-meta">
                     <div>
                       <dt>Landscape</dt>

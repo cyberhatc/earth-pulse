@@ -1,52 +1,28 @@
 const GALLERY = [
   {
-    title: "Global Earth observation",
-    caption: "A whole-Earth perspective supports understanding coupled land, ocean, atmosphere, and ice systems.",
-    src: "https://images-assets.nasa.gov/image/PIA03377/PIA03377~orig.jpg",
-    alt: "NASA Blue Marble-style global view of Earth showing land, oceans, clouds, and ice.",
-    credit: "NASA Image and Video Library",
-    href: "https://images.nasa.gov/details/PIA03377",
+    "src": "/atlas/nile-delta.jpg",
+    "alt": "The green fan in northern Egypt follows the branches of the Nile.",
+    "title": "Trace the edge of the fields",
+    "caption": "The green fan in northern Egypt follows the branches of the Nile. Its sharp edges help you pick places to compare with the surrounding desert.",
+    "credit": "Esri World Imagery and contributing providers",
+    "href": "https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9"
   },
   {
-    title: "Vegetation and land cover",
-    caption: "Vegetation indices and optical imagery help reveal greenness patterns and land-surface change over time.",
-    src: "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001963/GSFC_20171208_Archive_e001963~orig.jpg",
-    alt: "Satellite view highlighting vegetation and land cover patterns.",
-    credit: "NASA / GSFC (NASA Image and Video Library)",
-    href: "https://images.nasa.gov/details/GSFC_20171208_Archive_e001963",
+    "src": "/atlas/himalaya.jpg",
+    "alt": "Snow and ice trace the high ridges of the central Himalaya.",
+    "title": "Find the high ground",
+    "caption": "Snow and ice trace the high ridges of the central Himalaya. Compare images from the same season before interpreting a difference in snow cover.",
+    "credit": "Esri World Imagery and contributing providers",
+    "href": "https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9"
   },
   {
-    title: "Ocean and sea-surface conditions",
-    caption: "Ocean observations inform sea-surface conditions, circulation context, and coastal–marine interactions.",
-    src: "https://images-assets.nasa.gov/image/PIA02688/PIA02688~orig.jpg",
-    alt: "Satellite view of ocean color and coastal waters.",
-    credit: "NASA Image and Video Library",
-    href: "https://images.nasa.gov/details/PIA02688",
-  },
-  {
-    title: "Precipitation and atmosphere",
-    caption: "Atmospheric observations support analysis of storms, moisture, and precipitation-related variability.",
-    src: "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000975/GSFC_20171208_Archive_e000975~orig.jpg",
-    alt: "Satellite view of atmospheric cloud and precipitation systems.",
-    credit: "NASA / GSFC (NASA Image and Video Library)",
-    href: "https://images.nasa.gov/details/GSFC_20171208_Archive_e000975",
-  },
-  {
-    title: "Coastal change and land use",
-    caption: "Satellite imagery provides context for coastal interfaces, development patterns, and landscape transitions.",
-    src: "https://images-assets.nasa.gov/image/PIA12063/PIA12063~orig.jpg",
-    alt: "Satellite view of coastal and land-use patterns.",
-    credit: "NASA Image and Video Library",
-    href: "https://images.nasa.gov/details/PIA12063",
-  },
-  {
-    title: "Orbital Earth observation",
-    caption: "Orbital platforms capture multi-scale views used to investigate regional environmental systems.",
-    src: "https://images-assets.nasa.gov/image/iss036e022303/iss036e022303~orig.jpg",
-    alt: "Earth observation image captured from orbit showing regional geography.",
-    credit: "NASA Image and Video Library (ISS/NASA)",
-    href: "https://images.nasa.gov/details/iss036e022303",
-  },
+    "src": "/atlas/amazon.jpg",
+    "alt": "Near Manaus, dark and pale river waters meet.",
+    "title": "Follow two rivers",
+    "caption": "Near Manaus, dark and pale river waters meet. Their visible colors suggest a sampling question; an image alone cannot measure what is in the water.",
+    "credit": "Esri World Imagery and contributing providers",
+    "href": "https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9"
+  }
 ];
 
 export function ImagerySection() {
@@ -57,9 +33,7 @@ export function ImagerySection() {
           <p className="l-eyebrow" data-anime="mark">Imagery</p>
           <h2 className="l-section-title">Satellite imagery gallery</h2>
           <p className="l-section-lede">
-            Curated editorial gallery using verified NASA imagery for visual orientation. Images provide geographical or
-            observational context — <strong>not</strong> presented as direct, location-specific measurements produced by
-            this app unless explicitly labeled inside the application.
+            Read each landscape from above. These regional mosaics combine images taken at different times. They help you choose what to investigate; a trend needs repeated measurements.
           </p>
         </div>
 

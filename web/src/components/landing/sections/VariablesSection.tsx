@@ -1,12 +1,12 @@
 const VARIABLES = [
-  { category: "Atmosphere", name: "Temperature", desc: "Surface/air temperature signals used to examine warming/cooling patterns, seasonal cycles, and anomalies over time." },
-  { category: "Atmosphere", name: "Humidity", desc: "Moisture-related atmospheric conditions that influence comfort, evapotranspiration, and regional hydroclimate behavior." },
-  { category: "Atmosphere", name: "Wind", desc: "Near-surface wind characteristics relevant to circulation patterns, coastal dynamics, and local environmental variability." },
-  { category: "Hydrology", name: "Precipitation", desc: "Rainfall amounts and variability used to assess wet/dry periods, trends, and extreme or unusual conditions." },
-  { category: "Vegetation", name: "NDVI", desc: "Normalized Difference Vegetation Index as a proxy for vegetation greenness and condition, where observations are available and relevant." },
-  { category: "Energy", name: "Solar radiation", desc: "Incoming solar energy context that can relate to surface conditions, seasonality, and climate/energy analyses." },
-  { category: "Ocean", name: "Sea surface temperature", desc: "Ocean surface thermal conditions for marine-relevant locations; not applicable or available everywhere in the same way as land parameters." },
-  { category: "Ocean", name: "Sea level", desc: "Sea-level-related signals where supported by the selected data/store; interpreted with coverage and relevance constraints." },
+  { category: "Atmosphere", name: "Temperature", desc: "How warm the air or surface is, and how that changes with the seasons." },
+  { category: "Atmosphere", name: "Humidity", desc: "How much moisture the air holds. Humidity affects how quickly water evaporates." },
+  { category: "Atmosphere", name: "Wind", desc: "How air moves near the surface, including along the coast." },
+  { category: "Hydrology", name: "Precipitation", desc: "How much rain or snow falls. Compare wet and dry periods across years." },
+  { category: "Vegetation", name: "NDVI", desc: "A satellite measure of greenness. NDVI compares reflected red and near-infrared light to help track changes in plant cover." },
+  { category: "Energy", name: "Solar radiation", desc: "How much energy from sunlight reaches the surface." },
+  { category: "Ocean", name: "Sea surface temperature", desc: "How warm the upper ocean is at a marine location." },
+  { category: "Ocean", name: "Sea level", desc: "How the height of the sea changes where the dataset covers coastal or ocean waters." },
 ];
 
 export function VariablesSection() {
@@ -17,26 +17,23 @@ export function VariablesSection() {
           <p className="l-eyebrow" data-anime="mark">Variables</p>
           <h2 className="l-section-title">Environmental variables</h2>
           <p className="l-section-lede">
-            Parameters supported by application workflows. Availability depends on location, data mode, source coverage,
-            and physical relevance.
+            Choose a measure that fits your question. A coastal water temperature record covers a different part of the landscape than a hillside vegetation record.
           </p>
         </div>
 
         <div className="l-var-grid" data-l-stagger>
           {VARIABLES.map((v) => (
-            <article key={v.name} className="l-var-card" data-anime="accent">
+            <article key={v.name} className="l-var-card" data-domain={v.category} data-anime="accent">
               <p className="l-var-cat">{v.category}</p>
               <h3>{v.name}</h3>
               <p>{v.desc}</p>
+              {v.name === "NDVI" && <a href="https://science.nasa.gov/earth/earth-observatory/measuring-vegetation-ndvi-evi/">How NASA measures greenness</a>}
             </article>
           ))}
         </div>
 
         <p className="l-note-inline" data-l-reveal>
-          <strong>Coverage note:</strong> Availability depends on location, data mode, source coverage, and physical
-          relevance. The bundled offline demo uses a deterministic synthetic store with defined variables and masks.
-          Parameters may be unavailable, masked, or irrelevant depending on geography; no single variable is implied to
-          work everywhere.
+          A missing value means the source has no usable reading there. Check the dates too: different records begin in different years.
         </p>
       </div>
     </section>

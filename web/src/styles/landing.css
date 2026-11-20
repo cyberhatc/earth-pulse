@@ -115,12 +115,12 @@
 
 /* Video hero background */
 .landing-video-layer {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: #050505;
+  position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: #050505;
 }
 .landing-video {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; object-position: center center;
-  filter: grayscale(1) contrast(1.05) brightness(0.78);
+  filter: saturate(0.8) brightness(0.86);
 }
 .landing-video--desktop { object-position: center 45%; }
 .landing-video--mobile { object-position: center center; }
@@ -416,4 +416,17 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .l-btn-primary, .l-btn-secondary, .l-chip-btn, .landing-anchor, .landing-cta-link { transition: none !important; }
+}
+
+.l-arrival { isolation: isolate; }
+.l-region-figure img, .l-gallery-item img { filter: grayscale(var(--desaturation, 1)); }
+.l-method-card summary, .l-source-group summary { cursor: pointer; }
+.l-method-card details { margin-top: 1rem; color: #b5d6de; }
+.l-source-group summary::after { content: "+"; margin-left: auto; color: #b5d6de; }
+.l-source-group[open] summary::after { content: "-"; }
+.l-var-card[data-domain="Vegetation"] .l-var-cat { color: #aad29e; }
+.l-var-card[data-domain="Ocean"] .l-var-cat, .l-var-card[data-domain="Hydrology"] .l-var-cat { color: #9acddf; }
+.l-var-card[data-domain="Energy"] .l-var-cat { color: #e3bd86; }
+@media (prefers-reduced-motion: reduce) {
+  .l-region-figure img, .l-gallery-item img { filter: none; }
 }
