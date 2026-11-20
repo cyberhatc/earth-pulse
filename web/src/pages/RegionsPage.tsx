@@ -1,8 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LocationsMap } from "../components/LocationsMap";
+import { Reveal } from "../components/Reveal";
 import { Sparkline } from "../components/Sparkline";
 import { TopBar } from "../components/TopBar";
+import { useAmbientMotion } from "../hooks/useAmbientMotion";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useInvestigation } from "../lib/context";
 import { REGIONS, getVariable } from "../lib/data";
 import { computeStats, formatSlope, generateSeries } from "../lib/trend";
@@ -13,6 +16,9 @@ export function RegionsPage() {
   const navigate = useNavigate();
   const { setRegion } = useInvestigation();
   const liveBySlug = useLivePreviews(REGIONS);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const pageRef = useRef<HTMLElement | null>(null);
+  useAmbientMotion({ scopeRef: pageRef, reducedMotion: prefersReducedMotion, enabled: true });
 
   const cards = useMemo(
     () =>
@@ -37,41 +43,44 @@ export function RegionsPage() {
   return (
     <div className="page regions-map-page">
       <TopBar />
-      <main className="regions-page regions-page-map">
+      <main ref={pageRef} className="regions-page regions-page-map">
         <div className="shell regions-shell regions-shell-wide">
-          <p className="eyebrow">Map-first entry · 3 predefined case studies</p>
-          <h1 className="regions-title">Explore Earth Pulse locations</h1>
-          <p className="regions-lede">
+          <p className="eyebrow" data-l-reveal>Map-first entry · 3 predefined case studies</p>
+          <h1 className="regions-title" data-l-parallax>Explore Earth Pulse locations</h1>
+          <p className="regions-lede" data-l-reveal>
             Start from the interactive map. Select one of the three case-study regions to inspect its observed history, trends,
             forecasts, anomalies, comparisons, imagery, and location-aware tools. Hover or tap a marker for key info, then click to
             open the full location experience.
           </p>
 
-          <section className="locations-map-section" aria-label="Interactive locations map">
-            <div className="locations-map-frame specimen-frame">
-              <LocationsMap regions={REGIONS} analyses={liveBySlug} onSelect={setRegion} />
-            </div>
-            <div className="locations-map-legend" aria-label="Map legend">
+          <Reveal delay={40}>
+            <section className="locations-map-section" aria-label="Interactive locations map">
+              <div className="locations-map-frame specimen-frame">
+                <LocationsMap regions={REGIONS} analyses={liveBySlug} onSelect={setRegion} />
+              </div>
+              <div className="locations-map-legend" aria-label="Map legend">
               <span className="legend-pill"><span className="legend-dot" style={{ background: "var(--trend-up)" }} /> Increasing primary signal</span>
               <span className="legend-pill"><span className="legend-dot" style={{ background: "var(--trend-down)" }} /> Decreasing primary signal</span>
               <span className="legend-pill muted">Click a marker or card to inspect location data, chatbot, videos, and visualizations.</span>
             </div>
           </section>
+          </Reveal>
 
-          <div className="divider" aria-hidden="true">Case studies</div>
+          <Reveal delay={100}>
+            <div className="divider" aria-hidden="true">Case studies</div>
 
-          <div className="region-grid region-grid-rich" role="list">
-            {cards.map(({ region, variable, series, stats, color, status, source }) => (
-              <button
-                key={region.slug}
-                type="button"
-                role="listitem"
-                className="region-card specimen-frame region-card-selectable"
-                onClick={() => handleOpen(region)}
-              >
-                <div className="region-card-strip halftone-strip">
-                  <span className="region-card-overlay">{region.bboxLabel}</span>
-                  <span className="region-card-rate" style={{ color }}>{formatSlope(stats)}</span>
+            <div className="region-grid region-grid-rich" role="list">
+              {cards.map(({ region, variable, series, stats, color, status, source }) => (
+                <button
+                  key={region.slug}
+                  type="button"
+                  role="listitem"
+                  className="region-card specimen-frame region-card-selectable"
+                  onClick={() => handleOpen(region)}
+                >
+                  <div className="region-card-strip halftone-strip">
+                    <span className="region-card-overlay">{region.bboxLabel}</span>
+                    <span className="region-card-rate" style={{ color }}>{formatSlope(stats)}</span>
                   <Sparkline values={series} width={240} height={66} color={color} className="region-card-sparkline" />
                 </div>
                 <div className="region-card-body">
@@ -87,6 +96,7 @@ export function RegionsPage() {
               </button>
             ))}
           </div>
+          </Reveal>
 
           <div className="custom-note" role="note">
             <strong>Coverage & honesty:</strong> these are the three predefined demonstration case studies. Live views use the backend

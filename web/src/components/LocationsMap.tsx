@@ -95,20 +95,21 @@ export function LocationsMap({ regions, analyses, onSelect }: LocationsMapProps)
         const sig = stats ? (stats.significant ? "significant" : "not significant") : "";
         const status = analysis?.status ?? "loading";
         const source = analysis?.sourceLabel ?? "Connecting";
-        const color = region.trendShape === "up" ? "#b44318" : "#1e40af";
+        const color = region.trendShape === "up" ? "var(--trend-up)" : "var(--trend-down)";
+        const accent = "var(--accent)";
 
         // Subtle bounds rectangle for context
         L.rectangle(region.bounds, {
           color,
-          weight: 1.25,
-          opacity: 0.5,
+          weight: 1.5,
+          opacity: 0.55,
           fillColor: color,
-          fillOpacity: 0.06,
+          fillOpacity: 0.07,
           interactive: false,
         }).addTo(map);
 
         const marker = L.circleMarker(region.center, {
-          radius: 10,
+          radius: 11,
           color: "#ffffff",
           weight: 3,
           fillColor: color,
@@ -116,14 +117,19 @@ export function LocationsMap({ regions, analyses, onSelect }: LocationsMapProps)
         }).addTo(map);
 
         const popupHtml = `
-          <div style="min-width:220px;font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.35">
-            <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#5b6470;margin-bottom:4px">${region.plate} · ${region.bboxLabel}</div>
-            <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px">${region.name}</div>
-            <div style="font-size:12.5px;color:#374151;margin-bottom:6px">${region.area} · ${region.climate}</div>
-            <div style="font-size:12.5px;color:#111827;margin-bottom:2px"><strong>${variable.shortName}:</strong> ${trend}${sig ? ` (${sig})` : ""}</div>
-            <div style="font-size:11.5px;color:#6b7280;margin-bottom:8px">${source} · ${status === "live" ? "live data" : status === "demo" || status === "partial" ? "demo fallback" : status}</div>
-            <div style="font-size:11.5px;color:#374151;margin-bottom:8px">${region.teaser}</div>
-            <button data-open-region="${region.slug}" style="display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;border-radius:8px;border:1px solid #0e5a63;background:#0e5a63;color:#fff;font-weight:600;cursor:pointer">Inspect location →</button>
+          <div style="min-width:230px;font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.4;border-radius:12px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.45),0 0 0 1px rgba(255,255,255,0.06);background:linear-gradient(180deg,rgba(10,10,10,0.92),rgba(5,5,5,0.96));border:1px solid rgba(215,210,198,0.25);color:#f2f0ea">
+            <div style="padding:10px 12px 8px;border-bottom:1px solid rgba(215,210,198,0.2);display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#d7d2c6;font-weight:700">${region.plate}</div>
+              <span style="display:inline-flex;align-items:center;gap:6px;width:8px;height:8px;border-radius:50%;background:${color};box-shadow:0 0 10px ${color}"></span>
+            </div>
+            <div style="padding:10px 12px">
+              <div style="font-size:15px;font-weight:700;color:#ffffff;margin-bottom:3px">${region.name}</div>
+              <div style="font-size:11.5px;color:rgba(242,240,234,0.7);margin-bottom:7px">${region.area} · ${region.climate}</div>
+              <div style="font-size:12px;color:#ffffff;margin-bottom:2px"><strong>${variable.shortName}:</strong> <span style="color:${color}">${trend}</span>${sig ? ` · <span style="color:#d7d2c6">(${sig})</span>` : ""}</div>
+              <div style="font-size:11px;color:rgba(242,240,234,0.55);margin-bottom:9px">${source} · ${status === "live" ? "live backend" : status === "demo" || status === "partial" ? "demo fallback" : status}</div>
+              <div style="font-size:11px;color:rgba(242,240,234,0.8);margin-bottom:10px">${region.teaser}</div>
+              <button data-open-region="${region.slug}" style="display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;border-radius:8px;border:1px solid rgba(215,210,198,0.45);background:${accent};color:#050505;font-weight:700;cursor:pointer">Inspect location →</button>
+            </div>
           </div>`;
         marker.bindPopup(popupHtml, { closeButton: true, maxWidth: 320 });
         marker.bindTooltip(`<strong>${region.name}</strong><br/><span style="font-size:12px">${variable.shortName}: ${trend}</span>`, {

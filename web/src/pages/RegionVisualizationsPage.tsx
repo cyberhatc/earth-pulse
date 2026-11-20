@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CardRenderer } from "../components/cards";
 import { ContextChipBar } from "../components/ContextChipBar";
 import { TopBar } from "../components/TopBar";
 import { TrendChart } from "../components/TrendChart";
+import { useAmbientMotion } from "../hooks/useAmbientMotion";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
 import { fetchImageryPast, type BackendImageryPast } from "../lib/api";
@@ -19,6 +21,9 @@ export function RegionVisualizationsPage() {
   const target = point ?? region?.center ?? null;
   const analysis = live.analysis;
   const [past, setPast] = useState<BackendImageryPast | null>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const vizRef = useRef<HTMLDivElement>(null);
+  useAmbientMotion({ scopeRef: vizRef, reducedMotion: prefersReducedMotion, enabled: true });
 
   useEffect(() => {
     if (!target) return;
@@ -56,11 +61,11 @@ export function RegionVisualizationsPage() {
   const variable = getVariable(region.variable);
 
   return (
-    <div className="workspace-page">
+    <div ref={vizRef} className="workspace-page">
       <TopBar backHref={`/region/${region.slug}`} backLabel={region.name} />
       <ContextChipBar mode="visualizations" />
       <main className="page-shell detail-page visualizations-page">
-        <section className="section-block">
+        <section className="section-block" data-l-reveal>
           <p className="eyebrow">Data visualizations · observed, projected, and derived insights</p>
           <h1 className="page-title">Visual analysis for {region.name}</h1>
           <p className="section-lead">
@@ -75,7 +80,7 @@ export function RegionVisualizationsPage() {
           <p className="muted small">{analysis.sourceNote}</p>
         </section>
 
-        <section className="section-block">
+        <section className="section-block" data-l-reveal>
           <h2>Historical observed series & trend</h2>
           <p className="muted">Observed/demo historical monthly series for the selected variable with fitted trend and significance context.</p>
           <div className="viz-chart-wrap">
@@ -90,7 +95,7 @@ export function RegionVisualizationsPage() {
           </div>
         </section>
 
-        <section className="section-block">
+        <section className="section-block" data-l-reveal>
           <h2>Integrated cards & comparisons</h2>
           <p className="muted">Forecasts include uncertainty bands where available; anomalies and opposite trends are derived from backend analysis; coverage/provenance states limitations clearly.</p>
           <div className="canvas viz-canvas">
@@ -100,7 +105,7 @@ export function RegionVisualizationsPage() {
           </div>
         </section>
 
-        <section className="section-block">
+        <section className="section-block" data-l-reveal>
           <h2>Imagery & observational evidence</h2>
           <p className="muted">Reference/observed imagery for context. Imagery availability varies by source and location.</p>
           {past?.gibs?.length ? (

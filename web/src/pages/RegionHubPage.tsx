@@ -1,9 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CardRenderer } from "../components/cards";
 import { ContextChipBar } from "../components/ContextChipBar";
+import { Reveal } from "../components/Reveal";
+import { Tooltip } from "../components/Tooltip";
 import { TopBar } from "../components/TopBar";
 import { TrendChart } from "../components/TrendChart";
+import { useAmbientMotion } from "../hooks/useAmbientMotion";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
 import { fetchImageryPast, type BackendImageryPast } from "../lib/api";
@@ -23,6 +27,9 @@ export function RegionHubPage() {
   const analysis = live.analysis;
   const target = point ?? region?.center ?? null;
   const [imagery, setImagery] = useState<BackendImageryPast | null>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const hubRef = useRef<HTMLElement | null>(null);
+  useAmbientMotion({ scopeRef: hubRef, reducedMotion: prefersReducedMotion, enabled: true });
 
   useEffect(() => {
     if (!target) return;
@@ -76,27 +83,30 @@ export function RegionHubPage() {
     <div className="page">
       <TopBar backHref="/regions" backLabel="Locations" />
       <ContextChipBar mode="hub" />
-      <main className="page-shell detail-page hub-page-rich">
-        <section className="hub-hero-block">
-          <p className="eyebrow">Location details · selected context persists across all features</p>
-          <h1 className="hub-title">{region.name}</h1>
-          <p className="hub-sub">
-            {region.plate} · {region.climate} · {variable.name} focus · {region.area}
-          </p>
-          <div className="hub-meta-grid">
-            <div className="meta-box"><span className="meta-label">Target / pin</span><strong>{formatCoords(target[0], target[1], 3)}</strong><span className="muted small">{point ? "Pinned point (used by chat, imagery, and analysis where supported)" : "Region center (default)"}</span></div>
-            <div className="meta-box"><span className="meta-label">Time range</span><strong>{analysis.period[0]}–{analysis.period[1]}</strong><span className="muted small">{coverage?.time_range ? `Backend coverage: ${coverage.time_range[0]}–${coverage.time_range[1]}` : "Derived from available series"}</span></div>
-            <div className="meta-box"><span className="meta-label">Trend ({variable.shortName})</span><strong className={stats.direction === "up" ? "val-up" : stats.direction === "down" ? "val-down" : "val-flat"}>{formatSlope(stats)}</strong><span className="muted small">{formatP(stats.pValue)} · {stats.significant ? "statistically significant" : "not statistically significant"}</span></div>
-            <div className="meta-box"><span className="meta-label">Data status</span><strong>{analysis.sourceLabel}</strong><span className="muted small">{analysis.status} · {analysis.isLive ? "live backend payload" : "demo/fallback where needed"}</span></div>
-          </div>
-          <p className="hub-source-note">{analysis.sourceNote}</p>
-        </section>
+      <main ref={hubRef} className="page-shell detail-page hub-page-rich">
+        <Reveal delay={60}>
+          <section className="hub-hero-block">
+            <p className="eyebrow">Location details · selected context persists across all features</p>
+            <h1 className="hub-title">{region.name}</h1>
+            <p className="hub-sub">
+              {region.plate} · {region.climate} · {variable.name} focus · {region.area}
+            </p>
+            <div className="hub-meta-grid">
+              <div className="meta-box"><span className="meta-label">Target / pin</span><strong>{formatCoords(target[0], target[1], 3)}</strong><span className="muted small">{point ? "Pinned point (used by chat, imagery, and analysis where supported)" : "Region center (default)"}</span></div>
+              <div className="meta-box"><span className="meta-label">Time range</span><strong>{analysis.period[0]}–{analysis.period[1]}</strong><span className="muted small">{coverage?.time_range ? `Backend coverage: ${coverage.time_range[0]}–${coverage.time_range[1]}` : "Derived from available series"}</span></div>
+              <div className="meta-box"><span className="meta-label">Trend per decade</span><Tooltip placement="top" label="Average change in the measured value every ten years, based on the fitted trend line."><em className="term-trigger">{variable.shortName}</em></Tooltip><br /><strong className={stats.direction === "up" ? "val-up" : stats.direction === "down" ? "val-down" : "val-flat"}>{formatSlope(stats)}</strong><span className="muted small">{formatP(stats.pValue)} · {stats.significant ? "statistically significant" : "not statistically significant"} <Tooltip placement="top" label="Whether the observed change is likely a real signal rather than random noise. A p-value below 0.05 is generally treated as statistically significant."><span className="term-trigger">(p-value)</span></Tooltip></span></div>
+              <div className="meta-box"><span className="meta-label">Data status</span><strong>{analysis.sourceLabel}</strong><span className="muted small">{analysis.status} · {analysis.isLive ? "live backend payload" : "demo/fallback where needed"}</span></div>
+            </div>
+            <p className="hub-source-note">{analysis.sourceNote}</p>
+          </section>
+        </Reveal>
 
-        <section className="section-block">
-          <div className="section-head-row">
-            <h2>Access location features</h2>
-            <span className="status-pill">Integrated · context preserved</span>
-          </div>
+        <Reveal delay={120}>
+          <section className="section-block">
+            <div className="section-head-row">
+              <h2>Access location features</h2>
+              <span className="status-pill">Integrated · context preserved</span>
+            </div>
           <div className="feature-nav-grid">
             {featureLinks.map((f) => (
               <Link key={f.to} to={f.to} className="feature-nav-card">
@@ -121,11 +131,12 @@ export function RegionHubPage() {
             </button>
           </div>
         </section>
+        </Reveal>
 
-
-        <section className="section-block">
-          <h2>Historical observed data & trend/statistics</h2>
-          <p className="muted"><strong>Observed/demo series:</strong> monthly values for {variable.name}. Fitted trend and confidence context shown below; labels indicate significance and source.</p>
+        <Reveal delay={180}>
+          <section className="section-block">
+            <h2>Historical observed data & trend</h2>
+            <p className="muted"><strong>Observed/demo series:</strong> monthly values for {variable.name}. Fitted trend and confidence context shown below; labels indicate source and reliability.</p>
           <TrendChart
             series={analysis.series}
             period={analysis.period}
@@ -141,10 +152,12 @@ export function RegionHubPage() {
             <div><dt>Period analyzed</dt><dd>{analysis.period[0]}–{analysis.period[1]}</dd></div>
           </dl>
         </section>
+        </Reveal>
 
-        <section className="section-block">
-          <h2>Forecast / projections, anomalies, and comparisons</h2>
-          <p className="muted"><strong>Projected/forecast:</strong> model outputs include uncertainty bands where available and must not be read as observations. Unavailable parameters are listed explicitly.</p>
+        <Reveal delay={220}>
+          <section className="section-block">
+            <h2>Projected future, unusual events & nearby comparisons</h2>
+            <p className="muted"><strong>Projected future (model):</strong> outputs include uncertainty bands where available and must not be read as observations. <Tooltip placement="top" label="Projections are model-based estimates of what may come, shown with an uncertainty band — they are not direct observations."><span className="term-trigger">Unavailable parameters</span></Tooltip> are listed explicitly.</p>
           <div className="canvas detail-canvas">
             <CardRenderer card={makeCard("forecast", "hub-forecast")} region={region} analysis={analysis} />
             <CardRenderer card={makeCard("anomaly", "hub-anomaly")} region={region} analysis={analysis} />
@@ -164,7 +177,7 @@ export function RegionHubPage() {
               )}
             </div>
             <div className="info-panel">
-              <h3>Events & anomaly snapshot</h3>
+              <h3>Unusual events <Tooltip placement="top" label="An anomaly is a value far outside the normal seasonal range — it flags something worth investigating, not automatically a disaster or long-term trend."><span className="term-trigger">(anomalies)</span></Tooltip></h3>
               {anomalies && anomalies.length ? (
                 <ul className="plain-list">
                   {anomalies.slice(0, 6).map((a: any, i: number) => (
@@ -174,14 +187,16 @@ export function RegionHubPage() {
               ) : (
                 <p className="muted">No anomaly events returned for this target/coverage.</p>
               )}
-              {opposites && opposites.length ? <p className="muted small">Opposite-trend pairs detected nearby: {opposites.length} (see card for details).</p> : <p className="muted small">No opposite-trend pairs highlighted for this selection.</p>}
+              {opposites && opposites.length ? <p className="muted small">Nearby places trending in the opposite direction: {opposites.length} <Tooltip placement="top" label="Pairs of nearby grid cells whose measured trends move against each other."><span className="term-trigger">(see card for details)</span></Tooltip>.</p> : <p className="muted small">No opposite-trend pairs highlighted for this selection.</p>}
             </div>
           </div>
         </section>
+        </Reveal>
 
-        <section className="section-block">
-          <h2>Coverage, provenance, and limitations</h2>
-          <p className="muted">Clear labeling for observed vs projected and unavailable data. Synthetic/demo fallbacks are identified honestly.</p>
+        <Reveal delay={260}>
+          <section className="section-block">
+            <h2>Data coverage & provenance</h2>
+            <p className="muted">Clear labeling for observed vs projected and unavailable data. <Tooltip placement="top" label="Demo/synthetic content is clearly identified and never presented as a real observation."><span className="term-trigger">Demo/synthetic fallbacks</span></Tooltip> are identified honestly.</p>
           <div className="canvas detail-canvas">
             <CardRenderer card={makeCard("coverage", "hub-coverage")} region={region} analysis={analysis} />
             <CardRenderer card={makeCard("evidence", "hub-evidence")} region={region} analysis={analysis} />
@@ -201,7 +216,9 @@ export function RegionHubPage() {
             </div>
           </div>
         </section>
+        </Reveal>
 
+        <Reveal delay={300}>
         <section className="section-block">
           <h2>Imagery & evidence snapshots</h2>
           <div className="imagery-grid">
@@ -233,6 +250,7 @@ export function RegionHubPage() {
             <li><Link to={`/region/${region.slug}/videos`}>Videos/timelapse</Link>: observed timeline, projected frames, and scenario generation status/wiring.</li>
           </ul>
         </section>
+        </Reveal>
       </main>
     </div>
   );

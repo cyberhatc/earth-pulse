@@ -85,10 +85,11 @@ export function RegionMap({
       });
 
       L.rectangle(region.bounds, {
-        color: "#0e5a63",
+        color: "var(--accent)",
         weight: 1.5,
-        dashArray: "6 5",
-        fill: false,
+        dashArray: "7 6",
+        fillColor: "var(--accent-soft)",
+        fillOpacity: 0.14,
         interactive: false,
       }).addTo(map);
 
@@ -182,11 +183,11 @@ export function RegionMap({
 
     if (selectedPoint) {
       selectedMarkerRef.current = L.circleMarker(selectedPoint, {
-        radius: 9,
-        weight: 2,
-        color: "#14181A",
-        fillColor: "#FFFFFF",
-        fillOpacity: 1,
+        radius: 10,
+        weight: 3,
+        color: "#ffffff",
+        fillColor: "var(--accent)",
+        fillOpacity: 0.95,
       }).addTo(map);
     }
   }, [selectedPoint]);

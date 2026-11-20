@@ -33,6 +33,7 @@ import type {
   TrendStats,
 } from "../lib/types";
 import { TrendChart } from "./TrendChart";
+import { Tooltip } from "./Tooltip";
 
 type CardRendererProps = {
   card: CanvasCard;
@@ -248,7 +249,7 @@ export function CardRenderer({
     return (
       <article className="card">
         <div className="card-head">
-          <span className="card-head-label">Earth Trend Fingerprint</span>
+          <Tooltip placement="top" label="A compact view of how several climate variables are changing together for this place — one coupled picture instead of four separate charts."><span className="card-head-label">Trend fingerprint</span></Tooltip>
           <span className="card-head-meta">
             {fp.significantCount} of 4 significant · {region.bboxLabel}
           </span>
@@ -381,7 +382,7 @@ export function CardRenderer({
     return (
       <article className="card">
         <div className="card-head">
-          <span className="card-head-label">Earth Anomaly Detective</span>
+          <Tooltip placement="top" label="Values that fall far outside the normal seasonal range — they flag something worth investigating, not automatically a disaster."><span className="card-head-label">Unusual events</span></Tooltip>
           <span className="card-head-meta">
             {report.hotspot
               ? `Analysis cell ${formatCoords(report.hotspot[0], report.hotspot[1], 1)}`
@@ -490,7 +491,7 @@ export function CardRenderer({
     return (
       <article className="card">
         <div className="card-head">
-          <span className="card-head-label">Earth Twin Finder</span>
+          <Tooltip placement="top" label="Places with a similar long-term climate pattern, computed from the same data store — treated as analytical context, not a guarantee."><span className="card-head-label">Similar places (climate twin)</span></Tooltip>
           <span className="card-head-meta">
             {analysis.isLive ? "Backend · NASA POWER" : "Backend offline"}
           </span>
@@ -641,7 +642,7 @@ export function CardRenderer({
     return (
       <article className="card">
         <div className="card-head">
-          <span className="card-head-label">The finding</span>
+          <span className="card-head-label">Key finding</span>
           <span
             className={`stamp ${stats.significant ? "stamp-sig" : "stamp-not-sig"}`}
           >
@@ -754,7 +755,7 @@ export function CardRenderer({
     return (
       <article className="card">
         <div className="card-head">
-          <span className="card-head-label">Where is it changing?</span>
+          <Tooltip placement="top" label="Grid-level view of where values are rising or falling across the region, based on measured grid cells."><span className="card-head-label">Slope map</span></Tooltip>
           <span className="card-head-meta">
             {gridStatus === "ready"
               ? `measured · ${grid?.n_cells ?? 0} POWER cells · 15° grid`
@@ -858,7 +859,7 @@ export function CardRenderer({
       return (
         <article className="card">
           <div className="card-head">
-            <span className="card-head-label">Forecast</span>
+            <Tooltip placement="top" label="A model-based estimate of what may come, including an uncertainty band — not an observation."><span className="card-head-label">Projected future (model)</span></Tooltip>
           </div>
           <div className="card-body">
             <p className="anomaly-summary">
@@ -1019,7 +1020,7 @@ export function CardRenderer({
     return (
       <article className="card">
         <div className="card-head">
-          <span className="card-head-label">Opposite Trend Detector</span>
+          <Tooltip placement="top" label="Nearby grid cells whose measured trends move in the opposite direction."><span className="card-head-label">Opposite trends nearby</span></Tooltip>
           <span className="card-head-meta">
             {analysis.isLive ? "live engine output" : "backend needed"}
           </span>

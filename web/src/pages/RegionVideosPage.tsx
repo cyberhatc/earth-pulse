@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ContextChipBar } from "../components/ContextChipBar";
 import { TopBar } from "../components/TopBar";
+import { useAmbientMotion } from "../hooks/useAmbientMotion";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useInvestigation } from "../lib/context";
 import {
   fetchImageryPast,
@@ -19,6 +21,9 @@ export function RegionVideosPage() {
   const { region } = useRegionRoute();
   const { point, live } = useInvestigation();
   const target = point ?? region?.center ?? null;
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const videosRef = useRef<HTMLDivElement>(null);
+  useAmbientMotion({ scopeRef: videosRef, reducedMotion: prefersReducedMotion, enabled: true });
 
   const [past, setPast] = useState<BackendImageryPast | null>(null);
   const [scenario, setScenario] = useState<BackendScenario | null>(null);
@@ -68,11 +73,11 @@ export function RegionVideosPage() {
   const gifUrl = timelapseGifUrl(target[0], target[1], param);
 
   return (
-    <div className="workspace-page">
+    <div ref={videosRef} className="workspace-page">
       <TopBar backHref={`/region/${region.slug}`} backLabel={region.name} />
       <ContextChipBar mode="videos" />
       <main className="page-shell detail-page videos-page">
-        <section className="section-block">
+        <section className="section-block" data-l-reveal>
           <p className="eyebrow">Location videos & timelapse · observed past + projected future</p>
           <h1 className="page-title">Videos and imagery timeline for {region.name}</h1>
           <p className="section-lead">
@@ -84,7 +89,7 @@ export function RegionVideosPage() {
           {error ? <p className="warn-note">{error}</p> : null}
         </section>
 
-        <section className="section-block">
+        <section className="section-block" data-l-reveal>
           <div className="section-head-row">
             <h2>Observed past timelapse (backend-generated)</h2>
             <span className="status-pill status-integrated">Observed/model-derived timeline</span>
@@ -116,7 +121,7 @@ export function RegionVideosPage() {
           </div>
         </section>
 
-        <section className="section-block">
+        <section className="section-block" data-l-reveal>
           <div className="section-head-row">
             <h2>Projected future visualization frames</h2>
             <span className="status-pill status-optional">Model-projected · not observations</span>
@@ -144,7 +149,7 @@ export function RegionVideosPage() {
           </div>
         </section>
 
-        <section className="section-block">
+        <section className="section-block" data-l-reveal>
           <div className="section-head-row">
             <h2>Observed/reference imagery</h2>
             <span className="status-pill status-integrated">Observed or reference sources</span>
@@ -180,7 +185,7 @@ export function RegionVideosPage() {
           ) : null}
         </section>
 
-        <section className="section-block">
+        <section className="section-block" data-l-reveal>
           <div className="section-head-row">
             <h2>AI-generated scenario video/status</h2>
             <span className="status-pill status-planned">Scenario conditioning · generation status</span>
