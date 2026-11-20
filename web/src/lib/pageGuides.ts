@@ -16,7 +16,7 @@ export function getPageGuide(path: string): TourStep[] {
   ];
   if (path.endsWith("/visualizations")) return [
     {"target":".page-title","title":"Visual investigation","text":"Confirm the active region before reading the charts."},
-    {"target":".detail-canvas, .canvas","title":"Read a chart","text":"Check the axes and legend. Compare the historical record with derived trends."},
+    {"target":".viz-chart-wrap","title":"Read a chart","text":"Check the axes and legend. Compare the historical record with derived trends."},
     {"target":".imagery-grid","title":"Check image labels","text":"Look for the observation date and whether an image is projected."},
   ];
   if (path.endsWith("/chat")) return [

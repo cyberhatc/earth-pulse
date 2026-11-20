@@ -23,4 +23,10 @@
 .tour-bottom {bottom:max(1rem,env(safe-area-inset-bottom))}
 .tour-actions button:first-child {margin-right:auto}
 .tour-actions button:disabled {opacity:.5}
+@media(max-width:700px){
+  .topbar:not(.landing-nav-wrap) .topbar-inner {flex-wrap:wrap;height:auto;gap:.5rem;padding-block:.6rem}
+  .topbar:not(.landing-nav-wrap) .topbar-nav {display:flex;max-width:100%;flex-wrap:wrap;gap:.5rem}
+  .tour-panel {right:.75rem;width:calc(100% - 1.5rem);padding:1rem}
+  .help-launch,.tour-actions button {min-height:44px}
+}
 .help-launch:focus-visible,.tour-panel :focus-visible {outline:2px solid #49c5b6;outline-offset:3px}

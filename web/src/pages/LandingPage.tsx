@@ -48,6 +48,10 @@ export function LandingPage() {
   const rootRef = useRef<HTMLDivElement>(null);
   const lenisRef = useRef<Lenis | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (id) document.getElementById(id)?.scrollIntoView({block:"start",behavior:"instant"});
+  }, []);
   const reducedMotion = usePrefersReducedMotion();
   const isMobile = useIsMobile();
   const [videoFailed, setVideoFailed] = useState(false);

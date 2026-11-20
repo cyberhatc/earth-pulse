@@ -45,6 +45,7 @@ export function GuidedTour({ steps, index, move, close }: Props) {
       <h2 id="tour-title" ref={heading} tabIndex={-1}>{step.title}</h2><p>{step.text}</p>
       {!rect && <p role="status">This view is loading or unavailable. You can continue the guide.</p>}
       <div className="tour-actions"><button onClick={close}>Skip tour</button>
+      {index > 0 && <button onClick={() => move(0)}>Restart</button>}
       <button disabled={index===0} onClick={() => move(index-1)}>Back</button>
       <button onClick={() => index+1===steps.length ? close() : move(index+1)}>{index+1===steps.length ? "Finish" : "Next"}</button></div>
     </section>
