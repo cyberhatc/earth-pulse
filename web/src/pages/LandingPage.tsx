@@ -158,6 +158,11 @@ export function LandingPage() {
               <div className="landing-video-overlay" />
             </div>
           </ArrivalSection>
+          <aside className="beginner-intro">
+            <div><h2>New to EarthPulse?</h2><p>Follow one place from its monthly record to a forecast, with a guide at each step.</p></div>
+            <button className="l-btn-secondary" onClick={() => window.dispatchEvent(new Event("earthpulse:beginner"))}>Take the guided tour</button>
+            <a href="/earthpedia">Explore EarthPedia</a>
+          </aside>
           <ObservationSection />
           <AboutSection />
           <HowItWorksSection />

@@ -23,6 +23,7 @@ export function ArrivalSection({ children }: { children: React.ReactNode }) {
             <a href="#how-it-works" className="l-btn-secondary">
               How It Works
             </a>
+            <button className="l-btn-secondary" onClick={() => window.dispatchEvent(new Event("earthpulse:beginner"))}>New here? Take a tour</button>
           </div>
           <div className="l-value-grid" data-l-stagger aria-label="Key value propositions">
             <article className="l-value-card" data-anime="accent">

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GuidedTour } from "./GuidedTour";
 import type { TourStep } from "./GuidedTour";
 import { getPageGuide } from "../lib/pageGuides";
@@ -13,6 +13,16 @@ export function GlobalHelp() {
   const navigate = useNavigate();
   const [region,setRegion] = useState(REGIONS[0].slug);
   const [topic,setTopic] = useState("temperature");
+  const options = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const open = () => {
+      dialog.current?.showModal();
+      if (options.current) options.current.open = true;
+      options.current?.querySelector("select")?.focus();
+    };
+    window.addEventListener("earthpulse:beginner", open);
+    return () => window.removeEventListener("earthpulse:beginner", open);
+  }, []);
   const [steps, setSteps] = useState<TourStep[]>([]);
   const [index, setIndex] = useState(0);
   function start(guide: TourStep[]) {
@@ -34,7 +44,7 @@ export function GlobalHelp() {
       <p>{pathname.startsWith("/region") ? "Investigate one place at a time. Check the data label before comparing its charts." : "Explore the map, read the evidence or look up the science behind a result."}</p>
       <div className="help-options"><button onClick={() => start(getPageGuide(pathname))}>Start page tutorial</button>
       <Link to="/earthpedia" onClick={() => dialog.current?.close()}>Open EarthPedia</Link></div>
-      <details className="beginner-options"><summary>How to use EarthPulse</summary>
+      <details ref={options} className="beginner-options"><summary>How to use EarthPulse</summary>
         <label>Study region<select value={region} onChange={e=>setRegion(e.target.value)}>{REGIONS.map(r=><option value={r.slug} key={r.slug}>{r.name}</option>)}</select></label>
         <label>Investigation topic<select value={topic} onChange={e=>setTopic(e.target.value)}><option value="temperature">Temperature</option><option value="precipitation">Rainfall</option><option value="ndvi">Vegetation</option><option value="sst">Ocean temperature</option></select></label>
         <button onClick={()=>start(beginnerGuide(region,topic))}>Start beginner walkthrough</button>

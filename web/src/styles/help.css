@@ -7,6 +7,12 @@
 .help-menu details {padding:.75rem 0;border-top:1px solid #354148}
 .help-menu summary {cursor:pointer}
 .help-close {float:right}
+.beginner-options label {display:grid;gap:.25rem;margin:.8rem 0}
+.beginner-options select {color:inherit;background:#202c33;padding:.55rem;border:1px solid #53636b;border-radius:4px;width:100%}
+.beginner-intro {display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;padding:2rem 5vw;background:#182229;border-block:1px solid #354148}
+.beginner-intro div {flex:1 1 20rem}
+.beginner-intro h2,.beginner-intro p {margin:.35rem 0}
+.beginner-intro a {color:#8eddd2}
 .help-options,.tour-actions {display:flex;gap:.65rem;align-items:center;flex-wrap:wrap}
 .tour-stage[open] {position:fixed;inset:0;margin:0;width:100%;height:100%;max-width:none;max-height:none;padding:0;border:0;background:transparent;overflow:hidden}
 .tour-stage::backdrop {background:#08101355}
