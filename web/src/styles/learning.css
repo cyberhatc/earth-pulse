@@ -11,5 +11,11 @@
 .learn-grid {grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr))}
 .learn-grid article {background:#182229;border:1px solid #354148;padding:1.35rem;border-radius:.5rem}
 .learn-grid h2 {margin:.45rem 0;font-size:1.2rem}
+.learn-grid [data-subject="Vegetation"] small {color:#a8d09e}
+.learn-grid [data-subject="Oceans"] small,.learn-grid [data-subject="Sources"] small {color:#91c2e9}
+.learn-grid [data-subject="Atmosphere"] small {color:#aed8dd}
+.concept-figure {margin:2rem 0;padding:1.35rem;border-inline-start:3px solid #49c5b6;background:#182229;max-width:42rem}
+.concept-figure i {display:block;background:#83b874;height:.5rem;border-radius:2px;margin:.25rem 0 .7rem}
+.concept-figure figcaption {color:#acbbc2;line-height:1.55}
 .learn-page :focus-visible,.learn-panel :focus-visible {outline:2px solid var(--teal);outline-offset:3px}
 @media(max-width:650px){.learn-filters{grid-template-columns:1fr}}

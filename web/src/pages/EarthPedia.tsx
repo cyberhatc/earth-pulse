@@ -17,7 +17,7 @@ export function EarthPedia() {
   return <main className="learn-page">
     <Link to="/">← EarthPulse</Link>
     <header><small>EARTHPULSE KNOWLEDGE BASE</small><h1>EarthPedia</h1>
-    <p>Big Earth Science, Simply Explained.</p></header>
+    <p>Big Earth Science, Simply Explained.</p><p>Explore the science behind changing coastlines, seasonal vegetation, climate trends and forecasts.</p></header>
     <div className="learn-filters">
       <label>Search concepts<input type="search" placeholder="Try rainfall, NDVI or unusual measurement" value={query} onChange={e => update("q", e.target.value)} /></label>
       <label>Subject<select value={subject} onChange={e => update("subject", e.target.value)}>
@@ -26,6 +26,6 @@ export function EarthPedia() {
     </div>
     <p role="status">{results.length} concepts</p>
     {results.length === 0 && <button onClick={() => setParams({})}>Clear search and filters</button>}
-    <div className="learn-grid">{results.map(c => <article key={c.slug}><small>{c.subject}</small><h2><Link to={`/earthpedia/${c.slug}${params.size ? "?" + params : ""}`}>{c.name}</Link></h2><p>{c.summary}</p></article>)}</div>
+    <div className="learn-grid">{results.map(c => <article key={c.slug} data-subject={c.subject}><small>{c.subject}</small><h2><Link to={`/earthpedia/${c.slug}${params.size ? "?" + params : ""}`}>{c.name}</Link></h2><p>{c.summary}</p></article>)}</div>
   </main>;
 }
