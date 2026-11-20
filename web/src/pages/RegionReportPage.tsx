@@ -12,6 +12,7 @@ import {
 } from "../components/InteractiveCharts";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
+import { PARAM_META } from "../lib/live";
 import { buildReportMarkdown } from "../lib/report";
 import {
   formatP,
@@ -105,6 +106,9 @@ export function RegionReportPage() {
 
   const { variable, analysis, payload, coverage, stats, fingerprint, anomalies, evidence } = bundle;
   const totalMonths = payload?.past.dates.length ?? null;
+  const actualParamMeta = analysis.param ? PARAM_META[analysis.param] : null;
+  const displayParamName = actualParamMeta ? actualParamMeta.label : variable.name;
+  const displayUnit = actualParamMeta ? actualParamMeta.unit : variable.unit;
   const forecastParam = (() => {
     if (!analysis.forecast) return null;
     const preferred = analysis.param;
@@ -130,7 +134,7 @@ export function RegionReportPage() {
               </p>
               <h1 className="report-title">The Data, in Graphs</h1>
               <p className="report-sub">
-                {variable.name} · {analysis.period[0]}–{analysis.period[1]} ·{" "}
+                {displayParamName} · {analysis.period[0]}–{analysis.period[1]} ·{" "}
                 {analysis.isLive ? (
                   <span className="report-live">live NASA POWER record</span>
                 ) : (
@@ -153,7 +157,7 @@ export function RegionReportPage() {
             <div className="kpi-tile">
               <span className="kpi-label">Change per decade</span>
               <span className="kpi-value">{formatSlope(stats)}</span>
-              <span className="kpi-note">{stats.direction === "up" ? "increasing" : stats.direction === "down" ? "decreasing" : "flat"} · {variable.unit}</span>
+              <span className="kpi-note">{stats.direction === "up" ? "increasing" : stats.direction === "down" ? "decreasing" : "flat"} · {displayUnit}</span>
             </div>
             <div className="kpi-tile">
               <span className="kpi-label">Significance (Mann–Kendall)</span>

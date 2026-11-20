@@ -125,17 +125,29 @@ const PRIMARY_PARAM: Record<VariableKey, string> = {
   water_extent: "sea_level",
 };
 
-/** The frontend's case-file variable for a backend parameter (if they match). */
+/** The frontend's case-file variable for a backend parameter (if they match).
+ *
+ * Falls back to the first available live parameter when the case-file variable
+ * (e.g. NDVI, SST, sea level) is not present in the real store. This keeps the
+ * report on real data instead of a synthetic fallback.
+ */
 function liveParamFor(region: Region, payload: BackendPlace): string | null {
   const candidate = PRIMARY_PARAM[region.variable];
-  const series = payload.past.timeseries[candidate];
-  const trend = payload.trends[candidate];
-  if (!series || !trend) return null;
-  const finite = series.filter(
-    (v) => typeof v === "number" && Number.isFinite(v),
-  ).length;
-  if (finite < 12) return null;
-  return candidate;
+  const usable = (p: string | undefined): boolean => {
+    if (!p) return false;
+    const series = payload.past.timeseries[p];
+    const trend = payload.trends[p];
+    if (!series || !trend) return false;
+    const finite = series.filter(
+      (v) => typeof v === "number" && Number.isFinite(v),
+    ).length;
+    return finite >= 12;
+  };
+  if (usable(candidate)) return candidate;
+  for (const p of ["temperature", "precipitation", "humidity", "wind", "solar_radiation"]) {
+    if (usable(p)) return p;
+  }
+  return null;
 }
 
 function toNumberSeries(values: (number | null)[]): number[] | null {
@@ -393,6 +405,11 @@ export function deriveLiveAnalysis(
   const fingerprint = buildLiveFingerprint(region, payload);
   const evidence = buildLiveEvidence(region, stats, param, payload, point);
   const synthetic = payload.data_coverage.synthetic_demo;
+  const caseParam = PRIMARY_PARAM[region.variable];
+  const substituted = caseParam !== param;
+  const substitutionNote = substituted
+    ? ` Case-file ${variable.shortName} is not provided by NASA POWER; showing live ${meta.label} instead.`
+    : "";
 
   return {
     region,
@@ -402,7 +419,7 @@ export function deriveLiveAnalysis(
     isLive: true,
     param,
     sourceLabel: `${synthetic ? "Backend synthetic demo" : "Live backend"} · ${meta.dataset}`,
-    sourceNote: `${payload.forecast.model} forecast · ${payload.data_coverage.time_range[0]}–${payload.data_coverage.time_range[1]} · ${unavailable.length ? `missing ${unavailable.join(", ")}` : "all parameters available"}`,
+    sourceNote: `${payload.forecast.model} forecast · ${payload.data_coverage.time_range[0]}–${payload.data_coverage.time_range[1]} · ${unavailable.length ? `missing ${unavailable.join(", ")}` : "all parameters available"}${substitutionNote}`,
     series,
     dates,
     stats,

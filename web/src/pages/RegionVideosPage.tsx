@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ContextChipBar } from "../components/ContextChipBar";
 import { TopBar } from "../components/TopBar";
-import { useAmbientMotion } from "../hooks/useAmbientMotion";
-import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useInvestigation } from "../lib/context";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
+import { useLandingScroll } from "../hooks/useLandingScroll";
+import { useAnimeMicro } from "../hooks/useAnimeMicro";
 import {
   fetchImageryPast,
   fetchScenario,
@@ -21,9 +22,10 @@ export function RegionVideosPage() {
   const { region } = useRegionRoute();
   const { point, live } = useInvestigation();
   const target = point ?? region?.center ?? null;
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const videosRef = useRef<HTMLDivElement>(null);
-  useAmbientMotion({ scopeRef: videosRef, reducedMotion: prefersReducedMotion, enabled: true });
+  const rootRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = usePrefersReducedMotion();
+  useLandingScroll({ root: rootRef, reducedMotion, enabled: true });
+  useAnimeMicro({ enabled: !reducedMotion, root: rootRef });
 
   const [past, setPast] = useState<BackendImageryPast | null>(null);
   const [scenario, setScenario] = useState<BackendScenario | null>(null);
@@ -73,7 +75,7 @@ export function RegionVideosPage() {
   const gifUrl = timelapseGifUrl(target[0], target[1], param);
 
   return (
-    <div ref={videosRef} className="workspace-page">
+    <div className="workspace-page" ref={rootRef}>
       <TopBar backHref={`/region/${region.slug}`} backLabel={region.name} />
       <ContextChipBar mode="videos" />
       <main className="page-shell detail-page videos-page">
@@ -98,7 +100,7 @@ export function RegionVideosPage() {
             Animated timelapse assembled by the backend for the selected location and parameter (<code>{param}</code>). Availability depends on
             backend imagery services and data coverage.
           </p>
-          <div className="video-card">
+          <div className="video-card" data-anime="accent">
             <img
               src={gifUrl}
               alt={`Observed timelapse for ${region.name} (${param})`}
@@ -129,7 +131,7 @@ export function RegionVideosPage() {
           <p className="muted">
             SVG projections generated from trend/model extrapolation for selected years. These are <strong>model-projected visualizations</strong> with uncertainty and assumptions; they are not satellite observations.
           </p>
-          <div className="projected-grid">
+          <div className="projected-grid" data-l-stagger>
             {PROJECTED_YEARS.map((year) => (
               <figure key={year} className="projected-card">
                 <img
@@ -156,7 +158,7 @@ export function RegionVideosPage() {
           </div>
           <p className="muted">{past?.note ?? "Reference imagery from available Earth observation services for orientation and context."}</p>
           {past?.gibs?.length ? (
-            <div className="imagery-grid">
+            <div className="imagery-grid" data-l-stagger>
               {past.gibs.map((img, i) => (
                 <figure key={`${img.url}-${i}`} className="imagery-card">
                   <img src={img.url} alt={img.label || img.layer || "GIBS imagery"} loading="lazy" />
@@ -195,7 +197,7 @@ export function RegionVideosPage() {
             endpoints and clearly reports status, conditioning, and labeling.
           </p>
           {scenario ? (
-            <div className="scenario-card">
+            <div className="scenario-card" data-anime="accent">
               <div className="scenario-meta-grid">
                 <div><strong>Status:</strong> {scenario.enabled ? "Generation enabled/configured" : "Generation not enabled in this environment"}</div>
                 <div><strong>Parameter:</strong> {scenario.parameter}</div>

@@ -101,14 +101,41 @@ def manifest_hash() -> str | None:
 
 
 def models_info() -> dict:
-    """Which forecaster artifact would serve + whether conformal calibration is wired."""
-    info: dict = {"artifact": None, "conformal_calibrated": False,
-                  "calibration_date": None, "band_methods": ["sqrt_h"]}
+    """Which forecaster artifact would serve + whether conformal calibration is wired.
+
+    This must reflect the artifact actually used for the *active* store, not a
+    hard-coded synthetic artifact. A real POWER store uses
+    data/processed/forecaster_power_real.npz; the synthetic demo uses
+    models/artifacts/forecaster.npz.
+    """
+    info: dict = {
+        "artifact": None,
+        "artifact_path": None,
+        "trained_variables": [],
+        "trained_time_range": None,
+        "samples": None,
+        "lambda": None,
+        "provenance": None,
+        "conformal_calibrated": False,
+        "calibration_date": None,
+        "band_methods": ["sqrt_h"],
+    }
     try:
-        meta_fp = REPO_ROOT / "models" / "artifacts" / "forecaster_meta.json"
-        if meta_fp.exists():
-            meta = json.loads(meta_fp.read_text(encoding="utf-8"))
-            info["artifact"] = meta.get("artifact")
+        from models.infer import _artifact_for
+        active = store_info()
+        artifact = _artifact_for({"meta": {"synthetic": bool(active.get("synthetic", True))}})
+        if artifact.exists():
+            info["artifact"] = artifact.name
+            info["artifact_path"] = str(artifact)
+            meta_fp = artifact.parent / "forecaster_meta.json"
+            if meta_fp.exists():
+                meta = json.loads(meta_fp.read_text(encoding="utf-8"))
+                info["artifact"] = meta.get("artifact") or artifact.name
+                info["trained_variables"] = meta.get("variables", [])
+                info["trained_time_range"] = meta.get("store_time_range") or meta.get("time_range")
+                info["samples"] = meta.get("samples")
+                info["lambda"] = meta.get("lam")
+                info["provenance"] = meta.get("provenance")
         conformal_fp = REPO_ROOT / "data" / "processed" / "conformal.json"
         if conformal_fp.exists():
             c = json.loads(conformal_fp.read_text(encoding="utf-8"))

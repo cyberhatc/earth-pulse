@@ -3,12 +3,13 @@ import { CardRenderer } from "../components/cards";
 import { ContextChipBar } from "../components/ContextChipBar";
 import { TopBar } from "../components/TopBar";
 import { TrendChart } from "../components/TrendChart";
-import { useAmbientMotion } from "../hooks/useAmbientMotion";
-import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
 import { fetchImageryPast, type BackendImageryPast } from "../lib/api";
 import { useRegionRoute } from "../lib/useRegionRoute";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
+import { useLandingScroll } from "../hooks/useLandingScroll";
+import { useAnimeMicro } from "../hooks/useAnimeMicro";
 import type { CanvasCard } from "../lib/types";
 
 function card(kind: CanvasCard["kind"], id: string): CanvasCard {
@@ -19,11 +20,12 @@ export function RegionVisualizationsPage() {
   const { region } = useRegionRoute();
   const { point, live } = useInvestigation();
   const target = point ?? region?.center ?? null;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = usePrefersReducedMotion();
+  useLandingScroll({ root: rootRef, reducedMotion, enabled: true });
+  useAnimeMicro({ enabled: !reducedMotion, root: rootRef });
   const analysis = live.analysis;
   const [past, setPast] = useState<BackendImageryPast | null>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const vizRef = useRef<HTMLDivElement>(null);
-  useAmbientMotion({ scopeRef: vizRef, reducedMotion: prefersReducedMotion, enabled: true });
 
   useEffect(() => {
     if (!target) return;
@@ -61,7 +63,7 @@ export function RegionVisualizationsPage() {
   const variable = getVariable(region.variable);
 
   return (
-    <div ref={vizRef} className="workspace-page">
+    <div className="workspace-page" ref={rootRef}>
       <TopBar backHref={`/region/${region.slug}`} backLabel={region.name} />
       <ContextChipBar mode="visualizations" />
       <main className="page-shell detail-page visualizations-page">
@@ -109,7 +111,7 @@ export function RegionVisualizationsPage() {
           <h2>Imagery & observational evidence</h2>
           <p className="muted">Reference/observed imagery for context. Imagery availability varies by source and location.</p>
           {past?.gibs?.length ? (
-            <div className="imagery-grid">
+            <div className="imagery-grid" data-l-stagger>
               {past.gibs.slice(0, 6).map((img, i) => (
                 <figure key={`${img.url}-${i}`} className="imagery-card">
                   <img src={img.url} alt={img.label || img.layer || "Imagery"} loading="lazy" />
