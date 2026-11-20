@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ContextChipBar } from "../components/ContextChipBar";
 import { TopBar } from "../components/TopBar";
 import { TrendChart } from "../components/TrendChart";
+import { useAmbientMotion } from "../hooks/useAmbientMotion";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useInvestigation } from "../lib/context";
 import { getVariable } from "../lib/data";
 import { buildInvestigationMarkdown } from "../lib/intelligence";
@@ -19,6 +21,9 @@ export function RegionNotebookPage() {
   const { point, setPoint, messages, cards, live } = useInvestigation();
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const notebookRef = useRef<HTMLDivElement>(null);
+  useAmbientMotion({ scopeRef: notebookRef, reducedMotion: prefersReducedMotion, enabled: true });
 
   const initialQuestion = useMemo(() => {
     const fromUrl = searchParams.get("q");
@@ -154,7 +159,7 @@ export function RegionNotebookPage() {
   };
 
   return (
-    <div className="workspace-page">
+    <div ref={notebookRef} className="workspace-page">
       <TopBar backHref={`/region/${region.slug}`} backLabel={region.name} />
       <ContextChipBar mode="notebook" />
       <main className="notebook-page">
@@ -196,7 +201,7 @@ export function RegionNotebookPage() {
             </div>
           </div>
 
-          <div className="notebook-grid">
+          <div className="notebook-grid" data-l-stagger>
             <section className="card">
               <div className="card-head">
                 <span className="card-head-label">1. Research Question</span>
