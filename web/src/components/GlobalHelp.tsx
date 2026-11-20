@@ -45,7 +45,7 @@ export function GlobalHelp() {
     setIndex(next);
   }
   return <>
-    <button className="help-launch" aria-label="EarthPulse Help" onClick={() => dialog.current?.showModal()} aria-haspopup="dialog">? Help</button>
+    <button className="help-launch" aria-label="EarthPulse Help" onClick={() => dialog.current?.showModal()} aria-haspopup="dialog"><span aria-hidden="true">?</span> Help</button>
     <dialog ref={dialog} className="learn-panel help-menu" aria-labelledby="help-heading">
       <button className="help-close" onClick={() => dialog.current?.close()} aria-label="Close help">×</button>
       <small>EarthPulse field guide</small><h2 id="help-heading">How can we help?</h2>
