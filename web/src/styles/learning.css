@@ -1,0 +1,15 @@
+.learn-page,.learn-panel {--ink:#f4f7f7;--muted:#acbbc2;--teal:#49c5b6;color:var(--ink);background:#11191e;color-scheme:dark}
+.learn-page {min-height:100vh;padding:clamp(1.25rem,5vw,5rem) max(5vw,calc((100vw - 1100px)/2));line-height:1.6}
+.learn-page header {margin:3rem 0 2rem}
+.learn-page h1 {font:500 clamp(2.8rem,7vw,6rem)/1.04 Georgia,serif;margin:.5rem 0}
+.learn-page small,.learn-panel small {color:var(--teal);letter-spacing:.07em}
+.learn-page p,.learn-panel p {color:var(--muted);max-width:68ch}
+.learn-page a,.learn-panel a {color:#8eddd2;text-underline-offset:.2em}
+.learn-filters,.learn-grid {display:grid;gap:1rem}
+.learn-filters {grid-template-columns:2fr 1fr}
+.learn-filters input,.learn-filters select {display:block;background:#182229;color:var(--ink);width:100%;padding:.8rem;border:1px solid #56646a;border-radius:.4rem}
+.learn-grid {grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr))}
+.learn-grid article {background:#182229;border:1px solid #354148;padding:1.35rem;border-radius:.5rem}
+.learn-grid h2 {margin:.45rem 0;font-size:1.2rem}
+.learn-page :focus-visible,.learn-panel :focus-visible {outline:2px solid var(--teal);outline-offset:3px}
+@media(max-width:650px){.learn-filters{grid-template-columns:1fr}}

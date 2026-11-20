@@ -1,6 +1,7 @@
 ﻿import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { InvestigationProvider } from "./lib/context";
 import { LandingPage } from "./pages/LandingPage";
+import { EarthPedia } from "./pages/EarthPedia";
 import { RegionChatPage } from "./pages/RegionChatPage";
 import { RegionHubPage } from "./pages/RegionHubPage";
 import { RegionMapPage } from "./pages/RegionMapPage";
@@ -21,6 +22,7 @@ export default function App() {
         </a>
         <div id="main-content" tabIndex={-1}>
           <Routes>
+            <Route path="/earthpedia" element={<EarthPedia />} />
             <Route path="/" element={<LandingPage />} />
             <Route path="/regions" element={<RegionsPage />} />
             <Route path="/region/:slug" element={<RegionHubPage />} />
