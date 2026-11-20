@@ -223,6 +223,7 @@ export function RegionReportPage() {
             <section className="card report-card" aria-labelledby="report-s4">
               <div className="card-head">
                 <span className="card-head-label" id="report-s4">4 · The 5-year forecast (probabilistic)</span>
+                <Link to="/earthpedia/uncertainty">Read the uncertainty band</Link>
               </div>
               <div className="card-body">
                 <ForecastRibbon forecast={analysis.forecast} param={forecastParam} unit={forecastUnit} />
@@ -242,6 +243,7 @@ export function RegionReportPage() {
           <section className="card report-card" aria-labelledby="report-s6">
             <div className="card-head">
               <span className="card-head-label" id="report-s6">6 · Unusual months (|robust z| ≥ 3.5)</span>
+              <Link to="/earthpedia/anomaly">What makes a month unusual?</Link>
               <span className="card-head-meta">{anomalies.events.length} events</span>
             </div>
             <div className="card-body">

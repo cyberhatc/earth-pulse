@@ -51,6 +51,7 @@ export function TopBar({ backHref, backLabel, showThemeToggle = true }: TopBarPr
           ) : null}
         </div>
         <nav className="topbar-nav" aria-label="Primary navigation">
+          <Link to="/earthpedia" className="topbar-link">EarthPedia</Link>
           <Link to="/regions" className="topbar-link">
             Case Files
           </Link>

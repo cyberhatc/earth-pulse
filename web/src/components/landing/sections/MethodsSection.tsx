@@ -1,6 +1,9 @@
+import { Link } from "react-router-dom";
+
 const METHODS = [
   {
     title: "Theil–Sen estimator",
+    concept: "theil-sen",
     plain: "Estimates the typical rate of change by taking the middle slope among pairs of readings. One extreme year has less influence.",
     body: "Robust slope estimation, reducing sensitivity to outliers compared with ordinary least squares in many cases.",
     details: [
@@ -10,6 +13,7 @@ const METHODS = [
   },
   {
     title: "Mann–Kendall test",
+    concept: "mann-kendall",
     plain: "Checks whether later readings tend to be higher or lower than earlier ones. A steady direction can be easier to distinguish from random variation.",
     body: "Evaluates monotonic trend significance and direction.",
     details: [
@@ -19,6 +23,7 @@ const METHODS = [
   },
   {
     title: "Anomaly detection",
+    concept: "anomaly",
     plain: "Flags a reading that stands out from its usual local pattern so you can investigate what happened.",
     body: "Rolling robust statistics, median/MAD-based z-scores, and optional multivariate approaches such as Isolation Forest where implemented/configured.",
     details: [
@@ -28,6 +33,7 @@ const METHODS = [
   },
   {
     title: "Forecasting with uncertainty",
+    concept: "uncertainty",
     plain: "Shows a middle estimate and a range of possible values. A wider band means the model sees more uncertainty.",
     body: "p10/p50/p90 forecast outputs, ridge-rollout forecasting, and linear-trend-plus-seasonal fallback behavior where applicable.",
     details: [
@@ -37,6 +43,7 @@ const METHODS = [
   },
   {
     title: "Climate Twins",
+    concept: "climate-twins",
     plain: "Groups places with similar environmental patterns so you can compare them across a map.",
     body: "K-Means-based clustering of environmental feature signatures for comparative context (where supported by the analysis workflow).",
     details: [
@@ -46,6 +53,7 @@ const METHODS = [
   },
   {
     title: "Opposite Trend Detector",
+    concept: "opposite-trends",
     plain: "Finds neighbors where the same measure trends in opposite directions. The contrast gives you a question to investigate.",
     body: "Identifies neighboring grid cells with opposite trend directions, subject to significance and strength criteria (where supported).",
     details: [
@@ -80,6 +88,7 @@ export function MethodsSection() {
                 ))}
               </ul>
               </details>
+              <Link to={"/earthpedia/"+m.concept}>Explore {m.title} in EarthPedia</Link>
             </article>
           ))}
         </div>
