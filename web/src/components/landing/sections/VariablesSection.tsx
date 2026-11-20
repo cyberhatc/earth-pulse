@@ -23,7 +23,7 @@ export function VariablesSection() {
 
         <div className="l-var-grid" data-l-stagger>
           {VARIABLES.map((v) => (
-            <article key={v.name} className="l-var-card" data-domain={v.category} data-anime="accent">
+            <article key={v.name} className="l-var-card" data-domain={v.category} data-measure={v.name} data-anime="accent">
               <p className="l-var-cat">{v.category}</p>
               <h3>{v.name}</h3>
               <p>{v.desc}</p>

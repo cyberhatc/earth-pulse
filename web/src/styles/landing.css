@@ -430,3 +430,32 @@
 @media (prefers-reduced-motion: reduce) {
   .l-region-figure img, .l-gallery-item img { filter: none; }
 }
+
+.landing-root {
+  --science: #50c9b3;
+  --ocean: #4e91d8;
+  --vegetation: #a7c878;
+  --observation: #e7ab71;
+}
+.landing-section:not(.l-arrival) {
+  --landing-surface: rgba(18, 22, 26, .85);
+  --landing-fg-faint: #a6afb3;
+  background-color: #101317;
+  border-top: 1px solid rgba(196, 208, 214, .12);
+}
+.landing-section:not(.l-arrival):nth-of-type(odd) { background-color: #171d22; }
+.landing-section.l-regions, .landing-section.l-signals {
+  background-image: radial-gradient(ellipse at 90% 15%, rgba(78,145,216,.055), transparent 58%);
+}
+.landing-section:not(.l-arrival) .l-eyebrow,
+.landing-root .landing-anchor.active { color: var(--science); }
+.l-var-card { --domain: var(--science); border-top: 2px solid color-mix(in srgb, var(--domain) 36%, transparent); }
+.l-var-card[data-domain="Vegetation"] { --domain: var(--vegetation); }
+.l-var-card:is([data-domain="Ocean"], [data-domain="Hydrology"]) { --domain: var(--ocean); }
+.l-var-card[data-domain="Energy"], .l-var-card[data-measure="Temperature"] { --domain: var(--observation); }
+.landing-root .l-var-card .l-var-cat { color: color-mix(in srgb, var(--domain) 75%, white); }
+.l-notice-warn { border-inline-start: 2px solid var(--observation); }
+.landing-root :focus-visible { outline: 2px solid var(--science); outline-offset: 3px; }
+@media (hover: hover) {
+  .l-region-case:hover, .l-method-card:hover, .l-var-card:hover { border-color: #526264; }
+}

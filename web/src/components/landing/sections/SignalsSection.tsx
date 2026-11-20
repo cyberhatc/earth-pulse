@@ -51,8 +51,8 @@ export function SignalsSection() {
                 </desc>
                 <defs>
                   <linearGradient id="sigBand" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#d7d2c6" stopOpacity="0.22" />
-                    <stop offset="100%" stopColor="#d7d2c6" stopOpacity="0.05" />
+                    <stop offset="0%" stopColor="var(--science)" stopOpacity="0.22" />
+                    <stop offset="100%" stopColor="var(--science)" stopOpacity="0.05" />
                   </linearGradient>
                 </defs>
                 {[12,14,16,18,20,22,24,26,28].map((v) => (
@@ -67,11 +67,11 @@ export function SignalsSection() {
 
                 {showForecast && <path d={area} fill="url(#sigBand)" stroke="none" />}
                 <path d={line(hist)} fill="none" stroke="#f2f0ea" strokeWidth="2.6" />
-                {showForecast && <path d={line(forecast, 20)} fill="none" stroke="#d7d2c6" strokeWidth="2.4" strokeDasharray="6 4" />}
+                {showForecast && <path d={line(forecast, 20)} fill="none" stroke="var(--science)" strokeWidth="2.4" strokeDasharray="6 4" />}
                 {showTrend && <path d={trend} fill="none" stroke="#ffffff" strokeWidth="2" strokeDasharray="5 5" opacity="0.8" />}
                 {showAnomaly && (
                   <g>
-                    <circle cx={xs(anomalyI)} cy={ys(hist[anomalyI])} r="6" fill="#ffffff" />
+                    <circle cx={xs(anomalyI)} cy={ys(hist[anomalyI])} r="6" fill="var(--observation)" />
                     <circle cx={xs(anomalyI)} cy={ys(hist[anomalyI])} r="3" fill="#050505" />
                     <text x={xs(anomalyI) + 10} y={ys(hist[anomalyI]) - 10} fontSize="11" fill="#f2f0ea" fontWeight="600">Anomaly</text>
                   </g>
