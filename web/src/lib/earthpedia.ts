@@ -79,4 +79,9 @@ export const concepts = [
     ["firms","NASA FIRMS","Find satellite detections of active fires and unusual heat.","Look for thermal detections during a regional fire event.","A detection represents a sensor footprint, with confidence and observation-time limitations.","firms"],
     ["noaa","NOAA Climate Data Online","Find historical weather records for comparison.","Check a nearby station’s rainfall history.","Station records sample particular locations. Compare units and observation periods with a gridded product.","noaa"],
   ]),
+  ...group("Earth observation", [
+    ["earth-observation","Earth observation","Measure Earth repeatedly to understand where and when conditions change.","Compare monthly rainfall with how green nearby fields appear.","Ground stations, satellites and other instruments have different footprints. Match dates and units before comparing records.","sensing"],
+    ["satellite-imagery","Satellite imagery","A view of Earth assembled from sensor measurements.","A true-color coastal scene can show where a river meets the sea.","Displayed colors depend on wavelength bands, processing and display settings. Regional mosaics may combine several acquisition dates.","worldview"],
+    ["synthetic-data","Synthetic data","Values generated to demonstrate or test a workflow.","EarthPulse’s offline sample lets students practice reading a forecast without downloading climate records.","A reproducible synthetic series can exercise the same algorithms as observations. Its numerical trend does not establish a historical change at the depicted place.","sensing","demo simulated provenance fake example"],
+  ]),
 ];
