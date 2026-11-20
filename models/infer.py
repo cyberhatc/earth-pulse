@@ -188,8 +188,7 @@ def forecast_place(store, cell: int, horizon_months: int = 60,
         return fc
     # fallback: linear trend + seasonal climatology with CONFORMAL bands when available
     if requested is None:
-        requested = [k for k in store.keys()
-                     if k not in ("dates", "lats", "lons", "grid_lat", "grid_lon", "meta", "meta_json")]
+        requested = [name for name in STORE_VARIABLES if name in store]
     conformal = _conformal_fallback_widths(store)
     dates, X = prepare_cell_matrix(store, cell, requested)
     if conformal:
