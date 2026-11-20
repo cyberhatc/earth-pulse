@@ -26,6 +26,6 @@ export function EarthPedia() {
     </div>
     <p role="status">{results.length} concepts</p>
     {results.length === 0 && <button onClick={() => setParams({})}>Clear search and filters</button>}
-    <div className="learn-grid">{results.map(c => <article key={c.slug}><small>{c.subject}</small><h2>{c.name}</h2><p>{c.summary}</p></article>)}</div>
+    <div className="learn-grid">{results.map(c => <article key={c.slug}><small>{c.subject}</small><h2><Link to={`/earthpedia/${c.slug}${params.size ? "?" + params : ""}`}>{c.name}</Link></h2><p>{c.summary}</p></article>)}</div>
   </main>;
 }

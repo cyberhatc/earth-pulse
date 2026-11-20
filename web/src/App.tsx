@@ -2,6 +2,7 @@
 import { InvestigationProvider } from "./lib/context";
 import { LandingPage } from "./pages/LandingPage";
 import { EarthPedia } from "./pages/EarthPedia";
+import { ConceptArticle } from "./pages/ConceptArticle";
 import { RegionChatPage } from "./pages/RegionChatPage";
 import { RegionHubPage } from "./pages/RegionHubPage";
 import { RegionMapPage } from "./pages/RegionMapPage";
@@ -23,6 +24,7 @@ export default function App() {
         <div id="main-content" tabIndex={-1}>
           <Routes>
             <Route path="/earthpedia" element={<EarthPedia />} />
+            <Route path="/earthpedia/:concept" element={<ConceptArticle />} />
             <Route path="/" element={<LandingPage />} />
             <Route path="/regions" element={<RegionsPage />} />
             <Route path="/region/:slug" element={<RegionHubPage />} />
